@@ -41,7 +41,7 @@ class UsersModel {
     return response;
   }
 
-  static async getLoggedInUser(id, username, email) {
+  static async getLoggedInUser(id) {
     const db = getDatabase();
     const usersCollection = db.collection('users');
 

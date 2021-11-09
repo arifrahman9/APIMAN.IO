@@ -9,13 +9,12 @@ const routes = require('./routes');
 const cors = require('cors');
 
 const { connect, getDatabase } = require('./config/mongo');
-const errorHandler = require('./middlewares/error-handler');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(errorHandler);
+app.use('/', routes);
 
 connect().then(() => {
   app.listen(PORT, () => {

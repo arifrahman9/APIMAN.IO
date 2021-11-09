@@ -62,6 +62,22 @@ class UsersController {
       next(err);
     }
   }
+
+  static async getUserCredentials(req, res, next) {
+    try {
+      const user = await UsersModel.getLoggedInUser(req.user.id);
+
+      res.status(200).json({
+        username: user.username,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      });
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
 }
 
 module.exports = UsersController;

@@ -5,9 +5,9 @@ const UsersModel = require('../models/users-model');
 class UsersController {
   static async register(req, res, next) {
     try {
-      const { username, email, password, phoneNumber, address } = req.body;
+      const { username, email, password, firstName, lastName } = req.body;
 
-      if (!username || !email || !password || !phoneNumber || !address) {
+      if (!username || !email || !password || !firstName || !lastName) {
         throw { name: 'requiredValidationError' };
       }
 
@@ -25,6 +25,37 @@ class UsersController {
         id: registeredUser[0]._id,
         username: registeredUser[0].username,
         email: registeredUser[0].email,
+      });
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+
+  static async login(req, res, next) {
+    try {
+      const { password } = req.body;
+
+      const loginResponse = await UsersModel.login(req.body);
+
+      if (!loginResponse) {
+        throw { name: 'unauthorized' };
+      }
+
+      if (!comparePassword(password, loginResponse.password)) {
+        throw { name: 'unauthorized' };
+      }
+
+      const payload = {
+        id: loginResponse._id,
+        username: loginResponse.username,
+        email: loginResponse.email,
+      };
+
+      const token = createToken(payload);
+
+      res.status(200).json({
+        access_token: token,
       });
     } catch (err) {
       console.log(err);

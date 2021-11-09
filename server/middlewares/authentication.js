@@ -11,11 +11,7 @@ const authentication = async (req, res, next) => {
 
     const payload = verifyToken(access_token);
 
-    const foundUser = await UsersModel.getLoggedInUser(
-      payload.id,
-      payload.username,
-      payload.email
-    );
+    const foundUser = await UsersModel.getLoggedInUser(payload.id);
 
     if (!foundUser) {
       throw { name: 'invalidToken' };

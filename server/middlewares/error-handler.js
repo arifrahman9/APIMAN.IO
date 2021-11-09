@@ -13,6 +13,11 @@ const errorHandler = (err, req, res, next) => {
       message = 'email must be unique';
       break;
 
+    case 'unauthorized':
+      code = 401;
+      message = 'invalid user/email or password';
+      break;
+
     case 'JsonWebTokenError':
     case 'invalidToken':
       code = 401;

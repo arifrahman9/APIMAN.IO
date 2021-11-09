@@ -20,13 +20,23 @@ class UsersModel {
   }
 
   static async login(reqBody) {
-    const { email } = reqBody;
+    const { email, username } = reqBody;
     const db = getDatabase();
     const usersCollection = db.collection('users');
 
-    const response = await usersCollection.findOne({
-      email,
-    });
+    let findOneOption;
+
+    if (email) {
+      findOneOption = {
+        email,
+      };
+    } else {
+      findOneOption = {
+        username,
+      };
+    }
+
+    const response = await usersCollection.findOne(findOneOption);
 
     return response;
   }
@@ -37,11 +47,20 @@ class UsersModel {
 
     const foundUser = await usersCollection.findOne({
       _id: mongodb.ObjectId(id),
-      username,
-      email,
     });
 
     return foundUser;
+  }
+
+  static async findUserByEmail(email) {
+    const db = getDatabase();
+    const usersCollection = db.collection('users');
+
+    const response = await usersCollection.findOne({
+      email,
+    });
+
+    return response;
   }
 
   static async getLastInsertedUser() {

@@ -1,6 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
+import "./assets/css/sb-admin-2.min.css";
+import "./assets/vendor/fontawesome-free/css/all.css";
 import Navbar from "./components/Navbar";
 import Home from "./views/Home";
 import About from "./views/About";

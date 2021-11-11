@@ -3,7 +3,6 @@ const CollectionsModel = require('../models/collections-model');
 class CollectionsController {
   static async getAllCollections(req, res, next) {
     try {
-      console.log(req.user.id);
       const collections = await CollectionsModel.getCollectionsByUserId(
         req.user.id
       );

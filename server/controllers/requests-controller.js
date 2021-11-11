@@ -1,5 +1,6 @@
 const { default: axios } = require('axios');
 const process = require('../helpers/process-request');
+const HistoriesModel = require('../models/histories-model');
 
 class RequestsController {
   static async requestApi(req, res) {
@@ -46,6 +47,15 @@ class RequestsController {
 
       const response = await axios(axiosOptions);
 
+      const newAddedHistory = await HistoriesModel.addNewHistory(
+        url,
+        params,
+        headers,
+        bodies,
+        method,
+        req.user.id
+      );
+
       console.log(response);
 
       res.status(200).json({
@@ -53,6 +63,7 @@ class RequestsController {
         response: response.data,
         responseTime:
           new Date().getTime() - response.config.meta.requestStartedAt,
+        newAddedHistory,
       });
     } catch (err) {
       res.status(err.response.status).json({

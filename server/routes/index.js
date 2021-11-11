@@ -7,6 +7,7 @@ const authentication = require('../middlewares/authentication');
 const requests = require('./requests-router');
 const users = require('./users-router');
 const collections = require('./collections-router');
+const histories = require('./histories-router');
 const UsersController = require('../controllers/users-controller');
 
 router.post('/register', UsersController.register);
@@ -17,6 +18,7 @@ router.use(authentication);
 router.use('/requests', requests);
 router.use('/users', users);
 router.use('/collections', collections);
+router.use('/histories', histories);
 
 router.use(errorHandler);
 

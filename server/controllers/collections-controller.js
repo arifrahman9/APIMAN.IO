@@ -1,4 +1,5 @@
 const CollectionsModel = require('../models/collections-model');
+const HistoriesModel = require('../models/histories-model');
 
 class CollectionsController {
   static async getAllCollections(req, res, next) {
@@ -16,8 +17,8 @@ class CollectionsController {
 
   static async addNewCollection(req, res, next) {
     try {
-      const { HistoryId, name } = req.body;
-      await CollectionsModel.addNewCollection(req.user.id, HistoryId, name);
+      const { name } = req.body;
+      await CollectionsModel.addNewCollection(req.user.id, name);
 
       const newCollection = await CollectionsModel.getLastInsertedCollection();
 
@@ -60,6 +61,9 @@ class CollectionsController {
       const { id } = req.body;
 
       const deletedCollection = await CollectionsModel.deleteCollectionById(id);
+
+      //remove CollectionId field from history
+      await HistoriesModel.removeCollectionId(id);
 
       res.status(200).json(deletedCollection);
     } catch (err) {

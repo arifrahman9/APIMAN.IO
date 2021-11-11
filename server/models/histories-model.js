@@ -1,3 +1,4 @@
+const mongodb = require('mongodb');
 const { getDatabase } = require('../config/mongo');
 
 class HistoriesModel {
@@ -17,10 +18,25 @@ class HistoriesModel {
     }
   }
 
-  static async addNewHistory(requestBody, userId) {
+  static async getHistoriesByCollectionId(collectionId) {
     try {
-      const { url, params, headers, bodies, method } = requestBody;
+      const db = getDatabase();
+      const historiesCollection = db.collection('histories');
 
+      const histories = await historiesCollection
+        .find({
+          CollectionId: mongodb.ObjectId(collectionId),
+        })
+        .toArray();
+
+      return histories;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  static async addNewHistory(url, params, headers, bodies, method, userId) {
+    try {
       const db = getDatabase();
       const historiesCollection = db.collection('histories');
       await historiesCollection.insertOne({
@@ -29,7 +45,7 @@ class HistoriesModel {
         headers,
         params,
         bodies,
-        userId,
+        UserId: userId,
       });
 
       const newHistory = await historiesCollection
@@ -39,6 +55,89 @@ class HistoriesModel {
         .toArray();
 
       return newHistory;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  static async getHistoryById(id) {
+    try {
+      const db = getDatabase();
+      const historiesCollection = db.collection('histories');
+      const history = await historiesCollection.findOne({
+        _id: mongodb.ObjectId(id),
+      });
+
+      return history;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  static async addHistoryToCollection(historyId, collectionId) {
+    try {
+      const db = getDatabase();
+      const historiesCollection = db.collection('histories');
+
+      const historyToAdd = await historiesCollection.findOne({
+        _id: mongodb.ObjectId(historyId),
+      });
+
+      await historiesCollection.updateOne(
+        {
+          _id: mongodb.ObjectId(historyId),
+        },
+        {
+          $set: {
+            CollectionId: mongodb.ObjectId(collectionId),
+          },
+        }
+      );
+
+      return historyToAdd;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  static async deleteHistoryById(id) {
+    try {
+      const db = getDatabase();
+      const historiesCollection = db.collection('histories');
+
+      const historyToDelete = await historiesCollection.findOne({
+        _id: mongodb.ObjectId(id),
+      });
+
+      await historiesCollection.deleteOne({
+        _id: mongodb.ObjectId(id),
+      });
+
+      return historyToDelete;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  // ini method kalo hapus collection, field CollectionId di history juga dihilangkan
+  static async removeCollectionId(collectionId) {
+    try {
+      const db = getDatabase();
+      const historiesCollection = db.collection('histories');
+
+      await historiesCollection.updateMany(
+        {
+          CollectionId: mongodb.ObjectId(collectionId),
+        },
+        {
+          $unset: {
+            CollectionId: 1,
+          },
+        },
+        {
+          multi: true,
+        }
+      );
     } catch (err) {
       return err;
     }

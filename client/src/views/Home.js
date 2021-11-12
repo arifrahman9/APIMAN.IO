@@ -92,14 +92,18 @@ export default function Home() {
     <>
       <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} />
 
-      <div className="row mx-0 mt-2 h-100">
-        <div className="col-4 px-1 border-secondary">
-          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
+      <div className="row mx-0 mt-2 mb-2" style={{ overflowX: "hidden" }}>
+        {/* Card Left */}
+        <div className="col-4 px-1 border-secondary" style={{ position: "fixed", height: "89vh" }}>
+          <div className="card o-hidden border-0 h-100" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
             <div className="card-header">History Collection</div>
             <div className="card-body"></div>
           </div>
         </div>
-        <div className="col-4 px-1">
+        {/* End Card Left */}
+
+        {/* Card Middle */}
+        <div className="col-4 px-1 offset-4">
           <div className="card o-hidden border-0 mb-2" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
             <div className="d-flex card-header p-2 align-items-center justify-content-between">
               <div>
@@ -215,7 +219,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card Body Below Here */}
+          {/* Card Body Form Below Here */}
           <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
             <div className="d-flex card-header p-2 justify-content-between align-items-center">
               <div>
@@ -290,8 +294,11 @@ export default function Home() {
             </div>
           </div>
         </div>
+        {/* Card Middle */}
+
+        {/* Card Right */}
         <div className="col-4 px-1">
-          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
+          <div className="card o-hidden border-0 h-100" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
             <div className="d-flex card-header justify-content-between">
               <span>Response</span>
               <span>Status</span>
@@ -301,6 +308,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+        {/* Card Rigth */}
       </div>
     </>
   );

@@ -3,30 +3,35 @@ const errorHandler = (err, req, res, next) => {
   let code;
 
   switch (err.name) {
-    case 'requiredValidationError':
+    case "requiredValidationError":
       code = 400;
-      message = 'field cannot be empty';
+      message = "Field cannot be empty";
       break;
 
-    case 'emailUniqueValidationError':
+    case "usernameUniqueValidationError":
       code = 400;
-      message = 'email must be unique';
+      message = "Username must be unique";
       break;
 
-    case 'unauthorized':
-      code = 401;
-      message = 'invalid user/email or password';
+    case "emailUniqueValidationError":
+      code = 400;
+      message = "Email must be unique";
       break;
 
-    case 'JsonWebTokenError':
-    case 'invalidToken':
+    case "unauthorized":
       code = 401;
-      message = 'invalid access token';
+      message = "Invalid user / email or password";
       break;
 
-    case 'notLoggedIn':
+    case "JsonWebTokenError":
+    case "invalidToken":
       code = 401;
-      message = 'please login first';
+      message = "Invalid access token";
+      break;
+
+    case "notLoggedIn":
+      code = 401;
+      message = "Please login first";
       break;
 
     case 'noFile':
@@ -41,7 +46,7 @@ const errorHandler = (err, req, res, next) => {
 
     default:
       code = 500;
-      message = 'Internal Server Error';
+      message = "Internal Server Error";
       break;
   }
 

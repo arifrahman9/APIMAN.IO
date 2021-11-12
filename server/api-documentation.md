@@ -314,6 +314,70 @@ _Response (200)_
 }
 ```
 
+### POST /forgot-password (buat ngirim link untuk reset password ke email)
+
+_Request Header_
+
+```
+none
+```
+
+_Request Body_
+
+```
+{
+  "email": <account email to reset password>
+}
+```
+
+_Response (200)_
+
+```
+{
+  "message": "Email sent, please check your email for the password reset link"
+}
+```
+
+_Response Error (404)_
+
+```
+{
+  "message": "there is no user registered with that email"
+}
+```
+
+### POST /reset/:token (buat reset password usernya, setelah udah dapet token reset password)
+
+_Request Header_
+
+```
+none
+```
+
+_Request Body_
+
+```
+{
+  "password": <new password>
+}
+```
+
+_Response (200)_
+
+```
+{
+  "message": "Success! Your password has been changed, please login"
+}
+```
+
+_Response Error (401)_
+
+```
+{
+  "message": "Password reset token is invalid or has expired"
+}
+```
+
 ### GET /users/profile
 
 _Request Header_

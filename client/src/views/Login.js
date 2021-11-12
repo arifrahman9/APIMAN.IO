@@ -55,7 +55,7 @@ export default function Login() {
                   here
                 </Link>
                 <br />
-                <Link className="text-decoration-none" to="/register">
+                <Link className="text-decoration-none" to="/forgot-password">
                   Forgot password
                 </Link>
               </div>

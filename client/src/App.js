@@ -7,6 +7,7 @@ import Login from "./views/Login";
 import Register from "./views/Register";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
+import ForgotPassword from "./views/ForgotPassword";
 
 export default function App() {
   const { message } = useSelector((state) => state);
@@ -15,6 +16,7 @@ export default function App() {
     <>
       <Routes>
         <Route exact path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/" element={<Home />} />

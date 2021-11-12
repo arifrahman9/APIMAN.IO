@@ -13,11 +13,11 @@ export default function Register() {
               </div>
               <form className="mt-3 user mb-3">
                 <div className="row form-group">
-                  <div className="col">
+                  <div className="col pr-1">
                     <label htmlFor="first">First Name</label>
                     <input type="text" className="form-control rounded-pill" style={{ backgroundColor: "#dcdddd", borderColor: "#dcdddd" }} autoComplete="off" placeholder="Your first name" name="firstName" id="first" />
                   </div>
-                  <div className="col">
+                  <div className="col pl-1">
                     <label htmlFor="last">Last Name</label>
                     <input type="text" className="form-control rounded-pill" style={{ backgroundColor: "#dcdddd", borderColor: "#dcdddd" }} autoComplete="off" placeholder="Your last name" name="lastName" id="last" />
                   </div>

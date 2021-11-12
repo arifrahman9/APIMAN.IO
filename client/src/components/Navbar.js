@@ -1,14 +1,14 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Navbar(props) {
   const { inputMethodUrl, changeMethodUrlHandler, submitHandler } = props;
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light shadow" style={{ backgroundColor: "#fefefe", borderRadius: "0 0 20px 20px" }}>
-      <a className="navbar-brand mr-auto" href="#">
+      <a className="navbar-brand" href="#">
         <FontAwesomeIcon icon={faDatabase} color="#f56e56" />
       </a>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,16 +55,16 @@ export default function Navbar(props) {
         </form>
       </div>
 
-      <div className="justify-content-between">
+      <div className="ml-auto">
         <ul className="navbar-nav">
           <li className="nav-item dropdown no-arrow active">
             <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Hello, user
             </a>
             <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/profile">
                 Profile
-              </a>
+              </Link>
               <Link className="dropdown-item" to="/login">
                 Logout
               </Link>

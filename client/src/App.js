@@ -6,6 +6,7 @@ import "./assets/vendor/fontawesome-free/css/all.css";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import Home from "./views/Home";
+import Profile from "./views/Profile";
 
 export default function App() {
   const { message } = useSelector((state) => state);
@@ -15,6 +16,7 @@ export default function App() {
       <Routes>
         <Route exact path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </>

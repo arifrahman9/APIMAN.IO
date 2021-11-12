@@ -34,6 +34,16 @@ const errorHandler = (err, req, res, next) => {
       message = "Please login first";
       break;
 
+    case 'noFile':
+      code = 400;
+      message = 'you need to input the file';
+      break;
+
+    case 'wrongFileType':
+      code = 400;
+      message = 'file type needs to be application/json';
+      break;
+
     default:
       code = 500;
       message = "Internal Server Error";

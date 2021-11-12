@@ -3,6 +3,7 @@ const { createToken } = require("../helpers/jwt")
 const UsersModel = require("../models/users-model")
 const { OAuth2Client } = require("google-auth-library")
 
+
 class UsersController {
   static async register(req, res, next) {
     try {
@@ -12,10 +13,16 @@ class UsersController {
         throw { name: "requiredValidationError" }
       }
 
+      const foundUsername = await UsersModel.findUserByUsername(username);
+
+      if (foundUsername) {
+        throw { name: "usernameUniqueValidationError" };
+      }
+
       const foundUser = await UsersModel.findUserByEmail(email)
 
       if (foundUser) {
-        throw { name: "emailUniqueValidationError" }
+        throw { name: "emailUniqueValidationError" };
       }
 
       await UsersModel.register(req.body)
@@ -44,7 +51,11 @@ class UsersController {
       }
 
       if (!comparePassword(password, loginResponse.password)) {
-        throw { name: "unauthorized" }
+        throw { name: "unauthorized" };
+      }
+
+      if (!comparePassword(password, loginResponse.password)) {
+        throw { name: "unauthorized" };
       }
 
       const payload = {

@@ -1,5 +1,6 @@
 const { default: axios } = require('axios');
 const process = require('../helpers/process-request');
+const HistoriesModel = require('../models/histories-model');
 
 class RequestsController {
   static async requestApi(req, res) {
@@ -16,13 +17,9 @@ class RequestsController {
 
       if (bodies) {
         if (!bodyIsRaw) {
-          // let processedBodies = {};
-
-          // bodies.forEach((body) => {
-          //   processedBodies[body.key] = body.value;
-          // });
-
           bodies = process(bodies);
+        } else {
+          bodies = JSON.parse(bodies);
         }
       }
 
@@ -46,13 +43,21 @@ class RequestsController {
 
       const response = await axios(axiosOptions);
 
-      console.log(response);
+      const newAddedHistory = await HistoriesModel.addNewHistory(
+        url,
+        params,
+        headers,
+        bodies,
+        method,
+        req.user.id
+      );
 
       res.status(200).json({
         status: `${response.request.res.statusCode} ${response.request.res.statusMessage}`,
         response: response.data,
         responseTime:
           new Date().getTime() - response.config.meta.requestStartedAt,
+        newAddedHistory,
       });
     } catch (err) {
       res.status(err.response.status).json({

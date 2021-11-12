@@ -14,12 +14,11 @@ class CollectionsModel {
     return collections;
   }
 
-  static async addNewCollection(UserId, HistoryId, name) {
+  static async addNewCollection(UserId, name) {
     const db = getDatabase();
     const collectionsCollection = db.collection('collections');
     const collection = await collectionsCollection.insertOne({
       name,
-      HistoryId,
       UserId,
     });
 
@@ -51,7 +50,7 @@ class CollectionsModel {
     );
 
     const updatedCollection = await collectionsCollection.findOne({
-      _id: id,
+      _id: mongodb.ObjectId(id),
     });
 
     return updatedCollection;

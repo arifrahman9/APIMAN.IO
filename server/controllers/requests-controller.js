@@ -1,6 +1,7 @@
 const { default: axios } = require('axios');
 const process = require('../helpers/process-request');
 const HistoriesModel = require('../models/histories-model');
+const RequestsModel = require('../models/requests-model');
 
 class RequestsController {
   static async requestApi(req, res) {
@@ -66,6 +67,57 @@ class RequestsController {
         responseTime:
           new Date().getTime() - err.response.config.meta.requestStartedAt,
       });
+    }
+  }
+
+  static async readRequests(req, res, next) {
+    try {
+      console.log(req.file);
+      let requests = JSON.parse(req.file.buffer.toString());
+
+      const newAddedRequests = await RequestsModel.addNewRequest(
+        requests,
+        req.user.id
+      );
+
+      res.status(200).json(newAddedRequests);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  }
+
+  static async getRequestsByUserId(req, res, next) {
+    try {
+      const requests = await RequestsModel.getRequestsByUserId(req.user.id);
+
+      res.status(200).json(requests);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getRequestById(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const request = await RequestsModel.getRequestById(id);
+
+      res.status(200).json(request);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async deleteRequestById(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const deletedRequest = await RequestsModel.deleteRequestById(id);
+
+      res.status(200).json(deletedRequest);
+    } catch (err) {
+      next(err);
     }
   }
 }

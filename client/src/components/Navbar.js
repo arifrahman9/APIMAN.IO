@@ -11,9 +11,6 @@ export default function Navbar(props) {
       <a className="navbar-brand" href="#">
         <FontAwesomeIcon icon={faDatabase} color="#f56e56" />
       </a>
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon"></span>
-      </button>
 
       <div className="d-flex align-items-center justify-content-center position-absolute" style={{ left: 0, right: 0, top: 0, bottom: 0 }}>
         <form className="user" style={{ width: "40%" }} onSubmit={submitHandler}>

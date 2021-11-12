@@ -1,6 +1,7 @@
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 
 export default function Home() {
@@ -8,6 +9,8 @@ export default function Home() {
     method: "get",
     url: "",
   });
+
+  const { userdata } = useSelector((state) => state.loginReducer);
 
   const [paramsHeaders, setParamsHeader] = useState("params");
   const [inputParams, setInputParams] = useState([{ key: "", value: "" }]);
@@ -94,16 +97,16 @@ export default function Home() {
 
       <div className="row mx-0 mt-2 mb-2" style={{ overflowX: "hidden" }}>
         {/* Card Left */}
-        <div className="col-4 px-1 border-secondary" style={{ position: "fixed", height: "89vh" }}>
+        <div className="col-4 px-1 border-secondary">
           <div className="card o-hidden border-0 h-100" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
             <div className="card-header">History Collection</div>
-            <div className="card-body"></div>
+            <div className="card-body">Hello{userdata.username}</div>
           </div>
         </div>
         {/* End Card Left */}
 
         {/* Card Middle */}
-        <div className="col-4 px-1 offset-4">
+        <div className="col-4 px-1">
           <div className="card o-hidden border-0 mb-2" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
             <div className="d-flex card-header p-2 align-items-center justify-content-between">
               <div>

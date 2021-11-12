@@ -40,7 +40,11 @@ class UsersController {
 
   static async login(req, res, next) {
     try {
-      const { password } = req.body;
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        throw { name: "requiredValidationError" };
+      }
 
       const loginResponse = await UsersModel.login(req.body);
 

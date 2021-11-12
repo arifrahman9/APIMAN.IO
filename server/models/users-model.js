@@ -20,23 +20,14 @@ class UsersModel {
   }
 
   static async login(reqBody) {
-    const { email, username } = reqBody;
+    const { email } = reqBody;
+    console.log(reqBody);
     const db = getDatabase();
     const usersCollection = db.collection("users");
 
-    let findOneOption;
-
-    if (email) {
-      findOneOption = {
-        email,
-      };
-    } else {
-      findOneOption = {
-        username,
-      };
-    }
-
-    const response = await usersCollection.findOne(findOneOption);
+    const response = await usersCollection.findOne({
+      $or: [{ email }, { username: email }],
+    });
 
     return response;
   }

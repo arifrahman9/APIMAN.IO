@@ -1,6 +1,6 @@
-const { comparePassword } = require('../helpers/bcrypt');
-const { createToken } = require('../helpers/jwt');
-const UsersModel = require('../models/users-model');
+const { comparePassword } = require("../helpers/bcrypt");
+const { createToken } = require("../helpers/jwt");
+const UsersModel = require("../models/users-model");
 
 class UsersController {
   static async register(req, res, next) {
@@ -8,13 +8,19 @@ class UsersController {
       const { username, email, password, firstName, lastName } = req.body;
 
       if (!username || !email || !password || !firstName || !lastName) {
-        throw { name: 'requiredValidationError' };
+        throw { name: "requiredValidationError" };
+      }
+
+      const foundUsername = await UsersModel.findUserByUsername(username);
+
+      if (foundUsername) {
+        throw { name: "usernameUniqueValidationError" };
       }
 
       const foundUser = await UsersModel.findUserByEmail(email);
 
       if (foundUser) {
-        throw { name: 'emailUniqueValidationError' };
+        throw { name: "emailUniqueValidationError" };
       }
 
       await UsersModel.register(req.body);
@@ -39,11 +45,11 @@ class UsersController {
       const loginResponse = await UsersModel.login(req.body);
 
       if (!loginResponse) {
-        throw { name: 'unauthorized' };
+        throw { name: "unauthorized" };
       }
 
       if (!comparePassword(password, loginResponse.password)) {
-        throw { name: 'unauthorized' };
+        throw { name: "unauthorized" };
       }
 
       const payload = {

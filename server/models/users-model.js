@@ -1,13 +1,13 @@
-const mongodb = require('mongodb');
-const { getDatabase } = require('../config/mongo');
-const { hashPassword } = require('../helpers/bcrypt');
+const mongodb = require("mongodb");
+const { getDatabase } = require("../config/mongo");
+const { hashPassword } = require("../helpers/bcrypt");
 
 class UsersModel {
   static async register(reqBody) {
     const { username, email, password, firstName, lastName } = reqBody;
 
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
     const user = await usersCollection.insertOne({
       username,
       email,
@@ -22,7 +22,7 @@ class UsersModel {
   static async login(reqBody) {
     const { email, username } = reqBody;
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     let findOneOption;
 
@@ -43,7 +43,7 @@ class UsersModel {
 
   static async getLoggedInUser(id) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const foundUser = await usersCollection.findOne({
       _id: mongodb.ObjectId(id),
@@ -52,9 +52,20 @@ class UsersModel {
     return foundUser;
   }
 
+  static async findUserByUsername(username) {
+    const db = getDatabase();
+    const usersCollection = db.collection("users");
+
+    const response = await usersCollection.findOne({
+      username,
+    });
+
+    return response;
+  }
+
   static async findUserByEmail(email) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const response = await usersCollection.findOne({
       email,
@@ -65,12 +76,8 @@ class UsersModel {
 
   static async getLastInsertedUser() {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
-    const user = await usersCollection
-      .find({})
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
+    const usersCollection = db.collection("users");
+    const user = await usersCollection.find({}).sort({ _id: -1 }).limit(1).toArray();
 
     return user;
   }

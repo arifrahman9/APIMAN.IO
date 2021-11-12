@@ -1,6 +1,7 @@
 const { default: axios } = require('axios');
 const process = require('../helpers/process-request');
 const HistoriesModel = require('../models/histories-model');
+const RequestsModel = require('../models/requests-model');
 
 class RequestsController {
   static async requestApi(req, res) {
@@ -66,6 +67,22 @@ class RequestsController {
         responseTime:
           new Date().getTime() - err.response.config.meta.requestStartedAt,
       });
+    }
+  }
+
+  static async readRequests(req, res, next) {
+    try {
+      let requests = JSON.parse(req.file.buffer.toString());
+
+      const newAddedRequests = await RequestsModel.addNewRequest(
+        requests,
+        req.user.id
+      );
+
+      res.status(200).json(newAddedRequests);
+    } catch (err) {
+      console.log(err);
+      next(err);
     }
   }
 }

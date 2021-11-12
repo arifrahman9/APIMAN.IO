@@ -1,0 +1,10 @@
+[
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/posts-baru"
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:3000/posts-baru"
+  }
+]

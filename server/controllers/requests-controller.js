@@ -17,13 +17,9 @@ class RequestsController {
 
       if (bodies) {
         if (!bodyIsRaw) {
-          // let processedBodies = {};
-
-          // bodies.forEach((body) => {
-          //   processedBodies[body.key] = body.value;
-          // });
-
           bodies = process(bodies);
+        } else {
+          bodies = JSON.parse(bodies);
         }
       }
 
@@ -55,8 +51,6 @@ class RequestsController {
         method,
         req.user.id
       );
-
-      console.log(response);
 
       res.status(200).json({
         status: `${response.request.res.statusCode} ${response.request.res.statusMessage}`,

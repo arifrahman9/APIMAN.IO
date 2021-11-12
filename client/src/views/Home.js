@@ -10,7 +10,6 @@ export default function Home() {
   });
 
   const [paramsHeaders, setParamsHeader] = useState("params");
-
   const [inputParams, setInputParams] = useState([{ key: "", value: "" }]);
   const addInputParams = () => {
     setInputParams([...inputParams, { key: "", value: "" }]);

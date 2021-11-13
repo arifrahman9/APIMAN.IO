@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login, fetchUserdata } from "../store/actions/loginAction";
 
 export default function Login() {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { userdata } = useSelector((state) => state.loginReducer);
 
   const [inputLogin, setInputLogin] = useState({
     email: "",
@@ -33,7 +32,6 @@ export default function Login() {
       .then((response) => {
         const access_token = response.access_token;
         localStorage.setItem("access_token", access_token);
-        dispatch(fetchUserdata(access_token));
         history.push("/");
       })
       .catch((err) => {
@@ -52,7 +50,6 @@ export default function Login() {
             <div className="p-5">
               <div className="text-center">
                 <h1>APIMAN.io</h1>
-                {userdata.email}
               </div>
               {error.status ? (
                 <div className="text-center">
@@ -65,8 +62,7 @@ export default function Login() {
                 <div className="form-group">
                   <label htmlFor="email">Username / Email</label>
                   <input
-                    style={{ backgroundColor: "#dcdddd", borderColor: "#dcdddd", color: "#212121" }}
-                    className="form-control rounded-pill shadow-none"
+                    className="form-control rounded-pill shadow-none bg-secondary border-secondary text-dark"
                     placeholder="Enter your unique username or email"
                     autoComplete="off"
                     name="email"

@@ -1,16 +1,25 @@
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
+import { fetchUserdata } from "../store/actions/loginAction";
+import { postRequest } from "../store/actions/requestAction";
 
 export default function Home() {
+  const dispatch = useDispatch();
+  const [result, setResult] = useState("");
   const [inputMethodUrl, setMethodUrl] = useState({
     method: "get",
     url: "",
   });
 
   const { userdata } = useSelector((state) => state.loginReducer);
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    dispatch(fetchUserdata(access_token));
+  }, []);
 
   const [paramsHeaders, setParamsHeader] = useState("params");
   const [inputParams, setInputParams] = useState([{ key: "", value: "" }]);
@@ -84,30 +93,59 @@ export default function Home() {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    console.log(inputMethodUrl, "method url");
-    console.log(inputParams, "paramss");
-    console.log(inputHeaders, "headerss");
-    console.log(inputBodyForms, "body forms");
-    console.log(inputBodyRaw, "body rawww");
+    // console.log(inputMethodUrl, "method url");
+    // console.log(inputParams, "paramss");
+    // console.log(inputHeaders, "headerss");
+    // console.log(inputBodyForms, "body forms");
+    // console.log(inputBodyRaw, "body rawww");
+    dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, inputBodyForms, inputHeaders, inputParams, false))
+      .then((response) => {
+        console.log(response, "dari homeee");
+      })
+      .catch((err) => {
+        console.log(err, "dari error homeee");
+      });
   };
 
   return (
     <>
-      <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} />
+      <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} />
 
-      <div className="row mx-0 mt-2 mb-2" style={{ overflowX: "hidden" }}>
+      <div className="row mx-1 mt-2 mb-2" style={{ overflowX: "hidden", height: "88vh", overflow: "hidden" }}>
         {/* Card Left */}
         <div className="col-4 px-1 border-secondary">
-          <div className="card o-hidden border-0 h-100" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
-            <div className="card-header">History Collection</div>
-            <div className="card-body">Hello{userdata.username}</div>
+          <div class="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "88vh" }}>
+            <div class="card-body p-2 text-nowrap" style={{ overflowY: "auto" }}>
+              <nav>
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">
+                      Collection
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                      History
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                  History
+                </div>
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                  ...
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         {/* End Card Left */}
 
         {/* Card Middle */}
         <div className="col-4 px-1">
-          <div className="card o-hidden border-0 mb-2" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
+          <div className="card o-hidden border-0 mb-2" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "43vh" }}>
             <div className="d-flex card-header p-2 align-items-center justify-content-between">
               <div>
                 <div
@@ -137,7 +175,7 @@ export default function Home() {
                 <FontAwesomeIcon icon={faPlus} />
               </button>
             </div>
-            <div className="card-body p-2">
+            <div className="card-body p-2" style={{ overflowY: "auto" }}>
               {paramsHeaders === "params"
                 ? inputParams.map((inputParam, idx) => (
                     <div className="input-group">
@@ -223,7 +261,7 @@ export default function Home() {
           </div>
 
           {/* Card Body Form Below Here */}
-          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
+          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "44vh" }}>
             <div className="d-flex card-header p-2 justify-content-between align-items-center">
               <div>
                 <div className="custom-control custom-radio custom-control-inline" onClick={() => setBody("form")}>
@@ -247,7 +285,7 @@ export default function Home() {
                 ""
               )}
             </div>
-            <div className="card-body p-2">
+            <div className="card-body p-2" style={{ overflow: "auto" }}>
               {body === "form" ? (
                 inputBodyForms.map((inputBodyForm, idx) => (
                   <div className="input-group">
@@ -291,7 +329,7 @@ export default function Home() {
                 ))
               ) : (
                 <>
-                  <textarea className="form-control" cols="30" rows="5" style={{ color: "#212121", resize: "none" }} onChange={changeInputBodyRaw} value={inputBodyRaw}></textarea>
+                  <textarea className="form-control shadow-none border-0 body-raw bg-secondary" cols="30" rows="9" style={{ color: "#212121", resize: "none" }} onChange={changeInputBodyRaw} value={inputBodyRaw}></textarea>
                 </>
               )}
             </div>
@@ -301,13 +339,13 @@ export default function Home() {
 
         {/* Card Right */}
         <div className="col-4 px-1">
-          <div className="card o-hidden border-0 h-100" style={{ borderRadius: "10px", backgroundColor: "#fefefe" }}>
-            <div className="d-flex card-header justify-content-between">
+          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "88vh" }}>
+            <div className="d-flex card-header justify-content-between p-2">
               <span>Response</span>
               <span>Status</span>
             </div>
-            <div className="card-body">
-              <p>Sample Response</p>
+            <div className="card-body p-2" style={{ overflow: "auto" }}>
+              <p>Sample Responseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p>
             </div>
           </div>
         </div>

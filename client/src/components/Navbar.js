@@ -1,15 +1,19 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserdata } from "../store/actions/loginAction";
 
 export default function Navbar(props) {
-  const { inputMethodUrl, changeMethodUrlHandler, submitHandler } = props;
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { inputMethodUrl, changeMethodUrlHandler, submitHandler, userdata } = props;
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light shadow" style={{ backgroundColor: "#fefefe", borderRadius: "0 0 20px 20px" }}>
       <a className="navbar-brand" href="#">
-        <FontAwesomeIcon icon={faDatabase} color="#f56e56" />
+        <FontAwesomeIcon icon={faDatabase} color="#f56e56" /> APIMAN.io
       </a>
 
       <div className="d-flex align-items-center justify-content-center position-absolute" style={{ left: 0, right: 0, top: 0, bottom: 0 }}>
@@ -54,17 +58,26 @@ export default function Navbar(props) {
 
       <div className="ml-auto">
         <ul className="navbar-nav">
-          <li className="nav-item dropdown no-arrow active">
+          <li className="nav-item dropdown active">
             <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Hello, user
+              Hello, {userdata.firstName}
             </a>
             <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <Link className="dropdown-item" to="/profile">
                 Profile
               </Link>
-              <Link className="dropdown-item" to="/login">
+              <a
+                className="dropdown-item"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  localStorage.removeItem("access_token");
+                  dispatch(setUserdata({}));
+                  history.push("/login");
+                }}
+              >
                 Logout
-              </Link>
+              </a>
             </div>
           </li>
         </ul>

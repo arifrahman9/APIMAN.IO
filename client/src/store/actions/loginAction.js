@@ -18,7 +18,6 @@ export function login(data) {
         data,
       })
         .then((result) => {
-          dispatch(fetchUserdata(result.data.access_token));
           resolve(result.data);
         })
         .catch((err) => {

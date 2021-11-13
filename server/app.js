@@ -16,8 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
 
-connect().then(() => {
-  app.listen(PORT, () => {
-    console.log(`http://localhost:${PORT}`);
-  });
-});
+module.exports = app;
+
+// connect().then(() => {
+//   app.listen(PORT, () => {
+//     console.log(`http://localhost:${PORT}`);
+//   });
+// });

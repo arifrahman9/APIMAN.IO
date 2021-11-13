@@ -21,6 +21,10 @@ class HistoriesController {
         collectionId
       );
 
+      if (histories.length === 0) {
+        throw new Error();
+      }
+
       res.status(200).json(histories);
     } catch (err) {
       next(err);
@@ -33,6 +37,10 @@ class HistoriesController {
 
       const foundHistory = await HistoriesModel.getHistoryById(id);
 
+      if (!foundHistory) {
+        throw new Error();
+      }
+
       res.status(200).json(foundHistory);
     } catch (err) {
       next(err);
@@ -42,6 +50,10 @@ class HistoriesController {
   static async addHistoryToCollection(req, res, next) {
     try {
       const { historyId, collectionId } = req.body;
+
+      if (!historyId || !collectionId) {
+        throw new Error();
+      }
 
       const addedHistory = await HistoriesModel.addHistoryToCollection(
         historyId,
@@ -59,6 +71,10 @@ class HistoriesController {
       const { id } = req.params;
 
       const deletedHistory = await HistoriesModel.deleteHistoryById(id);
+
+      if (!deletedHistory) {
+        throw new Error();
+      }
 
       res.status(200).json(deletedHistory);
     } catch (err) {

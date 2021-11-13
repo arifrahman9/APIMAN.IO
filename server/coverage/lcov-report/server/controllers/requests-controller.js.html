@@ -177,19 +177,7 @@
 <a name='L118'></a><a href='#L118'>118</a>
 <a name='L119'></a><a href='#L119'>119</a>
 <a name='L120'></a><a href='#L120'>120</a>
-<a name='L121'></a><a href='#L121'>121</a>
-<a name='L122'></a><a href='#L122'>122</a>
-<a name='L123'></a><a href='#L123'>123</a>
-<a name='L124'></a><a href='#L124'>124</a>
-<a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a>
-<a name='L127'></a><a href='#L127'>127</a>
-<a name='L128'></a><a href='#L128'>128</a>
-<a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a>
-<a name='L131'></a><a href='#L131'>131</a>
-<a name='L132'></a><a href='#L132'>132</a>
-<a name='L133'></a><a href='#L133'>133</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L121'></a><a href='#L121'>121</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -237,7 +225,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -252,24 +240,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -321,10 +297,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { default: axios } = require('axios');
-const process = require('../helpers/process-request');
-const HistoriesModel = require('../models/histories-model');
-const RequestsModel = require('../models/requests-model');
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { default: axios } = require("axios");
+const process = require("../helpers/process-request");
+const HistoriesModel = require("../models/histories-model");
+const RequestsModel = require("../models/requests-model");
 &nbsp;
 class RequestsController {
 <span class="fstat-no" title="function not covered" >  st</span>atic async requestApi(req, res) {
@@ -367,28 +343,19 @@ class RequestsController {
 &nbsp;
       const response = <span class="cstat-no" title="statement not covered" >await axios(axiosOptions);</span>
 &nbsp;
-      const newAddedHistory = <span class="cstat-no" title="statement not covered" >await HistoriesModel.addNewHistory(</span>
-        url,
-        params,
-        headers,
-        bodies,
-        method,
-        req.user.id
-      );
+      const newAddedHistory = <span class="cstat-no" title="statement not covered" >await HistoriesModel.addNewHistory(url, params, headers, bodies, method, req.user.id);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      res.status(200).json({</span>
         status: `${response.request.res.statusCode} ${response.request.res.statusMessage}`,
         response: response.data,
-        responseTime:
-          new Date().getTime() - response.config.meta.requestStartedAt,
+        responseTime: new Date().getTime() - response.config.meta.requestStartedAt,
         newAddedHistory,
       });
     } catch (err) {
 <span class="cstat-no" title="statement not covered" >      res.status(err.response.status).json({</span>
         status: `${err.response.status} ${err.response.statusText}`,
         response: err.response.data,
-        responseTime:
-          new Date().getTime() - err.response.config.meta.requestStartedAt,
+        responseTime: new Date().getTime() - err.response.config.meta.requestStartedAt,
       });
     }
   }
@@ -398,10 +365,7 @@ class RequestsController {
 <span class="cstat-no" title="statement not covered" >      console.log(req.file);</span>
       let requests = <span class="cstat-no" title="statement not covered" >JSON.parse(req.file.buffer.toString());</span>
 &nbsp;
-      const newAddedRequests = <span class="cstat-no" title="statement not covered" >await RequestsModel.addNewRequest(</span>
-        requests,
-        req.user.id
-      );
+      const newAddedRequests = <span class="cstat-no" title="statement not covered" >await RequestsModel.addNewRequest(requests, req.user.id);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      res.status(200).json(newAddedRequests);</span>
     } catch (err) {
@@ -460,7 +424,7 @@ module.exports = RequestsController;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sat Nov 13 2021 22:21:43 GMT+0700 (Western Indonesia Time)
+                at Sat Nov 13 2021 23:26:16 GMT+0700 (Western Indonesia Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

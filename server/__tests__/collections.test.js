@@ -1,12 +1,33 @@
 const request = require('supertest');
 const app = require('../app');
 const mongodb = require('mongodb');
+const redis = require('../config/redis');
 const { connect, getDatabase } = require('../config/mongo');
 
 let newestCollection;
 let lastInsertedUser;
 let loginResponse;
 let db;
+
+const deleteRedis = async () => {
+  await redis.del('collections');
+  await redis.del('collectionsUserId');
+};
+
+const deleteRedisFoundCollection = async () => {
+  await redis.get('foundCollection');
+  await redis.get('collectionId');
+};
+
+const setToRedis = async (collectionsData, userData) => {
+  await redis.set('collections', JSON.stringify(collectionsData));
+  await redis.set('collectionsUserId', mongodb.ObjectId(userData));
+};
+
+const setRedisFoundCollection = async (collection, collectionID) => {
+  await redis.set('foundCollection', JSON.stringify(collection));
+  await redis.set('collectionId', mongodb.ObjectId(collectionID));
+};
 
 describe('GET /collections', () => {
   beforeAll(async () => {
@@ -78,6 +99,8 @@ describe('GET /collections', () => {
   });
 
   test('[success] successfuly fetched collections that belongs to the user', (done) => {
+    deleteRedis();
+
     request(app)
       .get('/collections')
       .set({
@@ -90,6 +113,31 @@ describe('GET /collections', () => {
         expect(body[0]).toHaveProperty('_id');
         expect(body[0]).toHaveProperty('name');
         expect(body[0]).toHaveProperty('UserId');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[success] successfuly fetched collections that belongs to the user', (done) => {
+    setToRedis(newestCollection, lastInsertedUser[0]._id);
+
+    request(app)
+      .get('/collections')
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Array));
+        expect(body[0]).toHaveProperty('_id');
+        expect(body[0]).toHaveProperty('name');
+        expect(body[0]).toHaveProperty('UserId');
+
+        deleteRedis();
 
         done();
       })
@@ -118,6 +166,8 @@ describe('GET /collections', () => {
   });
 
   test('[success] successfuly fetched collection by id', (done) => {
+    deleteRedis();
+
     request(app)
       .get(`/collections/${newestCollection[0]._id}`)
       .set({
@@ -130,6 +180,31 @@ describe('GET /collections', () => {
         expect(body).toHaveProperty('_id');
         expect(body).toHaveProperty('name');
         expect(body).toHaveProperty('UserId');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[success] successfuly fetched collection by id', (done) => {
+    setRedisFoundCollection(newestCollection[0], newestCollection[0]._id);
+
+    request(app)
+      .get(`/collections/${newestCollection[0]._id}`)
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Object));
+        expect(body).toHaveProperty('_id');
+        expect(body).toHaveProperty('name');
+        expect(body).toHaveProperty('UserId');
+
+        deleteRedis();
 
         done();
       })

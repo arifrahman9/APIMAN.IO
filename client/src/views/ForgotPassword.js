@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { useState } from 'react'
 
 export default function ForgotPassword () {
-  const [isSubmitted, setIsSubmitted] = useState(true)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const clickSubmit = () => {
     setIsSubmitted(true)

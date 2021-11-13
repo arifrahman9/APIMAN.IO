@@ -153,19 +153,28 @@ export default function Home() {
   };
 
   const submitHandler = () => {
+    let found = undefined;
+    for (const key in inputHeaders) {
+      if (inputHeaders[key].key !== "" || inputHeaders[key].value !== "") {
+        found = inputHeaders;
+        break;
+      }
+    }
+
     // console.log(inputMethodUrl, "method url");
     // console.log(inputParams, "paramss");
     // console.log(inputHeaders, "headerss");
     // console.log(inputBodyForms, "body forms");
     // console.log(inputBodyRaw, "body rawww");
-    dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, inputBodyForms, inputHeaders, inputParams, false))
+    dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, inputBodyForms, found, inputParams, false))
       .then((response) => {
-        setResultPanel(response.response);
+        // setResultPanel(response.response);
         setResultHeader({
           status: response.status,
           responseTime: `${response.responseTime} ms`,
         });
-        console.log(resultPanel);
+        dispatch(fetchHistories());
+        // console.log(resultPanel);
         console.log(response, "dari homeee");
       })
       .catch((err) => {

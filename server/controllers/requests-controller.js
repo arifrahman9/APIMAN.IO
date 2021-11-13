@@ -20,7 +20,7 @@ class RequestsController {
         if (!bodyIsRaw) {
           bodies = process(bodies);
         } else {
-          bodies = JSON.parse(bodies);
+          // bodies = JSON.parse(bodies);
         }
       }
 
@@ -82,7 +82,6 @@ class RequestsController {
 
       res.status(200).json(newAddedRequests);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -103,6 +102,10 @@ class RequestsController {
 
       const request = await RequestsModel.getRequestById(id);
 
+      if (!request) {
+        throw new Error();
+      }
+
       res.status(200).json(request);
     } catch (err) {
       next(err);
@@ -114,6 +117,10 @@ class RequestsController {
       const { id } = req.params;
 
       const deletedRequest = await RequestsModel.deleteRequestById(id);
+
+      if (!deletedRequest) {
+        throw new Error();
+      }
 
       res.status(200).json(deletedRequest);
     } catch (err) {

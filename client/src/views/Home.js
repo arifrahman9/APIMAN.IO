@@ -1,8 +1,9 @@
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faMinus, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
+import { fetchCollections } from "../store/actions/collectionAction";
 import { fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
@@ -46,6 +47,7 @@ export default function Home() {
 
   const { userdata } = useSelector((state) => state.loginReducer);
   const { histories } = useSelector((state) => state.historyReducer);
+  const { collections } = useSelector((state) => state.collectionReducer);
 
   const historyText = (method) => {
     if (method === "get") {
@@ -70,9 +72,15 @@ export default function Home() {
     return result;
   };
 
+  const getHistoriesCollection = (id) => {
+    let filtered = histories.filter((history) => history.CollectionId === id);
+    return filtered;
+  };
+
   useEffect(() => {
     dispatch(fetchUserdata());
     dispatch(fetchHistories());
+    dispatch(fetchCollections());
   }, []);
 
   const [paramsHeaders, setParamsHeader] = useState("params");
@@ -145,7 +153,6 @@ export default function Home() {
   };
 
   const submitHandler = () => {
-    console.log("masuk enter");
     // console.log(inputMethodUrl, "method url");
     // console.log(inputParams, "paramss");
     // console.log(inputHeaders, "headerss");
@@ -188,6 +195,11 @@ export default function Home() {
                     </a>
                   </li>
                   <li className="nav-item">
+                    <a className="nav-link text-white" id="pills-request-tab" data-toggle="pill" href="#pills-request" role="tab" aria-controls="pills-request" aria-selected="true">
+                      Request
+                    </a>
+                  </li>
+                  <li className="nav-item">
                     <a className="nav-link text-white" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="false">
                       History
                     </a>
@@ -195,10 +207,79 @@ export default function Home() {
                 </ul>
               </nav>
             </div>
-            <div className="card-body py-2 px-3 text-nowrap" style={{ overflowY: "auto" }}>
+            <div className="card-body py-2 px-3 text-wrap" style={{ overflowY: "auto" }}>
               <div className="tab-content" id="pills-tabContent">
                 <div className="tab-pane fade show active" id="pills-collection" role="tabpanel" aria-labelledby="pills-collection-tab">
-                  Collection
+                  {/* <button className="btn btn-primary btn-sm btn-block rounded-pill fixed">Add New</button> */}
+                  <div style={{ height: "100%" }}>
+                    {collections.length === 0 ? (
+                      <p>You didnt search anything yet</p>
+                    ) : (
+                      collections.map((collection, idx) => {
+                        return (
+                          <div key={collection._id}>
+                            <a className="text-decoration-none text-white" data-toggle="collapse" href={`#collapse${collection._id}`}>
+                              <div className="row p-2" style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}} onMouseEnter={() => toggleHover(idx)} onMouseLeave={() => toggleHover(-1)}>
+                                <div className="col-1">
+                                  <FontAwesomeIcon icon={faAngleRight} />
+                                </div>
+                                <div className="col-11">{collection.name}</div>
+                              </div>
+                            </a>
+                            <div className="row collapse" id={`collapse${collection._id}`}>
+                              <div className="col-11 offset-1">
+                                {getHistoriesCollection(collection._id).length === 0 ? (
+                                  <p className="p-2">
+                                    This collection is empty. Please{" "}
+                                    <a className="text-danger text-decoration-none" href="#">
+                                      add request
+                                    </a>{" "}
+                                    to start working
+                                  </p>
+                                ) : (
+                                  histories
+                                    .filter((h) => h.CollectionId === collection._id)
+                                    .map((history, idx) => (
+                                      <a
+                                        href="#"
+                                        className="text-decoration-none text-white"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          setMethodUrl({
+                                            method: history.method,
+                                            url: history.url,
+                                          });
+
+                                          setInputParams(populateHistory(history.params));
+                                          setInputBodyForms(populateHistory(history.bodies));
+                                          setInputHeaders(populateHistory(history.headers));
+                                        }}
+                                      >
+                                        <div
+                                          className="row mb-1 py-1"
+                                          key={history.id}
+                                          style={hoverStatus.idx === history._id ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
+                                          onMouseEnter={() => toggleHover(history._id)}
+                                          onMouseLeave={() => toggleHover(-1)}
+                                        >
+                                          <div className="col-2 px-1 text-right">
+                                            <span className={historyText(history.method)}>{history.method}</span>
+                                          </div>
+                                          <div className={`col-10 px-1`}>{history.url}</div>
+                                        </div>
+                                      </a>
+                                    ))
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+                <div className="tab-pane fade show" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
+                  Request
                 </div>
                 <div className="tab-pane fade text-wrap" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
                   {histories.length === 0 ? (
@@ -229,9 +310,9 @@ export default function Home() {
                             onMouseLeave={() => toggleHover(-1)}
                           >
                             <div className="col-2 px-1 text-right">
-                              <span className={historyText(history.method)}>{history.method}</span>{" "}
+                              <span className={historyText(history.method)}>{history.method}</span>
                             </div>
-                            <div className="col-10 px-1">{history.url}</div>
+                            <div className={`col-10 px-1`}>{history.url}</div>
                           </div>
                         </a>
                       );

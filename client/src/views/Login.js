@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login, fetchUserdata } from "../store/actions/loginAction";
+import { login } from "../store/actions/loginAction";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -45,11 +45,11 @@ export default function Login() {
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
       <div className="col-xl-5 col-lg-8 col-md-8">
-        <div className="card o-hidden border-0 shadow-lg text-white" style={{ borderRadius: "20px", backgroundColor:"#2d3748" }}>
+        <div className="card o-hidden border-0 shadow-lg text-white" style={{ borderRadius: "20px", backgroundColor: "#2d3748" }}>
           <div className="card-body p-0">
             <div className="p-5">
               <div className="text-center">
-                <h1>APIMAN.io</h1>
+                <h1 className="h1">APIMAN.io</h1>
               </div>
               {error.status ? (
                 <div className="text-center">
@@ -95,12 +95,11 @@ export default function Login() {
               </form>
               <div className="text-center">
                 Dont't have account yet? click{" "}
-                <Link className="text-decoration-none" to="/register">
+                <Link className="text-decoration-none text-primary" to="/register">
                   here
                 </Link>
                 <br />
-                <Link className="text-decoration-none" to="/">
-                <Link className="text-decoration-none" to="/forgot-password">
+                <Link className="text-decoration-none text-primary" to="/forgot-password">
                   Forgot password
                 </Link>
               </div>

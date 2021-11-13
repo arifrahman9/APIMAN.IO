@@ -30,7 +30,11 @@ export default function Home() {
     function handleKeyDown(e) {
       if (e.keyCode === 13 && e.ctrlKey) {
         console.log("CTRL + ENTER");
-        submitHandler(e);
+        setMethodUrl(inputMethodUrl);
+        setInputParams(inputParams);
+        setInputHeaders(inputHeaders);
+        setInputBodyForms(inputBodyForms);
+        submitHandler();
       }
     }
 
@@ -140,9 +144,8 @@ export default function Home() {
     setInputBodyRaw(value);
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-
+  const submitHandler = () => {
+    console.log("masuk enter");
     // console.log(inputMethodUrl, "method url");
     // console.log(inputParams, "paramss");
     // console.log(inputHeaders, "headerss");

@@ -1,4 +1,5 @@
 import React from "react";
+import { Avatar } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Link, useHistory } from "react-router-dom";
@@ -17,7 +18,14 @@ export default function Navbar(props) {
       </a>
 
       <div className="d-flex align-items-center justify-content-center position-absolute" style={{ left: 0, right: 0, top: 0, bottom: 0 }}>
-        <form className="user" style={{ width: "40%" }} onSubmit={submitHandler}>
+        <form
+          className="user"
+          style={{ width: "40%" }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitHandler();
+          }}
+        >
           <div className="input-group">
             <div className="input-group-prepend">
               <select className="custom-select shadow-none" style={{ borderRadius: "20px 0 0 20px", backgroundColor: "#dcdddd", color: "#212121" }} name="method" onChange={changeMethodUrlHandler}>
@@ -56,11 +64,11 @@ export default function Navbar(props) {
         </form>
       </div>
 
-      <div className="ml-auto">
+      <div className="ml-auto d-flex align-items-center">
         <ul className="navbar-nav">
           <li className="nav-item dropdown active">
             <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Hello, {userdata.firstName}
+              Hello, {userdata.firstName}&nbsp;
             </a>
             <div className="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdown" style={{ backgroundColor: "#2d3748" }}>
               <Link className="dropdown-item text-white" to="/profile">

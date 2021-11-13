@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
+const redis = require('../config/redis');
 const mongodb = require('mongodb');
 const { connect, getDatabase } = require('../config/mongo');
 
@@ -8,6 +9,42 @@ let lastInsertedUser;
 let lastInsertedCollection;
 let loginResponse;
 let db;
+
+const deleteRedis = async () => {
+  await redis.del('histories');
+  await redis.del('historiesUserId');
+};
+
+const deleteRedisHistoriesCollection = async () => {
+  await redis.get('collectionHistories');
+  await redis.get('historiesCollectionId');
+};
+
+const deleteRedisFoundHistory = async () => {
+  await redis.get('foundHistory');
+  await redis.get('historyId');
+};
+
+const setToRedis = async (historyData, userData) => {
+  await redis.set('histories', JSON.stringify(historyData));
+  await redis.set('historiesUserId', mongodb.ObjectId(userData));
+};
+
+const setToRedisHistoriesCollection = async (
+  historiesCollectionData,
+  collectionIdData
+) => {
+  await redis.set(
+    'collectionHistories',
+    JSON.stringify(historiesCollectionData)
+  );
+  await redis.set('historiesCollectionId', mongodb.ObjectId(collectionIdData));
+};
+
+const setRedisFoundHistory = async (history, historyID) => {
+  await redis.set('foundHistory', JSON.stringify(history));
+  await redis.set('historyId', mongodb.ObjectId(historyID));
+};
 
 describe('GET /histories', () => {
   beforeAll(async () => {
@@ -77,6 +114,8 @@ describe('GET /histories', () => {
   });
 
   test('[success] successfully fetched histories that belong to the user', (done) => {
+    deleteRedis();
+
     request(app)
       .get('/histories')
       .set({
@@ -88,6 +127,32 @@ describe('GET /histories', () => {
         console.log(body);
 
         expect(body).toEqual(expect.any(Array));
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[success from cache] successfully fetched histories that belong to the user from redis cache', (done) => {
+    setToRedis(newestHistory, lastInsertedUser[0]._id);
+
+    console.log(lastInsertedUser[0]._id, '<===');
+
+    request(app)
+      .get('/histories')
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        console.log(body);
+
+        expect(body).toEqual(expect.any(Array));
+
+        deleteRedis();
 
         done();
       })
@@ -203,6 +268,36 @@ describe('GET /histories/collections/:collectionId', () => {
   });
 
   test('[success] successfuly fetched history by collection id', (done) => {
+    deleteRedisHistoriesCollection();
+
+    request(app)
+      .get(`/histories/collection/${lastInsertedCollection[0]._id}`)
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body[0]).toEqual(expect.any(Object));
+        expect(body[0]).toHaveProperty('_id');
+        expect(body[0]).toHaveProperty('method');
+        expect(body[0]).toHaveProperty('url');
+        expect(body[0]).toHaveProperty('headers');
+        expect(body[0]).toHaveProperty('params');
+        expect(body[0]).toHaveProperty('bodies');
+        expect(body[0]).toHaveProperty('UserId');
+        expect(body[0]).toHaveProperty('CollectionId');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[success from cache] successfuly fetched history by collection id from redis cache', (done) => {
+    setToRedisHistoriesCollection(newestHistory, lastInsertedCollection[0]._id);
+
     request(app)
       .get(`/histories/collection/${lastInsertedCollection[0]._id}`)
       .set({
@@ -488,6 +583,8 @@ describe('GET /histories/:id', () => {
   });
 
   test('[success] successfuly fetched history by ID', (done) => {
+    deleteRedisFoundHistory();
+
     request(app)
       .get(`/histories/${newestHistory[0]._id}`)
       .set({
@@ -504,6 +601,35 @@ describe('GET /histories/:id', () => {
         expect(body).toHaveProperty('params');
         expect(body).toHaveProperty('bodies');
         expect(body).toHaveProperty('UserId');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[success from cache] successfuly fetched history by ID from redis cache', (done) => {
+    setRedisFoundHistory(newestHistory[0], newestHistory[0]._id);
+
+    request(app)
+      .get(`/histories/${newestHistory[0]._id}`)
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Object));
+        expect(body).toHaveProperty('_id');
+        expect(body).toHaveProperty('method');
+        expect(body).toHaveProperty('url');
+        expect(body).toHaveProperty('headers');
+        expect(body).toHaveProperty('params');
+        expect(body).toHaveProperty('bodies');
+        expect(body).toHaveProperty('UserId');
+
+        deleteRedisFoundHistory();
 
         done();
       })

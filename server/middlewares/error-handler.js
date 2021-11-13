@@ -34,6 +34,16 @@ const errorHandler = (err, req, res, next) => {
       message = 'Please login first';
       break;
 
+    case 'collectionNameEmpty':
+      code = 401;
+      message = 'collection name cannot be empty';
+      break;
+
+    case 'collectionIdEmpty':
+      code = 401;
+      message = 'collection id cannot be empty';
+      break;
+
     case 'noFile':
       code = 400;
       message = 'you need to input the file';

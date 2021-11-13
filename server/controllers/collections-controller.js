@@ -10,7 +10,6 @@ class CollectionsController {
 
       res.status(200).json(collections);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -18,6 +17,11 @@ class CollectionsController {
   static async addNewCollection(req, res, next) {
     try {
       const { name } = req.body;
+
+      if (!name) {
+        throw { name: 'collectionNameEmpty' };
+      }
+
       await CollectionsModel.addNewCollection(req.user.id, name);
 
       const newCollection = await CollectionsModel.getLastInsertedCollection();
@@ -32,6 +36,10 @@ class CollectionsController {
   static async getCollectionById(req, res, next) {
     try {
       const { id } = req.params;
+
+      if (!id) {
+        throw { name: 'collectionIdEmpty' };
+      }
 
       const foundCollection = await CollectionsModel.getCollectionById(id);
 
@@ -59,6 +67,10 @@ class CollectionsController {
   static async deleteCollectionById(req, res, next) {
     try {
       const { id } = req.body;
+
+      if (!id) {
+        throw { name: 'collectionIdEmpty' };
+      }
 
       const deletedCollection = await CollectionsModel.deleteCollectionById(id);
 

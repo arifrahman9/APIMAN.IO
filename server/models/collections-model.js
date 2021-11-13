@@ -3,6 +3,7 @@ const { getDatabase } = require('../config/mongo');
 
 class CollectionsModel {
   static async getCollectionsByUserId(userId) {
+    console.log(userId);
     const db = getDatabase();
     const collectionsCollection = db.collection('collections');
     const collections = await collectionsCollection

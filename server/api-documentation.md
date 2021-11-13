@@ -763,7 +763,7 @@ _Response (200)_
 
 ### DELETE /collections
 
-> add new collection
+> delete collection
 
 _Request Header_
 

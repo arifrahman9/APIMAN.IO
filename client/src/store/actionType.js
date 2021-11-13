@@ -1,1 +1,2 @@
-export const SET_MESSAGE = "message/setMessage";
+export const SET_USERDATA = "userdata/setUserdata";
+export const SET_HISTORIES = "histories/setHistories"

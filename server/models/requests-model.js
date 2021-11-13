@@ -3,71 +3,55 @@ const { getDatabase } = require('../config/mongo');
 
 class RequestsModel {
   static async addNewRequest(payload, UserId) {
-    try {
-      const db = getDatabase();
-      const requestsCollection = db.collection('requests');
+    const db = getDatabase();
+    const requestsCollection = db.collection('requests');
 
-      payload.forEach((el) => {
-        el['UserId'] = UserId;
-      });
+    payload.forEach((el) => {
+      el['UserId'] = UserId;
+    });
 
-      await requestsCollection.insertMany(payload);
+    await requestsCollection.insertMany(payload);
 
-      return payload;
-    } catch (err) {
-      return err;
-    }
+    return payload;
   }
 
   static async getRequestsByUserId(UserId) {
-    try {
-      const db = getDatabase();
-      const requestsCollection = db.collection('requests');
+    const db = getDatabase();
+    const requestsCollection = db.collection('requests');
 
-      const requests = await requestsCollection
-        .find({
-          UserId,
-        })
-        .toArray();
+    const requests = await requestsCollection
+      .find({
+        UserId,
+      })
+      .toArray();
 
-      return requests;
-    } catch (err) {
-      return err;
-    }
+    return requests;
   }
 
   static async getRequestById(id) {
-    try {
-      const db = getDatabase();
-      const requestsCollection = db.collection('requests');
+    const db = getDatabase();
+    const requestsCollection = db.collection('requests');
 
-      const request = await requestsCollection.findOne({
-        _id: mongodb.ObjectId(id),
-      });
+    const request = await requestsCollection.findOne({
+      _id: mongodb.ObjectId(id),
+    });
 
-      return request;
-    } catch (err) {
-      return err;
-    }
+    return request;
   }
 
   static async deleteRequestById(id) {
-    try {
-      const db = getDatabase();
-      const requestsCollection = db.collection('requests');
+    const db = getDatabase();
+    const requestsCollection = db.collection('requests');
 
-      const deletedRequest = await requestsCollection.findOne({
-        _id: mongodb.ObjectId(id),
-      });
+    const deletedRequest = await requestsCollection.findOne({
+      _id: mongodb.ObjectId(id),
+    });
 
-      await requestsCollection.deleteOne({
-        _id: mongodb.ObjectId(id),
-      });
+    await requestsCollection.deleteOne({
+      _id: mongodb.ObjectId(id),
+    });
 
-      return deletedRequest;
-    } catch (err) {
-      return err;
-    }
+    return deletedRequest;
   }
 }
 

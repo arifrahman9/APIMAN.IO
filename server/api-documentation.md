@@ -83,7 +83,9 @@ _Response (200)_
               "email": "email2@gmail.com",
               "password": "password"
           },
-          "UserId": "618be802bd7d202cfcc2d253"
+          "UserId": "618be802bd7d202cfcc2d253",
+          "createdAt": "2021-11-13T09:34:38.372Z",
+          "updatedAt": "2021-11-13T09:34:38.372Z"
       }
   ]
 }
@@ -443,7 +445,9 @@ _Response (200)_
       "params": null,
       "bodies": null,
       "UserId": "618a30ff4d86c47e1e446d9d",
-      "CollectionId": "618a8fdc7aea3bb603a4afe4"
+      "CollectionId": "618a8fdc7aea3bb603a4afe4",
+      "createdAt": "2021-11-13T09:32:32.543Z",
+      "updatedAt": "2021-11-13T09:32:32.543Z"
   },
   {
       "_id": "618d29d2a6054242bce8ff04",
@@ -456,7 +460,9 @@ _Response (200)_
           "password": "password"
       },
       "UserId": "618a30ff4d86c47e1e446d9d",
-      "CollectionId": "618a8fdc7aea3bb603a4afe4"
+      "CollectionId": "618a8fdc7aea3bb603a4afe4",
+      "createdAt": "2021-11-13T09:32:32.543Z",
+      "updatedAt": "2021-11-13T09:32:32.543Z"
   },
   {
       "_id": "618d2cec79ac23ed6a38ab9e",
@@ -467,7 +473,9 @@ _Response (200)_
       },
       "params": null,
       "bodies": null,
-      "UserId": "618a30ff4d86c47e1e446d9d"
+      "UserId": "618a30ff4d86c47e1e446d9d",
+      "createdAt": "2021-11-13T09:32:32.543Z",
+      "updatedAt": "2021-11-13T09:32:32.543Z"
   }
 ]
 ```

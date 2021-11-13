@@ -9,6 +9,9 @@ class HistoriesModel {
       .find({
         UserId: userId,
       })
+      .sort({
+        createdAt: -1,
+      })
       .toArray();
 
     return histories;
@@ -37,6 +40,8 @@ class HistoriesModel {
       params,
       bodies,
       UserId: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     const newHistory = await historiesCollection

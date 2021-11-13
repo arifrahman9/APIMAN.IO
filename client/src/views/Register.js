@@ -50,7 +50,7 @@ export default function Register() {
           <div className="card-body p-0">
             <div className="p-5">
               <div className="text-center">
-                <h1>APIMAN.io</h1>
+                <h1 className="h1">APIMAN.io</h1>
               </div>
               {error.status ? (
                 <div className="text-center">
@@ -138,7 +138,7 @@ export default function Register() {
               </form>
               <div className="text-center">
                 Already have an account? click&nbsp;
-                <Link className="text-decoration-none" to="/login">
+                <Link className="text-decoration-none text-primary" to="/login">
                   here
                 </Link>
               </div>

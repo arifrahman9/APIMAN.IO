@@ -1,5 +1,4 @@
 import React from "react";
-// import { Routes, Route, Navigate } from "react-router-dom";
 import { Switch, Route } from "react-router-dom";
 import "./assets/css/sb-admin-2.min.css";
 import PrivateLogin from "./navigation-guards/PrivateLogin";
@@ -21,21 +20,27 @@ export default function App() {
         <PrivateLogin path="/register">
           <Register />
         </PrivateLogin>
+        <PrivateLogin path="/forgot-password">
+          <ForgotPassword />
+        </PrivateLogin>
+        <PrivateLogin path="/change-password">
+          <ChangePassword />
+        </PrivateLogin>
         <PrivatePage path="/profile">
-          <Profile />
+          <ProfilePage />
         </PrivatePage>
         <PrivatePage path="/">
           <Home />
         </PrivatePage>
       </Switch>
-//       <Routes>
+      {/* //       <Routes>
 //         <Route exact path="/login" element={<Login />} />
 //         <Route path="/forgot-password" element={<ForgotPassword />} />
 //         <Route path="/change-password" element={<ChangePassword />} />
 //         <Route path="/register" element={<Register />} />
 //         <Route path="/profile" element={<ProfilePage />} />
 //         <Route path="/" element={<Home />} />
-//       </Routes>
+//       </Routes> */}
     </>
   );
 }

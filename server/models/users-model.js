@@ -5,8 +5,8 @@ const { hashPassword } = require("../helpers/bcrypt")
 class UsersModel {
   static async register(reqBody) {
     const { username, email, password, firstName, lastName } = reqBody
-    const db = getDatabase();
-    const usersCollection = db.collection("users");
+    const db = getDatabase()
+    const usersCollection = db.collection("users")
 
     const user = await usersCollection.insertOne({
       username,
@@ -48,19 +48,18 @@ class UsersModel {
     const foundUser = await usersCollection.findOne({
       _id: mongodb.ObjectId(id),
     })
-
     return foundUser
   }
 
   static async findUserByUsername(username) {
-    const db = getDatabase();
-    const usersCollection = db.collection("users");
+    const db = getDatabase()
+    const usersCollection = db.collection("users")
 
     const response = await usersCollection.findOne({
       username,
-    });
+    })
 
-    return response;
+    return response
   }
 
   static async findUserByEmail(email) {
@@ -83,7 +82,7 @@ class UsersModel {
   }
 
   static async loginGoogle(reqBody) {
-    console.log(reqBody, "google login")
+    // console.log(reqBody, "google login")
     const emailFromGoogle = reqBody.email
     const nameFromGoogle = reqBody.name
     const firstNameFromGoogle = reqBody.firstName

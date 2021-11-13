@@ -11,7 +11,7 @@ export default function Navbar(props) {
   const { inputMethodUrl, changeMethodUrlHandler, submitHandler, userdata } = props;
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light shadow" style={{ backgroundColor: "#fefefe", borderRadius: "0 0 20px 20px" }}>
+    <nav className="navbar navbar-expand-lg navbar-dark shadow" style={{ backgroundColor: "#2d3748", borderRadius: "0 0 20px 20px" }}>
       <a className="navbar-brand" href="#">
         <FontAwesomeIcon icon={faDatabase} color="#f56e56" /> APIMAN.io
       </a>
@@ -20,20 +20,20 @@ export default function Navbar(props) {
         <form className="user" style={{ width: "40%" }} onSubmit={submitHandler}>
           <div className="input-group">
             <div className="input-group-prepend">
-              <select className="custom-select shadow-none" style={{ borderRadius: "20px 0 0 20px", backgroundColor: "#dcdddd", color: "#212121" }} name="method" defaultValue={inputMethodUrl.method} onChange={changeMethodUrlHandler}>
-                <option value="get" key="get">
+              <select className="custom-select shadow-none" style={{ borderRadius: "20px 0 0 20px", backgroundColor: "#dcdddd", color: "#212121" }} name="method" onChange={changeMethodUrlHandler}>
+                <option value="get" key="get" selected={inputMethodUrl.method === "get" ? "selected" : false}>
                   Get
                 </option>
-                <option value="post" key="post">
+                <option value="post" key="post" selected={inputMethodUrl.method === "post" ? "selected" : false}>
                   Post
                 </option>
-                <option value="put" key="put">
+                <option value="put" key="put" selected={inputMethodUrl.method === "put" ? "selected" : false}>
                   Put
                 </option>
-                <option value="patch" key="patch">
+                <option value="patch" key="patch" selected={inputMethodUrl.method === "patch" ? "selected" : false}>
                   Patch
                 </option>
-                <option value="delete" key="delete">
+                <option value="delete" key="delete" selected={inputMethodUrl.method === "delete" ? "selected" : false}>
                   Delete
                 </option>
               </select>
@@ -62,12 +62,12 @@ export default function Navbar(props) {
             <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Hello, {userdata.firstName}
             </a>
-            <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <Link className="dropdown-item" to="/profile">
+            <div className="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdown" style={{ backgroundColor: "#2d3748" }}>
+              <Link className="dropdown-item text-white" to="/profile">
                 Profile
               </Link>
               <a
-                className="dropdown-item"
+                className="dropdown-item text-white"
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();

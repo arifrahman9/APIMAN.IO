@@ -27,7 +27,8 @@ export function login(data) {
   };
 }
 
-export function fetchUserdata(access_token) {
+export function fetchUserdata() {
+  const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
     axios({
       url: `${server}/users/profile`,

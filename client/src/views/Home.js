@@ -3,22 +3,72 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
+import { fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const [result, setResult] = useState("");
+  const [resultHeader, setResultHeader] = useState({
+    status: "",
+    responseTime: "",
+  });
+  const [resultPanel, setResultPanel] = useState();
   const [inputMethodUrl, setMethodUrl] = useState({
     method: "get",
     url: "",
   });
 
-  const { userdata } = useSelector((state) => state.loginReducer);
+  const [hoverStatus, setHoverStatus] = useState({ idx: -1 });
+  const toggleHover = (idx) => {
+    setHoverStatus({
+      idx,
+    });
+  };
 
   useEffect(() => {
-    const access_token = localStorage.getItem("access_token");
-    dispatch(fetchUserdata(access_token));
+    function handleKeyDown(e) {
+      if (e.keyCode === 13 && e.ctrlKey) {
+        console.log("CTRL + ENTER");
+        submitHandler(e);
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return function cleanup() {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const { userdata } = useSelector((state) => state.loginReducer);
+  const { histories } = useSelector((state) => state.historyReducer);
+
+  const historyText = (method) => {
+    if (method === "get") {
+      return "text-success";
+    } else if (method === "post") {
+      return "text-warning";
+    } else if (method === "put") {
+      return "text-primary";
+    } else if (method === "patch") {
+      return "text-info";
+    } else if (method === "delete") {
+      return "text-danger";
+    }
+  };
+
+  const populateHistory = (obj) => {
+    const result = [];
+    for (const key in obj) {
+      result.push({ key, value: obj[key] });
+    }
+
+    return result;
+  };
+
+  useEffect(() => {
+    dispatch(fetchUserdata());
+    dispatch(fetchHistories());
   }, []);
 
   const [paramsHeaders, setParamsHeader] = useState("params");
@@ -84,7 +134,7 @@ export default function Home() {
     });
   };
 
-  const [inputBodyRaw, setInputBodyRaw] = useState(`{"name": "acit", "age": 6}`);
+  const [inputBodyRaw, setInputBodyRaw] = useState();
   const changeInputBodyRaw = (e) => {
     const { value } = e.target;
     setInputBodyRaw(value);
@@ -100,9 +150,20 @@ export default function Home() {
     // console.log(inputBodyRaw, "body rawww");
     dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, inputBodyForms, inputHeaders, inputParams, false))
       .then((response) => {
+        setResultPanel(response.response);
+        setResultHeader({
+          status: response.status,
+          responseTime: `${response.responseTime} ms`,
+        });
+        console.log(resultPanel);
         console.log(response, "dari homeee");
       })
       .catch((err) => {
+        setResultPanel(err.response);
+        setResultHeader({
+          status: err.status,
+          responseTime: err.responseTime,
+        });
         console.log(err, "dari error homeee");
       });
   };
@@ -111,31 +172,68 @@ export default function Home() {
     <>
       <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} />
 
-      <div className="row mx-1 mt-2 mb-2" style={{ overflowX: "hidden", height: "88vh", overflow: "hidden" }}>
+      <div className="row mx-1 mt-2 mb-2" style={{ overflowX: "hidden", height: "88vh", overflow: "hidden", fontSize: "10pt" }}>
         {/* Card Left */}
-        <div className="col-4 px-1 border-secondary">
-          <div class="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "88vh" }}>
-            <div class="card-body p-2 text-nowrap" style={{ overflowY: "auto" }}>
+        <div className="col-4 px-1">
+          <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "88vh" }}>
+            <div className="card-header mx-2 pt-2 px-2 pb-2" style={{ backgroundColor: "#2d3748" }}>
               <nav>
-                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                  <li class="nav-item">
-                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">
+                <ul className="nav nav-pills nav-fill" id="pills-tab" role="tablist">
+                  <li className="nav-item">
+                    <a className="nav-link active text-white" id="pills-collection-tab" data-toggle="pill" href="#pills-collection" role="tab" aria-controls="pills-collection" aria-selected="true">
                       Collection
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                  <li className="nav-item">
+                    <a className="nav-link text-white" id="pills-history-tab" data-toggle="pill" href="#pills-history" role="tab" aria-controls="pills-history" aria-selected="false">
                       History
                     </a>
                   </li>
                 </ul>
               </nav>
-              <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                  History
+            </div>
+            <div className="card-body py-2 px-3 text-nowrap" style={{ overflowY: "auto" }}>
+              <div className="tab-content" id="pills-tabContent">
+                <div className="tab-pane fade show active" id="pills-collection" role="tabpanel" aria-labelledby="pills-collection-tab">
+                  Collection
                 </div>
-                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                  ...
+                <div className="tab-pane fade text-wrap" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
+                  {histories.length === 0 ? (
+                    <p>You didnt search anything yet</p>
+                  ) : (
+                    histories.map((history, idx) => {
+                      return (
+                        <a
+                          href="#"
+                          className="text-decoration-none text-white"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setMethodUrl({
+                              method: history.method,
+                              url: history.url,
+                            });
+
+                            setInputParams(populateHistory(history.params));
+                            setInputBodyForms(populateHistory(history.bodies));
+                            setInputHeaders(populateHistory(history.headers));
+                          }}
+                        >
+                          <div
+                            className="row mb-1 py-1"
+                            key={history.id}
+                            style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
+                            onMouseEnter={() => toggleHover(idx)}
+                            onMouseLeave={() => toggleHover(-1)}
+                          >
+                            <div className="col-2 px-1 text-right">
+                              <span className={historyText(history.method)}>{history.method}</span>{" "}
+                            </div>
+                            <div className="col-10 px-1">{history.url}</div>
+                          </div>
+                        </a>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             </div>
@@ -145,43 +243,50 @@ export default function Home() {
 
         {/* Card Middle */}
         <div className="col-4 px-1">
-          <div className="card o-hidden border-0 mb-2" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "43vh" }}>
-            <div className="d-flex card-header p-2 align-items-center justify-content-between">
+          <div className="card o-hidden border-0 mb-2 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "43vh" }}>
+            <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
               <div>
-                <div
-                  className="custom-control custom-radio custom-control-inline"
-                  onClick={(e) => {
-                    setParamsHeader("params");
-                  }}
-                >
-                  <input type="radio" id="params" name="paramsHeaders" value="params" className="custom-control-input" defaultChecked={paramsHeaders === "params"} />
-                  <label className="custom-control-label" htmlFor="params">
-                    Params
-                  </label>
-                </div>
-                <div
-                  className="custom-control custom-radio custom-control-inline"
-                  onClick={(e) => {
-                    setParamsHeader("headers");
-                  }}
-                >
-                  <input type="radio" id="headers" name="paramsHeaders" value="headers" className="custom-control-input" defaultChecked={paramsHeaders === "headers"} />
-                  <label className="custom-control-label" htmlFor="headers">
-                    Headers
-                  </label>
-                </div>
+                <nav>
+                  <ul className="nav nav-pills" id="pills-tab" role="tablist">
+                    <li className="nav-item">
+                      <a
+                        className="nav-link active text-white"
+                        data-toggle="pill"
+                        href="#pills-params"
+                        onClick={(e) => {
+                          setParamsHeader("params");
+                        }}
+                      >
+                        Params
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a
+                        className="nav-link text-white"
+                        data-toggle="pill"
+                        href="#pills-headers"
+                        onClick={(e) => {
+                          setParamsHeader("headers");
+                        }}
+                      >
+                        Headers
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
-              <button className="btn btn-primary btn-sm" onClick={paramsHeaders === "params" ? addInputParams : addInputHeaders}>
+              <button className="btn btn-primary btn-sm btn-circle" onClick={paramsHeaders === "params" ? addInputParams : addInputHeaders}>
                 <FontAwesomeIcon icon={faPlus} />
               </button>
             </div>
             <div className="card-body p-2" style={{ overflowY: "auto" }}>
-              {paramsHeaders === "params"
-                ? inputParams.map((inputParam, idx) => (
+              <div className="tab-content" id="pills-tabContent">
+                <div className="tab-pane fade show active" id="pills-params">
+                  {inputParams.map((inputParam, idx) => (
                     <div className="input-group">
                       <input
                         type="text"
-                        className="form-control form-control-sm shadow-none"
+                        className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
                         placeholder="Key"
                         style={{ color: "#212121", borderRadius: 0 }}
                         defaultValue={inputParam.key}
@@ -191,7 +296,7 @@ export default function Home() {
                       />
                       <input
                         type="text"
-                        className="form-control form-control-sm shadow-none"
+                        className="form-control form-control-sm shadow-none  shadow-none border-0 rounded-pill bg-secondary mr-1"
                         placeholder="Value"
                         style={{ color: "#212121", borderRadius: 0 }}
                         defaultValue={inputParam.value}
@@ -201,7 +306,7 @@ export default function Home() {
                       />
                       <div className="input-group-append">
                         <button
-                          className="btn btn-danger btn-sm"
+                          className="btn btn-danger btn-sm rounded-circle mb-1"
                           type="button"
                           disabled={idx === 0}
                           style={{
@@ -216,12 +321,14 @@ export default function Home() {
                         </button>
                       </div>
                     </div>
-                  ))
-                : inputHeaders.map((inputHeader, idx) => (
+                  ))}
+                </div>
+                <div className="tab-pane fade" id="pills-headers">
+                  {inputHeaders.map((inputHeader, idx) => (
                     <div key={idx} className="input-group">
                       <input
                         type="text"
-                        className="form-control form-control-sm shadow-none"
+                        className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
                         placeholder="Key"
                         style={{ color: "#212121", borderRadius: 0 }}
                         defaultValue={inputHeader.key}
@@ -231,7 +338,7 @@ export default function Home() {
                       />
                       <input
                         type="text"
-                        className="form-control form-control-sm shadow-none"
+                        className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mr-1"
                         placeholder="Value"
                         style={{ color: "#212121", borderRadius: 0 }}
                         defaultValue={inputHeader.value}
@@ -241,7 +348,7 @@ export default function Home() {
                       />
                       <div className="input-group-append">
                         <button
-                          className="btn btn-danger btn-sm"
+                          className="btn btn-danger btn-sm rounded-circle mb-1"
                           type="button"
                           disabled={idx === 0}
                           style={{
@@ -257,12 +364,14 @@ export default function Home() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Card Body Form Below Here */}
-          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "44vh" }}>
-            <div className="d-flex card-header p-2 justify-content-between align-items-center">
+          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "44vh" }}>
+            <div className="d-flex card-header border-0 p-2 justify-content-between align-items-center text-white" style={{ backgroundColor: "#2d3748" }}>
               <div>
                 <div className="custom-control custom-radio custom-control-inline" onClick={() => setBody("form")}>
                   <input type="radio" id="bodyForm" name="body" className="custom-control-input" defaultChecked={body === "form"} />
@@ -278,7 +387,7 @@ export default function Home() {
                 </div>
               </div>
               {body === "form" ? (
-                <button className="btn btn-primary btn-sm" onClick={addInputBodyForms}>
+                <button className="btn btn-primary btn-sm btn-circle" onClick={addInputBodyForms}>
                   <FontAwesomeIcon icon={faPlus} />
                 </button>
               ) : (
@@ -291,9 +400,9 @@ export default function Home() {
                   <div className="input-group">
                     <input
                       type="text"
-                      className="form-control form-control-sm shadow-none"
+                      className="form-control form-control-sm shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
                       placeholder="Key"
-                      style={{ color: "#212121", borderRadius: 0 }}
+                      style={{ color: "#212121" }}
                       defaultValue={inputBodyForm.key}
                       name="key"
                       autoComplete="off"
@@ -301,9 +410,9 @@ export default function Home() {
                     />
                     <input
                       type="text"
-                      className="form-control form-control-sm shadow-none"
+                      className="form-control form-control-sm shadow-none border-0 rounded-pill bg-secondary mr-1"
                       placeholder="Value"
-                      style={{ color: "#212121", borderRadius: 0 }}
+                      style={{ color: "#212121" }}
                       defaultValue={inputBodyForm.value}
                       name="value"
                       autoComplete="off"
@@ -311,7 +420,7 @@ export default function Home() {
                     />
                     <div className="input-group-append">
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-danger btn-sm rounded-circle mb-1"
                         type="button"
                         disabled={idx === 0}
                         style={{
@@ -329,7 +438,7 @@ export default function Home() {
                 ))
               ) : (
                 <>
-                  <textarea className="form-control shadow-none border-0 body-raw bg-secondary" cols="30" rows="9" style={{ color: "#212121", resize: "none" }} onChange={changeInputBodyRaw} value={inputBodyRaw}></textarea>
+                  <textarea className="form-control shadow-none border-0 body-raw bg-secondary" cols="30" rows="9" style={{ color: "#212121", resize: "none", height: "100%" }} onChange={changeInputBodyRaw} value={inputBodyRaw}></textarea>
                 </>
               )}
             </div>
@@ -339,13 +448,24 @@ export default function Home() {
 
         {/* Card Right */}
         <div className="col-4 px-1">
-          <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#fefefe", height: "88vh" }}>
-            <div className="d-flex card-header justify-content-between p-2">
-              <span>Response</span>
-              <span>Status</span>
+          <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "88vh" }}>
+            <div className="d-flex card-header border-0 flex-column p-2" style={{ backgroundColor: "#2d3748" }}>
+              <div className="d-flex justify-content-between">
+                <span>Response</span>
+                <span></span>
+              </div>
+              <div>
+                Status: <span className="text-success">{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
+              </div>
             </div>
-            <div className="card-body p-2" style={{ overflow: "auto" }}>
-              <p>Sample Responseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p>
+            <div className="card-body pb-2 pt-0 px-2" style={{ overflow: "auto" }}>
+              <textarea
+                className="form-control shadow-none border-0 bg-secondary border-0 text-dark body-raw"
+                cols="30"
+                style={{ resize: "none", height: "100%", fontSize: "10pt" }}
+                defaultValue={JSON.stringify(resultPanel, null, 2)}
+                disabled
+              ></textarea>
             </div>
           </div>
         </div>

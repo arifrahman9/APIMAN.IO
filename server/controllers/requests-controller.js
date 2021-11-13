@@ -20,7 +20,7 @@ class RequestsController {
         if (!bodyIsRaw) {
           bodies = process(bodies);
         } else {
-          // bodies = JSON.parse(bodies);
+          bodies = JSON.parse(bodies);
         }
       }
 

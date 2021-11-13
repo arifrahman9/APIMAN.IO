@@ -7,7 +7,9 @@ import PrivatePage from "./navigation-guards/PrivatePage";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import Home from "./views/Home";
-import Profile from "./views/Profile";
+import ProfilePage from "./views/ProfilePage";
+import ForgotPassword from "./views/ForgotPassword";
+import ChangePassword from "./views/ChangePassword";
 
 export default function App() {
   return (
@@ -26,6 +28,14 @@ export default function App() {
           <Home />
         </PrivatePage>
       </Switch>
+//       <Routes>
+//         <Route exact path="/login" element={<Login />} />
+//         <Route path="/forgot-password" element={<ForgotPassword />} />
+//         <Route path="/change-password" element={<ChangePassword />} />
+//         <Route path="/register" element={<Register />} />
+//         <Route path="/profile" element={<ProfilePage />} />
+//         <Route path="/" element={<Home />} />
+//       </Routes>
     </>
   );
 }

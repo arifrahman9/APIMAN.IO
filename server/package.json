@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --runInBand --coverage --verbose"
+    "test": "jest --watchAll --runInBand --coverage --verbose",
+    "start": "node bin/www.js"
   },
   "keywords": [],
   "author": "",

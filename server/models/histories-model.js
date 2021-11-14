@@ -1,4 +1,5 @@
 const mongodb = require('mongodb');
+const redis = require('../config/redis');
 const { getDatabase } = require('../config/mongo');
 
 class HistoriesModel {
@@ -49,6 +50,9 @@ class HistoriesModel {
       .sort({ _id: -1 })
       .limit(1)
       .toArray();
+
+    await redis.del('histories');
+    await redis.set('historiesUserId');
 
     return newHistory;
   }

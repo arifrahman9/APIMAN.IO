@@ -134,8 +134,8 @@ class UsersController {
       const transport = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'wutfuuu@gmail.com',
-          pass: 'oranggila',
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD,
         },
       });
 

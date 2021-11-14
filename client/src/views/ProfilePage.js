@@ -32,7 +32,7 @@ export default function ProfilePage () {
                 <Avatar display={!data.userProfile.username ? 'none' : 'flex'} boxSize='10em' src='https://bit.ly/broken-link' />
               </Flex>
               {/* Detail */}
-              <VStack divider={<StackDivider borderColor='gray.600' />} width='100%' marginLeft={10} justifyContent='center' spacing={5}>
+              <VStack divider={<StackDivider borderColor={!data.userProfile.username ? 'transparent' : 'gray.600'} />} width='100%' marginLeft={10} justifyContent='center' spacing={5}>
                 <Box width='100%'>
                   <Skeleton startColor='gray.600' endColor='gray.700' isLoaded={data.userProfile.username ? true : false}>
                     <HStack justifyContent='flex-start' width='100%'>

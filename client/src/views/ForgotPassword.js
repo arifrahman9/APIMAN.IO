@@ -1,13 +1,57 @@
-import { Flex, Text, InputGroup, Input, InputLeftElement, Button, Link } from "@chakra-ui/react";
+import { Flex, Text, InputGroup, Input, InputLeftElement, Button, Link, useToast, Box, Spinner } from "@chakra-ui/react";
 import { WarningIcon, EmailIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { Link as RouterLink } from "react-router-dom";
 import { useState } from "react";
+import validator from 'email-validator'
+import { requestForgotPassword } from '../store/actions/forgotPasswordAction'
+import { useDispatch } from "react-redux";
 
 export default function ForgotPassword() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [email, setEmail] = useState('')
+  const [isWaiting, setIsWaiting] = useState(false)
+  const dispatch = useDispatch()
+  const toast = useToast()
 
-  const clickSubmit = () => {
-    setIsSubmitted(true);
+  const clickSubmit = (e) => {
+    e.preventDefault()
+    if (!validator.validate(email)) {
+      if (!toast.isActive('danger-toast')) {
+        toast({
+          id: 'danger-toast',
+          position: 'top',
+          render: () => (
+            <Box p={3} bgColor='red.500' marginTop={3} borderRadius={5} color='gray.100' textAlign='center'>
+              Invalid email address!
+            </Box>
+          ),
+          duration: 1500
+        })
+      }
+    } else {
+      setIsWaiting(true)
+      dispatch(requestForgotPassword(email))
+        .then(data => {
+          console.log(data)
+          setIsSubmitted(true)
+        })
+        .catch(err => {
+          if (!toast.isActive('error123')) {
+            toast({
+              id: 'error123',
+              position: 'top',
+              render: () => (
+                <Box p={3} bgColor='red.500' marginTop={3} borderRadius={5} color='gray.100' textAlign='center'>
+                  { err?.data.message[0].toUpperCase() + err?.data.message.slice(1) + '!' }
+                </Box>
+              ),
+              duration: 1500
+            })
+          }
+        }).finally(() => {
+          setIsWaiting(false)
+        })
+    }
   };
 
   if (!isSubmitted) {
@@ -22,7 +66,7 @@ export default function ForgotPassword() {
             Enter your email and we'll send you a link to reset your password
           </Text>
           {/* form */}
-          <form style={{ width: "100%" }}>
+          <form style={{ width: "100%" }} onSubmit={clickSubmit}>
             <InputGroup marginTop={2} marginBottom={3}>
               <InputLeftElement children={<EmailIcon />} />
               <Input
@@ -35,11 +79,13 @@ export default function ForgotPassword() {
                   fontFamily: "calibri",
                   fontSize: "md",
                 }}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 name="email"
                 required
               />
             </InputGroup>
-            <Button type="submit" width="100%" fontFamily="calibri" fontWeight="light" colorScheme="teal" onClick={clickSubmit}>
+            <Button type="submit" width="100%" fontFamily="calibri" fontWeight="light" colorScheme="teal" onClick={clickSubmit} isLoading={isWaiting} loadingText='SUBMITTING...'>
               SUBMIT
             </Button>
           </form>

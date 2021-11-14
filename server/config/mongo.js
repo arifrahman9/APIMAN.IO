@@ -1,8 +1,17 @@
 const { MongoClient } = require('mongodb');
+let client;
 
-const url = 'mongodb://127.0.0.1:27017';
-
-const client = new MongoClient(url);
+if (process.env.NODE_ENV !== 'production') {
+  const url = 'mongodb://127.0.0.1:27017';
+  client = new MongoClient(url);
+} else {
+  console.log('pake atlas');
+  const uri = process.env.MONGOATLAS_URL;
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+}
 
 const dbName = 'apiman';
 let database = null;

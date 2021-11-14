@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --runInBand --coverage --verbose"
+    "test": "jest --watchAll --runInBand --coverage --verbose",
+    "start": "node bin/www.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "express": "^4.17.1",
     "form-data": "^4.0.0",
     "google-auth-library": "^7.10.2",
+    "ioredis": "^4.28.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
     "multer": "^1.4.3",

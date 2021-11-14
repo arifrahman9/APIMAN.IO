@@ -12,7 +12,6 @@ import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
 import HomePage from "./views/HomePage";
 
-
 export default function App() {
   return (
     <>
@@ -32,20 +31,13 @@ export default function App() {
         <PrivatePage path="/profile">
           <ProfilePage />
         </PrivatePage>
+        {/* <PrivatePage path="/chakra-home">
+          <HomePage />
+        </PrivatePage> */}
         <PrivatePage path="/">
-          <Home />
-          {/* <HomePage /> */}
+          <HomePage />
         </PrivatePage>
       </Switch>
-      {/* //       <Routes>
-//         <Route exact path="/login" element={<Login />} />
-//         <Route path="/forgot-password" element={<ForgotPassword />} />
-//         <Route path="/change-password" element={<ChangePassword />} />
-//         <Route path="/register" element={<Register />} />
-//         <Route path="/profile" element={<ProfilePage />} />
-//         <Route path="/" element={<Home />} />
-//       </Routes> */}
-
     </>
   );
 }

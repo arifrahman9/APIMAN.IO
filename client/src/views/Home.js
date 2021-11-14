@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import { fetchCollections } from "../store/actions/collectionAction";
-import { deleteHistory, fetchHistories } from "../store/actions/historiesAction";
+import { addNewHistory, deleteHistory, fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
 
@@ -173,9 +173,7 @@ export default function Home() {
           status: response.status,
           responseTime: `${response.responseTime} ms`,
         });
-        dispatch(fetchHistories());
-        // console.log(resultPanel);
-        console.log(response, "dari homeee");
+        dispatch(addNewHistory(response.newAddedHistory[0]));
       })
       .catch((err) => {
         setResultPanel(err.response);

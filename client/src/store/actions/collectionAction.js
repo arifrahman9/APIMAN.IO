@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SET_COLLECTIONS } from "../actionType";
 const server = process.env.REACT_APP_BASE_URL;
+const access_token = localStorage.getItem("access_token");
 
 export function setCollections(payload) {
   return {
@@ -10,7 +11,6 @@ export function setCollections(payload) {
 }
 
 export function fetchCollections() {
-  const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios({

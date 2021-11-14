@@ -99,7 +99,7 @@ class HistoriesController {
       );
 
       await redis.del('histories');
-      await redis.set('historiesUserId');
+      await redis.del('historiesUserId');
 
       res.status(200).json(addedHistory);
     } catch (err) {
@@ -119,7 +119,7 @@ class HistoriesController {
       }
 
       await redis.del('histories');
-      await redis.set('historiesUserId');
+      await redis.del('historiesUserId');
 
       res.status(200).json(deletedHistory);
     } catch (err) {

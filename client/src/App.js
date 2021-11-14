@@ -31,8 +31,8 @@ export default function App() {
           <ProfilePage />
         </PrivatePage>
         <PrivatePage path="/">
-          {/* <Home /> */}
-          <HomePage />
+          <Home />
+          {/* <HomePage /> */}
         </PrivatePage>
       </Switch>
       {/* //       <Routes>

@@ -10,6 +10,7 @@ import Home from "./views/Home";
 import ProfilePage from "./views/ProfilePage";
 import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
+import HomePage from "./views/HomePage";
 
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
         </PrivatePage>
         <PrivatePage path="/">
           <Home />
+          {/* <HomePage /> */}
         </PrivatePage>
       </Switch>
       {/* //       <Routes>

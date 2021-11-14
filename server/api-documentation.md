@@ -48,42 +48,212 @@ _Request Body_
 }
 ```
 
+**atau (kalau bodies-nya raw)**
+
+```
+{
+  "url": "https://darwin-blog-challenge-1-p2.herokuapp.com/login",
+  "method": "POST",
+  "bodies": {
+      "email": "email2@gmail.com",
+      "password": "password"
+  },
+  "bodyIsRaw": true
+}
+
+```
+
 _Response (200)_
 
 ```
 {
   "status": "200 OK",
   "response": {
-      "id": 4,
-      "title": "camping di curug",
-      "content": "seru",
-      "imgUrl": "https://ik.imagekit.io/ppv8vh60qbt/icon_cmdZYdBVL.jpeg",
-      "categoryId": 1,
-      "authorId": 2,
-      "status": "inactive",
-      "createdAt": "2021-10-01T10:47:53.100Z",
-      "updatedAt": "2021-11-10T15:06:47.900Z",
-      "Category": {
-          "id": 1,
-          "name": "travel",
-          "createdAt": "2021-10-01T09:02:51.797Z",
-          "updatedAt": "2021-10-01T09:02:51.797Z"
-      }
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJlbWFpbDJAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjM2NzIyODQ5fQ.VOnX1lqDza20PMTXcfkGCmK9WfUkYy2_MCnzqrOI7rE"
   },
-  "responseTime": 967,
+  "responseTime": 996,
   "newAddedHistory": [
       {
-          "_id": "618d312f79ac23ed6a38aba0",
-          "method": "GET",
-          "url": "https://darwin-blog-challenge-1-p2.herokuapp.com/posts/4",
-          "headers": {
-              "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJlbWFpbDJAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjM2NjM5NTMyfQ.DxXs0i5-1AA63larHl3TO1tRSPb86LN4s_7aaezsYmY"
-          },
+          "_id": "618e68a10950bcedd31cfaa0",
+          "method": "POST",
+          "url": "https://darwin-blog-challenge-1-p2.herokuapp.com/login",
+          "headers": null,
           "params": null,
-          "bodies": null,
-          "UserId": "618a30ff4d86c47e1e446d9d"
+          "bodies": {
+              "email": "email2@gmail.com",
+              "password": "password"
+          },
+          "UserId": "618be802bd7d202cfcc2d253",
+          "createdAt": "2021-11-13T09:34:38.372Z",
+          "updatedAt": "2021-11-13T09:34:38.372Z"
       }
   ]
+}
+```
+
+### POST /requests/read (MVP import endpoint via file JSON)
+
+> Add new requests from JSON file
+
+_Request Header_
+
+```
+{
+  "access_token": "<access_token>"
+}
+```
+
+_Request Body_
+
+```
+{
+  "requests": <file.json>
+}
+```
+
+_Response (200)_
+
+```
+[
+  {
+      "method": "POST",
+      "url": "http://localhost:3000/login",
+      "UserId": "618be802bd7d202cfcc2d253",
+      "_id": "618e65e6a422c5756735934d"
+  },
+  {
+      "method": "GET",
+      "url": "http://localhost:3000/movies",
+      "UserId": "618be802bd7d202cfcc2d253",
+      "_id": "618e65e6a422c5756735934e"
+  }
+]
+```
+
+_Response (500) Error_
+
+```
+{
+  message: internal server error
+}
+```
+
+### GET /requests
+
+> Get requests by user ID (get logged in user requests)
+
+_Request Header_
+
+```
+{
+  "access_token": "<access_token>"
+}
+```
+
+_Request Body_
+
+```
+none
+```
+
+_Response (200)_
+
+```
+[
+  {
+      "_id": "618e645e1e1d6c22698e5f54",
+      "method": "PATCH",
+      "url": "http://localhost:3000/update-status",
+      "UserId": "618be802bd7d202cfcc2d253"
+  },
+  {
+      "_id": "618e645e1e1d6c22698e5f55",
+      "method": "PUT",
+      "url": "http://localhost:3000/update-post",
+      "UserId": "618be802bd7d202cfcc2d253"
+  }
+]
+```
+
+_Response (500) Error_
+
+```
+{
+  message: internal server error
+}
+```
+
+### GET /requests/:id
+
+> Get request by ID
+
+_Request Header_
+
+```
+{
+  "access_token": "<access_token>"
+}
+```
+
+_Request Body_
+
+```
+none
+```
+
+_Response (200)_
+
+```
+{
+  "_id": "618e645e1e1d6c22698e5f54",
+  "method": "PATCH",
+  "url": "http://localhost:3000/update-status",
+  "UserId": "618be802bd7d202cfcc2d253"
+}
+```
+
+_Response (500) Error_
+
+```
+{
+  message: internal server error
+}
+```
+
+### DELETE /requests/:id
+
+> Delete request by ID
+
+_Request Header_
+
+```
+{
+  "access_token": "<access_token>"
+}
+```
+
+_Request Body_
+
+```
+none
+```
+
+_Response (200)_
+
+```
+{
+  "_id": "618e645e1e1d6c22698e5f55",
+  "method": "PUT",
+  "url": "http://localhost:3000/update-post",
+  "UserId": "618be802bd7d202cfcc2d253"
+}
+```
+
+_Response (500) Error_
+
+```
+{
+  message: internal server error
 }
 ```
 
@@ -146,6 +316,70 @@ _Response (200)_
 }
 ```
 
+### POST /forgot-password (buat ngirim link untuk reset password ke email)
+
+_Request Header_
+
+```
+none
+```
+
+_Request Body_
+
+```
+{
+  "email": <account email to reset password>
+}
+```
+
+_Response (200)_
+
+```
+{
+  "message": "Email sent, please check your email for the password reset link"
+}
+```
+
+_Response Error (404)_
+
+```
+{
+  "message": "there is no user registered with that email"
+}
+```
+
+### POST /reset/:token (buat reset password usernya, setelah udah dapet token reset password)
+
+_Request Header_
+
+```
+none
+```
+
+_Request Body_
+
+```
+{
+  "password": <new password>
+}
+```
+
+_Response (200)_
+
+```
+{
+  "message": "Success! Your password has been changed, please login"
+}
+```
+
+_Response Error (401)_
+
+```
+{
+  "message": "Password reset token is invalid or has expired"
+}
+```
+
 ### GET /users/profile
 
 _Request Header_
@@ -174,6 +408,7 @@ _Response (200)_
   "lastName": "santoso"
 }
 ```
+
 ---
 
 ## Histories Endpoint
@@ -210,7 +445,9 @@ _Response (200)_
       "params": null,
       "bodies": null,
       "UserId": "618a30ff4d86c47e1e446d9d",
-      "CollectionId": "618a8fdc7aea3bb603a4afe4"
+      "CollectionId": "618a8fdc7aea3bb603a4afe4",
+      "createdAt": "2021-11-13T09:32:32.543Z",
+      "updatedAt": "2021-11-13T09:32:32.543Z"
   },
   {
       "_id": "618d29d2a6054242bce8ff04",
@@ -223,7 +460,9 @@ _Response (200)_
           "password": "password"
       },
       "UserId": "618a30ff4d86c47e1e446d9d",
-      "CollectionId": "618a8fdc7aea3bb603a4afe4"
+      "CollectionId": "618a8fdc7aea3bb603a4afe4",
+      "createdAt": "2021-11-13T09:32:32.543Z",
+      "updatedAt": "2021-11-13T09:32:32.543Z"
   },
   {
       "_id": "618d2cec79ac23ed6a38ab9e",
@@ -234,7 +473,9 @@ _Response (200)_
       },
       "params": null,
       "bodies": null,
-      "UserId": "618a30ff4d86c47e1e446d9d"
+      "UserId": "618a30ff4d86c47e1e446d9d",
+      "createdAt": "2021-11-13T09:32:32.543Z",
+      "updatedAt": "2021-11-13T09:32:32.543Z"
   }
 ]
 ```
@@ -530,7 +771,7 @@ _Response (200)_
 
 ### DELETE /collections
 
-> add new collection
+> delete collection
 
 _Request Header_
 
@@ -559,7 +800,9 @@ _Response (200)_
 ```
 
 ---
+
 ## Results Endpoint
+
 ### GET / results
 
 Request Headers

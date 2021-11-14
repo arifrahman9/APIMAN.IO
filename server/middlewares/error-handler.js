@@ -5,28 +5,68 @@ const errorHandler = (err, req, res, next) => {
   switch (err.name) {
     case 'requiredValidationError':
       code = 400;
-      message = 'field cannot be empty';
+      message = 'Field cannot be empty';
+      break;
+
+    case 'usernameUniqueValidationError':
+      code = 400;
+      message = 'Username must be unique';
       break;
 
     case 'emailUniqueValidationError':
       code = 400;
-      message = 'email must be unique';
+      message = 'Email must be unique';
       break;
 
     case 'unauthorized':
       code = 401;
-      message = 'invalid user/email or password';
+      message = 'Invalid user / email or password';
       break;
 
     case 'JsonWebTokenError':
     case 'invalidToken':
       code = 401;
-      message = 'invalid access token';
+      message = 'Invalid access token';
       break;
 
     case 'notLoggedIn':
       code = 401;
-      message = 'please login first';
+      message = 'Please login first';
+      break;
+
+    case 'collectionNameEmpty':
+      code = 401;
+      message = 'collection name cannot be empty';
+      break;
+
+    case 'collectionIdEmpty':
+      code = 401;
+      message = 'collection id cannot be empty';
+      break;
+
+    case 'noFile':
+      code = 400;
+      message = 'you need to input the file';
+      break;
+
+    case 'wrongFileType':
+      code = 400;
+      message = 'file type needs to be application/json';
+      break;
+
+    case 'userDoesNotExist':
+      code = 404;
+      message = 'there is no user registered with that email';
+      break;
+
+    case 'emailFailed':
+      code = 401;
+      message = 'sending email failed';
+      break;
+
+    case 'tokenExpired':
+      code = 401;
+      message = 'Password reset token is invalid or has expired';
       break;
 
     default:

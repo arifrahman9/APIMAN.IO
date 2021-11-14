@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import { fetchCollections } from "../store/actions/collectionAction";
-import { fetchHistories } from "../store/actions/historiesAction";
+import { deleteHistory, fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
 
@@ -296,34 +296,55 @@ export default function Home() {
                   ) : (
                     histories.map((history, idx) => {
                       return (
-                        <a
-                          href="#"
-                          className="text-decoration-none text-white"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setMethodUrl({
-                              method: history.method,
-                              url: history.url,
-                            });
+                        <div className="row" style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}} onMouseEnter={() => toggleHover(idx)} onMouseLeave={() => toggleHover(-1)}>
+                          <div className={`col-10`}>
+                            <a
+                              href="#"
+                              className="text-decoration-none text-white"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setMethodUrl({
+                                  method: history.method,
+                                  url: history.url,
+                                });
 
-                            setInputParams(populateHistory(history.params));
-                            setInputBodyForms(populateHistory(history.bodies));
-                            setInputHeaders(populateHistory(history.headers));
-                          }}
-                        >
-                          <div
-                            className="row mb-1 py-1"
-                            key={history.id}
-                            style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
-                            onMouseEnter={() => toggleHover(idx)}
-                            onMouseLeave={() => toggleHover(-1)}
-                          >
-                            <div className="col-2 px-1 text-right">
-                              <span className={historyText(history.method)}>{history.method}</span>
-                            </div>
-                            <div className={`col-10 px-1`}>{history.url}</div>
+                                setInputParams(populateHistory(history.params));
+                                setInputBodyForms(populateHistory(history.bodies));
+                                setInputHeaders(populateHistory(history.headers));
+                              }}
+                            >
+                              <div className="row mb-1 py-1" key={history.id}>
+                                <div className="col-2 px-1 text-right">
+                                  <span className={historyText(history.method)}>{history.method}</span>
+                                </div>
+                                <div className={`col-10 px-1`}>{history.url}</div>
+                              </div>
+                            </a>
                           </div>
-                        </a>
+                          {hoverStatus.idx === idx ? (
+                            <div className="col-2 d-flex align-items-center justify-content-around">
+                              <a href="#" className="text-decoration-none text-white" data-toggle="tooltip" data-placement="bottom" title="Add to collection">
+                                <FontAwesomeIcon icon={faPlus} />
+                              </a>
+                              <a
+                                href="#"
+                                className="text-decoration-none text-white"
+                                data-toggle="tooltip"
+                                data-placement="bottom"
+                                title="Delete history"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  // console.log(history._id);
+                                  dispatch(deleteHistory(history._id));
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faTrash} />
+                              </a>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                       );
                     })
                   )}

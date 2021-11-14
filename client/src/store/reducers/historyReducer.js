@@ -2,6 +2,7 @@ import { SET_HISTORIES } from "../actionType";
 
 const initialState = {
   histories: [],
+  isLoading: false,
 };
 
 export default function historyReducer(state = initialState, action) {

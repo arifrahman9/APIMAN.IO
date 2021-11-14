@@ -28,3 +28,25 @@ export function fetchHistories() {
     });
   };
 }
+
+export function deleteHistory(id) {
+  const access_token = localStorage.getItem("access_token");
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "DELETE",
+        url: `${server}/histories/${id}`,
+        headers: {
+          access_token,
+        },
+      })
+        .then((result) => {
+          const newHistory = getState().historyReducer.histories.filter((history) => history._id !== id);
+          dispatch(setHistories(newHistory));
+        })
+        .catch((err) => {
+          console.log(err.response.data.message);
+        });
+    });
+  };
+}

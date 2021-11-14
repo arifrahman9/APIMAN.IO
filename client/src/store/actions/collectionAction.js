@@ -20,7 +20,6 @@ export function fetchCollections() {
         },
       })
         .then((result) => {
-          console.log(result.data);
           dispatch(setCollections(result.data));
         })
         .catch((err) => {

@@ -2,6 +2,7 @@ import { SET_COLLECTIONS } from "../actionType";
 
 const initialState = {
   collections: [],
+  isLoading: false,
 };
 
 export default function collectionReducer(state = initialState, action) {

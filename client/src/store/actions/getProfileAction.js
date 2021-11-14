@@ -12,7 +12,7 @@ export const setUserProfile = (data) => {
 export const fetchUserProfile = (access_token) => {
   return function(dispatch) {
     axios({
-      url: 'https://d512-125-166-8-138.ngrok.io/users/profile',
+      url: server + '/users/profile',
       headers: {access_token},
       method: 'GET'
     }).then(({ data }) => {

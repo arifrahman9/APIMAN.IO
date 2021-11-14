@@ -26,7 +26,7 @@ export default function App() {
         <PrivateLogin path="/forgot-password">
           <ForgotPassword />
         </PrivateLogin>
-        <PrivateLogin path="/change-password">
+        <PrivateLogin path="/reset/:token">
           <ChangePassword />
         </PrivateLogin>
         <PrivatePage path="/profile">

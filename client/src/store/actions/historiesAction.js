@@ -41,6 +41,7 @@ export function deleteHistory(id) {
         },
       })
         .then((result) => {
+          console.log(result);
           const newHistory = getState().historyReducer.histories.filter((history) => history._id !== id);
           dispatch(setHistories(newHistory));
         })

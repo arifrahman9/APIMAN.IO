@@ -168,7 +168,7 @@ export default function Home() {
     // console.log(inputBodyRaw, "body rawww");
     dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, inputBodyForms, found, inputParams, false))
       .then((response) => {
-        // setResultPanel(response.response);
+        setResultPanel(response.response);
         setResultHeader({
           status: response.status,
           responseTime: `${response.responseTime} ms`,

@@ -6,9 +6,11 @@ import PrivatePage from "./navigation-guards/PrivatePage";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import Home from "./views/Home";
+
 import ProfilePage from "./views/ProfilePage";
 import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";
+
 
 export default function App() {
   return (
@@ -41,6 +43,7 @@ export default function App() {
 //         <Route path="/profile" element={<ProfilePage />} />
 //         <Route path="/" element={<Home />} />
 //       </Routes> */}
+
     </>
   );
 }

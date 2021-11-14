@@ -1,5 +1,4 @@
 import React from "react";
-import { Avatar } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Link, useHistory } from "react-router-dom";

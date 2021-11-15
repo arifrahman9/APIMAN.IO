@@ -8,6 +8,7 @@ import { addNewHistory, addToCollections, deleteHistory, fetchHistories } from "
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
 import NavbarNew from "../components/Navbar";
+import ReactJson from 'react-json-view'
 
 export default function HomePage() {
   // Buat itung container
@@ -721,14 +722,18 @@ export default function HomePage() {
                   Status: <span className="text-success">{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
-              <div className="card-body pb-2 pt-0 px-2" style={{ overflow: "auto" }}>
-                <textarea
+              <div className="card-body pb-2 pt-0 px-2" style={{ overflowY: "auto", overflowX: 'hidden' }}>
+                {
+                  !resultPanel ? <div></div> :
+                  <ReactJson src={resultPanel} indentWidth={1} theme='colors' enableClipboard={false} iconStyle='square' displayDataTypes={false} style={{backgroundColor: '#2D3748'}}/>
+                }
+                {/* <textarea
                   className="form-control shadow-none border-0 bg-secondary border-0 text-dark body-raw"
                   cols="30"
                   style={{ resize: "none", height: "100%", fontSize: "10pt" }}
                   defaultValue={JSON.stringify(resultPanel, null, 2)}
                   disabled
-                ></textarea>
+                ></textarea> */}
               </div>
             </div>
           </Flex>

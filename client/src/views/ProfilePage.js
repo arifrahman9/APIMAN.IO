@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchUserProfile } from '../store/actions/getProfileAction'
 import SecondaryNavbar from '../components/SecondaryNavbar'
+import CollectionInProfile from '../components/Collection.ProfilePage'
 
 export default function ProfilePage () {
   const {profileReducer: data} = useSelector(state => state)
@@ -67,36 +68,7 @@ export default function ProfilePage () {
         </Flex>
         {/* Right container */}
         <Flex width='49%' minHeight='100%' position='static' top={0} right={0}>
-          <Flex bgColor='gray.700' width='100%' borderRadius={8} p={6} flexDirection='column'>
-            {/* headers */}
-            <Flex alignSelf='flex-start' width='100%' justifyContent='center' alignItems='center' borderBottom='2px solid' borderColor='gray.200' paddingBottom={5} marginBottom={5}>
-              <Icon as={FcOpenedFolder} boxSize={6} marginRight={2}/>
-              <Text color='gray.200' fontSize='xl'>Collections</Text>
-            </Flex>
-            {/* Collection list */}
-            <Flex paddingX={2}>
-              <Box alignItems='center' justifyContent='center' display='flex' flexDirection='column' margin={3}>
-                <Icon as={BsFolderFill} color='teal.400' boxSize={8}/>
-                <Text color='gray.200' fontFamily='calibri' marginTop={2}>Localhost1</Text>
-              </Box>
-              <Box alignItems='center' justifyContent='center' display='flex' flexDirection='column' margin={3}>
-                <Icon as={BsFolderFill} color='teal.400' boxSize={8}/>
-                <Text color='gray.200' fontFamily='calibri' marginTop={2}>Localhost1</Text>
-              </Box>
-              <Box alignItems='center' justifyContent='center' display='flex' flexDirection='column' margin={3}>
-                <Icon as={BsFolderFill} color='teal.400' boxSize={8}/>
-                <Text color='gray.200' fontFamily='calibri' marginTop={2}>Localhost1</Text>
-              </Box>
-              <Box alignItems='center' justifyContent='center' display='flex' flexDirection='column' margin={3}>
-                <Icon as={BsFolderFill} color='teal.400' boxSize={8}/>
-                <Text color='gray.200' fontFamily='calibri' marginTop={2}>Localhost1</Text>
-              </Box>
-              <Box alignItems='center' justifyContent='center' display='flex' flexDirection='column' margin={3}>
-                <Icon as={BsFolderFill} color='teal.400' boxSize={8}/>
-                <Text color='gray.200' fontFamily='calibri' marginTop={2}>Localhost1</Text>
-              </Box>
-            </Flex>
-          </Flex>
+          <CollectionInProfile />
         </Flex>
       </Flex>
     </Flex>

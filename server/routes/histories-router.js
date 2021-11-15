@@ -6,6 +6,11 @@ router.get('/:id', HistoriesController.getHistoryById);
 
 router.delete('/:id', HistoriesController.deleteHistoryById);
 
+router.post(
+  '/collection-remove/:id',
+  HistoriesController.removeHistoryFromCollection
+);
+
 router.get(
   '/collection/:collectionId',
   HistoriesController.getHistoriesByCollectionId

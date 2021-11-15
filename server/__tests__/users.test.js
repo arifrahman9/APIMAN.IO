@@ -312,7 +312,7 @@ describe("POST /forgot-password", () => {
         // console.log(response.body)
         expect(response.status).toBe(404)
         expect(response.body).toEqual(expect.any(Object))
-        expect(response.body).toHaveProperty("message", "there is no user registered with that email")
+        expect(response.body).toHaveProperty("message", "There is no user registered with that email")
         done()
       })
       .catch((err) => done(err))
@@ -401,7 +401,7 @@ describe("POST /login-google", () => {
         return resp.body
       })
       .then((result) => {
-        expect(result.access_token).toEqual(expect.any(Object))
+        expect(result).toEqual(expect.any(Object))
         console.log(result)
       })
       .catch((err) => {

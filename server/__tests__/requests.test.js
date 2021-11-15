@@ -527,7 +527,7 @@ describe('POST /requests/read', () => {
         const body = response.body;
 
         expect(body).toEqual(expect.any(Object));
-        expect(body).toHaveProperty('message', 'you need to input the file');
+        expect(body).toHaveProperty('message', 'You need to input the file');
 
         done();
       })
@@ -549,7 +549,7 @@ describe('POST /requests/read', () => {
         expect(body).toEqual(expect.any(Object));
         expect(body).toHaveProperty(
           'message',
-          'file type needs to be application/json'
+          'File type needs to be application/json'
         );
 
         done();

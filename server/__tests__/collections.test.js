@@ -621,7 +621,7 @@ describe('POST /collections', () => {
         expect(body).toEqual(expect.any(Object));
         expect(body).toHaveProperty(
           'message',
-          'collection name cannot be empty'
+          'Collection name cannot be empty'
         );
 
         done();

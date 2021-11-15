@@ -11,6 +11,7 @@ export const requestForgotPassword = (email) => {
       }).then(({ data }) => {
         resolve(data)
       }).catch(({ response }) => {
+        console.log(response)
         reject(response)
       })
     })

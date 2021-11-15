@@ -83,13 +83,50 @@ export function addToCollections(data) {
         data,
       })
         .then((result) => {
-          const index = getState().historyReducer.histories.indexOf(result.data);
-          result.data["CollectionId"] = data.collectionId;
-          getState().historyReducer.histories.splice(index, 1, result.data);
+          const histories = getState().historyReducer.histories;
+          histories.forEach((history, idx) => {
+            if (history._id === result.data._id) {
+              result.data["CollectionId"] = data.collectionId;
+              histories.splice(idx, 1, result.data);
+            }
+          });
           resolve(result.data);
         })
         .catch((err) => {
           reject(err.response.data.message);
+        });
+    });
+  };
+}
+
+export function deleteHistoryfromCollection(id) {
+  const access_token = localStorage.getItem("access_token");
+  return (dispatch, getState) => {
+    dispatch(loadingHistory(true));
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: `${server}/histories/collection-remove/${id}`,
+        headers: {
+          access_token,
+        },
+      })
+        .then((result) => {
+          const histories = getState().historyReducer.histories;
+          histories.forEach((history, idx) => {
+            if (history._id === result.data._id) {
+              delete result.data.CollectionId;
+              histories.splice(idx, 1, result.data);
+            }
+          });
+          resolve(result.data);
+        })
+        .catch((err) => {
+          // console.log(err.response.data.message);
+          reject(err.response.data.message);
+        })
+        .finally(() => {
+          dispatch(loadingHistory(false));
         });
     });
   };

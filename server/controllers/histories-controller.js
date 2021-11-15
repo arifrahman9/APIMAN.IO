@@ -102,6 +102,11 @@ class HistoriesController {
       const { id } = req.params;
 
       const removedHistory = await HistoriesModel.getHistoryById(id);
+
+      if (!removedHistory) {
+        throw new Error();
+      }
+
       await HistoriesModel.removeCollectionIdByHistoryId(id);
 
       await redis.del('histories');

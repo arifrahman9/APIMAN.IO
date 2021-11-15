@@ -498,6 +498,155 @@ describe('POST /histories/collection', () => {
   });
 });
 
+describe('POST /histories/collection-remove/:id', () => {
+  beforeAll(async () => {
+    await connect();
+    await getDatabase();
+
+    db = getDatabase();
+    const usersCollection = db.collection('users');
+
+    await request(app).post('/register').send({
+      username: 'testuser',
+      email: 'test@gmail.com',
+      password: 'password',
+      firstName: 'firstTest',
+      lastName: 'lastTest',
+    });
+
+    lastInsertedUser = await usersCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(1)
+      .toArray();
+
+    // then login
+    const payload = {
+      email: 'test@gmail.com',
+      password: 'password',
+    };
+
+    loginResponse = await request(app).post('/login').send(payload);
+
+    db = getDatabase();
+    const historiesCollection = db.collection('histories');
+    const collectionsCollection = db.collection('collections');
+
+    await collectionsCollection.insertOne({
+      name: 'history test collection',
+      UserId: lastInsertedUser[0]._id,
+    });
+
+    lastInsertedCollection = await collectionsCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(1)
+      .toArray();
+
+    await historiesCollection.insertOne({
+      method: 'GET',
+      url: 'https://testurl.com',
+      headers: null,
+      params: null,
+      bodies: { email: 'email2@gmail.com', password: 'password' },
+      UserId: lastInsertedUser[0]._id,
+      CollectionId: lastInsertedCollection[0]._id,
+    });
+
+    newestHistory = await historiesCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(1)
+      .toArray();
+  });
+
+  afterAll(async () => {
+    await connect();
+    await getDatabase();
+
+    db = getDatabase();
+
+    const historiesCollection = db.collection('histories');
+    await historiesCollection.deleteOne({
+      _id: newestHistory[0]._id,
+    });
+
+    const usersCollection = db.collection('users');
+    await usersCollection.deleteOne({
+      _id: lastInsertedUser[0]._id,
+    });
+
+    const collectionsCollection = db.collection('collections');
+    await collectionsCollection.deleteOne({
+      _id: lastInsertedCollection[0]._id,
+    });
+  });
+
+  test('[success] successfuly removed history from collection', (done) => {
+    request(app)
+      .post(`/histories/collection-remove/${newestHistory[0]._id}`)
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Object));
+        expect(body).toHaveProperty('_id');
+        expect(body).toHaveProperty('method');
+        expect(body).toHaveProperty('url');
+        expect(body).toHaveProperty('headers');
+        expect(body).toHaveProperty('params');
+        expect(body).toHaveProperty('bodies');
+        expect(body).toHaveProperty('UserId');
+        expect(body).toHaveProperty('CollectionId');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[failed] failed to remove history from collection because of invalid token', (done) => {
+    request(app)
+      .post(`/histories/collection-remove/${newestHistory[0]._id}`)
+      .set({
+        access_token: loginResponse.body.access_token + 'asd',
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Object));
+        expect(body).toHaveProperty('message', 'Invalid access token');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[failed] failed to remove history from collection because the history does not exist', (done) => {
+    request(app)
+      .post('/histories/collection-remove/618f6d283cdf446fd20beeee')
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Object));
+        expect(body).toHaveProperty('message', 'Internal Server Error');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
 describe('GET /histories/:id', () => {
   beforeAll(async () => {
     await connect();

@@ -8,7 +8,7 @@ import { addNewHistory, addToCollections, deleteHistory, fetchHistories } from "
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
 import NavbarNew from "../components/Navbar";
-import ReactJson from 'react-json-view'
+import ReactJson from "react-json-view";
 
 export default function HomePage() {
   // Buat itung container
@@ -46,8 +46,15 @@ export default function HomePage() {
 
   const submitCollection = () => {
     dispatch(postCollection(inputCollection))
-      .then((response) => {})
-      .catch((err) => {});
+      .then((response) => {
+        console.log(response, ">>>>home");
+        setInputCollection({
+          name: "",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const [hoverStatus, setHoverStatus] = useState({ idx: -1 });
@@ -301,45 +308,59 @@ export default function HomePage() {
                               <div className="row collapse" id={`collapse${collection._id}`}>
                                 <div className="col-11 offset-1">
                                   {getHistoriesCollection(collection._id).length === 0 ? (
-                                    <p className="p-2">
-                                      This collection is empty. Please{" "}
-                                      <a className="text-danger text-decoration-none" href="#">
-                                        add request
-                                      </a>{" "}
-                                      to start working
-                                    </p>
+                                    <p className="p-2">This collection is empty.</p>
                                   ) : (
                                     histories
                                       .filter((h) => h.CollectionId === collection._id)
                                       .map((history, idx) => (
-                                        <a
-                                          href="#"
-                                          className="text-decoration-none text-white"
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            setMethodUrl({
-                                              method: history.method,
-                                              url: history.url,
-                                            });
-
-                                            setInputParams(populateHistory(history.params));
-                                            setInputBodyForms(populateHistory(history.bodies));
-                                            setInputHeaders(populateHistory(history.headers));
-                                          }}
+                                        <div
+                                          className="row"
+                                          style={hoverStatus.idx === history._id ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
+                                          onMouseEnter={() => toggleHover(history._id)}
+                                          onMouseLeave={() => toggleHover(-1)}
                                         >
-                                          <div
-                                            className="row mb-1 py-1"
-                                            key={history.id}
-                                            style={hoverStatus.idx === history._id ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
-                                            onMouseEnter={() => toggleHover(history._id)}
-                                            onMouseLeave={() => toggleHover(-1)}
+                                          <a
+                                            href="#"
+                                            className="col-11 text-decoration-none text-white"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setMethodUrl({
+                                                method: history.method,
+                                                url: history.url,
+                                              });
+
+                                              setInputParams(populateHistory(history.params));
+                                              setInputBodyForms(populateHistory(history.bodies));
+                                              setInputHeaders(populateHistory(history.headers));
+                                            }}
                                           >
-                                            <div className="col-2 px-1 text-right">
-                                              <span className={historyText(history.method)}>{history.method}</span>
+                                            <div className="row mb-1 py-1" key={history.id}>
+                                              <div className="col-2 px-1 text-right">
+                                                <span className={historyText(history.method)}>{history.method}</span>
+                                              </div>
+                                              <div className={`col-8 px-1`}>{history.url}</div>
                                             </div>
-                                            <div className={`col-10 px-1`}>{history.url}</div>
-                                          </div>
-                                        </a>
+                                          </a>
+                                          {hoverStatus.idx === history._id ? (
+                                            <div className="col-1 d-flex align-items-center justify-content-around">
+                                              <a
+                                                href="#"
+                                                className="text-decoration-none text-white"
+                                                data-toggle="tooltip"
+                                                data-placement="bottom"
+                                                title="Delete history"
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  // dispatch(deleteHistory(history._id));
+                                                }}
+                                              >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                              </a>
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </div>
                                       ))
                                   )}
                                 </div>
@@ -349,9 +370,6 @@ export default function HomePage() {
                         })
                       )}
                     </Flex>
-                    {/* <div className="h-100" style={{ backgroundColor: "#000000", overflowY: "auto" }}>
-                      
-                    </div> */}
                   </div>
                   <div className="tab-pane fade show" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
                     Request
@@ -478,7 +496,7 @@ export default function HomePage() {
                     );
                   })}
                 </div>
-                <div id="messageAddHistory" />
+                <div id="messageAddHistory" className="mt-2" />
               </div>
               <div className={`${modalFooter ? "" : "d-none"} modal-footer border-0`}>
                 <button
@@ -512,9 +530,6 @@ export default function HomePage() {
                     e.preventDefault();
                     dispatch(addToCollections(inputAddHistory))
                       .then((response) => {
-                        const index = histories.indexOf(response);
-                        response["CollectionId"] = inputAddHistory.collectionId;
-                        histories.splice(index, 1, response);
                         setInputAddHistory({});
                         setmodalFooter(true);
                         document.getElementById("messageAddHistory").innerHTML = `<span class="text-success">Success added to collection</span>`;
@@ -782,13 +797,15 @@ export default function HomePage() {
                   Status: <span className={historyText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
-              <div className="card-body pb-2 pt-0 px-2" style={{ overflowY: "auto", overflowX: 'hidden' }}>
-                {
-                  !resultPanel ? <div></div> :
-                  <ReactJson src={resultPanel} indentWidth={1} theme='colors' enableClipboard={false} iconStyle='square' displayDataTypes={false} style={{backgroundColor: '#2D3748'}}/>
-                }
-                {/* <textarea
-                  className="form-control shadow-none border-0 bg-secondary border-0 text-dark body-raw"
+              <div className="card-body pb-2 pt-0 px-2 text-wrap mx-2 mb-2" style={{ overflowY: "auto", overflowX: "auto", backgroundColor: "#1a202c", borderRadius: "10px" }}>
+                {!resultPanel ? (
+                  <div></div>
+                ) : (
+                  <ReactJson src={resultPanel} indentWidth={1} theme="colors" enableClipboard={false} iconStyle="square" collapseStringsAfterLength={50} displayDataTypes={false} style={{ width: "20%", backgroundColor: "#1a202c" }} />
+                )}
+                {/* <div className="card-body pb-2 pt-0 px-2 text-wrap">
+                <textarea
+                  className="form-control shadow-none border-0 border-0 text-white body-raw"
                   cols="30"
                   style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c" }}
                   defaultValue={typeof resultPanel === "object" ? JSON.stringify(resultPanel, null, 2) : resultPanel}

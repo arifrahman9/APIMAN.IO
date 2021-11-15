@@ -83,6 +83,9 @@ export function addToCollections(data) {
         data,
       })
         .then((result) => {
+          const index = getState().historyReducer.histories.indexOf(result.data);
+          result.data["CollectionId"] = data.collectionId;
+          getState().historyReducer.histories.splice(index, 1, result.data);
           resolve(result.data);
         })
         .catch((err) => {

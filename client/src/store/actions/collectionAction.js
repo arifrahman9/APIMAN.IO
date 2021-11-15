@@ -53,10 +53,12 @@ export function postCollection(data) {
         data,
       })
         .then((result) => {
-          console.log(result.data);
+          console.log(result.data[0]);
+          getState().collectionReducer.collections.push(result.data[0]);
+          resolve(result.data);
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          reject(err.response.data.message);
         });
     });
   };

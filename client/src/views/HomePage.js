@@ -1,27 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Flex, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
-import { faAngleRight, faMinus, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Flex } from "@chakra-ui/react";
+import { faAngleRight, faMinus, faPencilAlt, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCollections,postCollection } from "../store/actions/collectionAction";
-import { addNewHistory, addToCollections, deleteHistory, fetchHistories } from "../store/actions/historiesAction";
+import { deleteCollection, fetchCollections, patchCollection, postCollection } from "../store/actions/collectionAction";
+import { addNewHistory, addToCollections, deleteHistory, deleteHistoryfromCollection, fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
 import NavbarNew from "../components/Navbar";
-import ReactJson from 'react-json-view'
+import ReactJson from "react-json-view";
 
 export default function HomePage() {
-  // Buat itung container
   // Chakra layout start
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const navbar = useRef(null);
   const bodyHtml = useRef(null);
   const [containerHeight, setConteinerHeight] = useState(0);
-  const [panelWidth, setPanelWidth] = useState(0)
+  const [panelWidth, setPanelWidth] = useState(0);
 
   useEffect(() => {
-    // letakkan pertama kali
-    setPanelWidth(Math.floor(bodyHtml.current.offsetWidth/3))
+    setPanelWidth(Math.floor(bodyHtml.current.offsetWidth / 3));
     setConteinerHeight(bodyHtml.current.offsetHeight - navbar.current.offsetHeight);
   }, []);
   // Chakra layout end
@@ -48,12 +45,13 @@ export default function HomePage() {
   };
 
   const submitCollection = () => {
+    setInputCollection({
+      name: "",
+    });
+
     dispatch(postCollection(inputCollection))
       .then((response) => {
         console.log(response, ">>>>home");
-        setInputCollection({
-          name: "",
-        });
       })
       .catch((err) => {
         console.log(err);
@@ -72,16 +70,26 @@ export default function HomePage() {
   const { collections } = useSelector((state) => state.collectionReducer);
 
   const historyText = (method) => {
-    if (method === "get" || method === "2") {
+    if (method === "get") {
       return "text-success";
-    } else if (method === "post" || method === "5") {
+    } else if (method === "post") {
       return "text-warning";
     } else if (method === "put") {
       return "text-primary";
-    } else if (method === "delete" || method === "4") {
+    } else if (method === "delete") {
       return "text-danger";
     } else {
       return "text-info";
+    }
+  };
+
+  const statusText = (num) => {
+    if (num == 2) {
+      return "text-success";
+    } else if (num == 4) {
+      return "text-danger";
+    } else {
+      return "text-warning";
     }
   };
 
@@ -176,6 +184,35 @@ export default function HomePage() {
 
   const [inputAddHistory, setInputAddHistory] = useState({ historyId: "", collectionId: "" });
   const [modalFooter, setmodalFooter] = useState(false);
+  const [oldCollectionName, setOldCollectionName] = useState("");
+  const [inputNewName, setinputNewName] = useState({
+    id: "",
+    name: "",
+  });
+
+  const changeInputNewName = (e) => {
+    const { name, value } = e.target;
+    setinputNewName({
+      ...inputNewName,
+      [name]: value,
+    });
+  };
+
+  const submitNewName = (e) => {
+    e.preventDefault();
+    // console.log(inputNewName);
+    dispatch(patchCollection(inputNewName))
+      .then((response) => {
+        console.log(response);
+        document.getElementById("messageEditCollection").innerHTML = `<span class="text-success">Success edit collection's name</span>`;
+        setmodalFooter(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        document.getElementById("messageEditCollection").innerHTML = `<span class="text-danger">Failed edit collection's name</span>`;
+        setmodalFooter(true);
+      });
+  };
 
   const submitHandler = () => {
     let headerSend = undefined;
@@ -215,42 +252,23 @@ export default function HomePage() {
       });
   };
 
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.keyCode === 13 && e.ctrlKey) {
-        console.log("CTRL + ENTER");
-        console.log(inputMethodUrl);
-        // setMethodUrl(inputMethodUrl);
-        // setInputParams(inputParams);
-        // setInputHeaders(inputHeaders);
-        // setInputBodyForms(inputBodyForms);
-        // submitHandler();
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    return function cleanup() {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-  
   return (
-    <Flex ref={bodyHtml} bgColor='gray.800' h='100vh' w='100vw' flexDir='column'>
+    <Flex ref={bodyHtml} bgColor="gray.800" h="100vh" w="100vw" flexDir="column">
       {/* for navbar section */}
-      <Flex ref={navbar} bgColor='gray.700'>
+      <Flex ref={navbar} bgColor="gray.700">
         <NavbarNew inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} />
       </Flex>
       {/* for main section */}
-      <Flex h={containerHeight} justifyContent='space-evenly' alignItems='center'>
+      <Flex h={containerHeight} justifyContent="space-evenly" alignItems="center" fontSize="10pt" px={1} py={2}>
         {/* for main left section */}
-        <Flex justifyContent='center' alignItems='center' p={2} h={containerHeight} w={panelWidth}>
+        <Flex justifyContent="center" alignItems="center" px={1} py={2} h={containerHeight} w={panelWidth}>
           <div className="card o-hidden border-0 text-white " style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
             <div className="card-header mx-2 pt-2 px-2 pb-2" style={{ backgroundColor: "#2d3748" }}>
               <nav>
                 <ul className="nav nav-pills nav-fill" id="pills-tab" role="tablist">
                   <li className="nav-item">
                     <a className="nav-link active text-white" id="pills-collection-tab" data-toggle="pill" href="#pills-collection" role="tab" aria-controls="pills-collection" aria-selected="true">
-                      <div class="btn-group">Collections</div>
+                      <div className="btn-group">Collections</div>
                     </a>
                   </li>
                   <li className="nav-item">
@@ -279,12 +297,12 @@ export default function HomePage() {
                     <div className="col-9 pr-0">
                       <input
                         type="text"
-                        className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
+                        className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1 w-100"
                         placeholder="New collection name"
                         style={{ color: "#212121", borderRadius: 0 }}
                         name="name"
                         autoComplete="off"
-                        defaultValue={inputCollection.name}
+                        value={inputCollection.name}
                         onChange={changeInputCollection}
                       />
                     </div>
@@ -301,14 +319,58 @@ export default function HomePage() {
                       collections.map((collection, idx) => {
                         return (
                           <div key={collection._id}>
-                            <a className="text-decoration-none text-white" data-toggle="collapse" href={`#collapse${collection._id}`}>
-                              <div className="row p-2" style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}} onMouseEnter={() => toggleHover(idx)} onMouseLeave={() => toggleHover(-1)}>
-                                <div className="col-1">
-                                  <FontAwesomeIcon icon={faAngleRight} />
-                                </div>
-                                <div className="col-11">{collection.name}</div>
+                            <div className="row" style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}} onMouseEnter={() => toggleHover(idx)} onMouseLeave={() => toggleHover(-1)}>
+                              <div className="col-10">
+                                <a className="text-decoration-none text-white" data-toggle="collapse" href={`#collapse${collection._id}`}>
+                                  <div className="row p-2">
+                                    <div className="col-1">
+                                      <FontAwesomeIcon icon={faAngleRight} />
+                                    </div>
+                                    <div className="col-11">{collection.name}</div>
+                                  </div>
+                                </a>
                               </div>
-                            </a>
+                              {hoverStatus.idx === idx ? (
+                                <div className="col-2 d-flex align-items-center justify-content-around">
+                                  <a
+                                    href="#"
+                                    className={`text-decoration-none text-white`}
+                                    data-toggle="tooltip"
+                                    data-placement="bottom"
+                                    title="Save to collection"
+                                    data-toggle="modal"
+                                    data-target="#editNameCollection"
+                                    data-backdrop="static"
+                                    data-keyboard="false"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setOldCollectionName(collection.name);
+                                      setinputNewName({
+                                        id: collection._id,
+                                        name: collection.name,
+                                      });
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faPencilAlt} />
+                                  </a>
+                                  <a
+                                    href="#"
+                                    className="text-decoration-none text-white"
+                                    data-toggle="tooltip"
+                                    data-placement="bottom"
+                                    title="Delete collection"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      dispatch(deleteCollection(collection._id));
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </a>
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                            </div>
                             <div className="row collapse" id={`collapse${collection._id}`}>
                               <div className="col-11 offset-1">
                                 {getHistoriesCollection(collection._id).length === 0 ? (
@@ -355,7 +417,7 @@ export default function HomePage() {
                                               title="Delete history"
                                               onClick={(e) => {
                                                 e.preventDefault();
-                                                // dispatch(deleteHistory(history._id));
+                                                dispatch(deleteHistoryfromCollection(history._id));
                                               }}
                                             >
                                               <FontAwesomeIcon icon={faTrash} />
@@ -421,6 +483,8 @@ export default function HomePage() {
                                 title="Save to collection"
                                 data-toggle="modal"
                                 data-target="#addToCollectionModal"
+                                data-backdrop="static"
+                                data-keyboard="false"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   setInputAddHistory({
@@ -457,10 +521,166 @@ export default function HomePage() {
             </div>
           </div>
         </Flex>
+
+        <div className="modal fade text-white" id="editNameCollection" tabIndex="-1" role="dialog" aria-labelledby="addToCollections" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content border-0" style={{ borderRadius: "20px", backgroundColor: "#2d3748" }}>
+              <div className="modal-header border-0 align-items-center">
+                <h1 className="modal-title h5" id="editNameCollectionLabel">
+                  Edit {oldCollectionName}
+                </h1>
+              </div>
+              <form onSubmit={submitNewName}>
+                <div className="modal-body mx-3 my-0" style={{ backgroundColor: "#1a202c", borderRadius: "20px" }}>
+                  <div className="card-body p-0 mt-2">
+                    <label htmlFor="newname">Collection new name</label>
+                    <input
+                      type="text"
+                      id="newname"
+                      placeholder="Enter new name here"
+                      className="form-control border-0 bg-secondary text-dark rounded-pill"
+                      autoComplete="off"
+                      defaultValue={inputNewName.name}
+                      value={inputNewName.name}
+                      name="name"
+                      disabled={modalFooter}
+                      onChange={changeInputNewName}
+                    />
+                  </div>
+                  <div id="messageEditCollection" className="mt-2" />
+                </div>
+                <div className={`${modalFooter ? "" : "d-none"} modal-footer border-0`}>
+                  <button
+                    type="button"
+                    data-dismiss="modal"
+                    className="btn btn-danger rounded-pill"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById("messageEditCollection").innerHTML = "";
+                      setmodalFooter(false);
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className={`${!modalFooter ? "" : "d-none"} modal-footer border-0`}>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary rounded-pill"
+                    data-dismiss="modal"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setmodalFooter(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-danger rounded-pill" disabled={inputNewName.name === ""}>
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal fade text-white" id="addToCollectionModal" tabIndex="-1" role="dialog" aria-labelledby="addToCollections" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content border-0" style={{ borderRadius: "20px", backgroundColor: "#2d3748" }}>
+              <div className="modal-header border-0 align-items-center">
+                <h1 className="modal-title h5" id="addToCollectionModalLabel">
+                  Save Request To Collection
+                </h1>
+              </div>
+              <div className="modal-body mx-3 my-0" style={{ backgroundColor: "#1a202c", borderRadius: "20px" }}>
+                <h1 className="mb-2">Save to</h1>
+                <hr style={{ border: "1px solid white" }} />
+                <div className="card-body p-0 mt-2" style={{ maxHeight: "40vh", minHeight: "40vh", overflowY: "auto", overflowX: "hidden" }}>
+                  {collections.map((collection) => {
+                    return (
+                      <div
+                        key={collection._id}
+                        className="mb-1"
+                        style={hoverStatus.idx === collection._id || inputAddHistory.collectionId === collection._id ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
+                        onMouseEnter={() => toggleHover(collection._id)}
+                        onMouseLeave={() => toggleHover(-1)}
+                      >
+                        <a
+                          href="#"
+                          className="text-decoration-none text-white row py-2 px-3"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setInputAddHistory({
+                              ...inputAddHistory,
+                              collectionId: collection._id,
+                            });
+                          }}
+                        >
+                          <div className="col-12">{collection.name}</div>
+                        </a>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div id="messageAddHistory" className="mt-2" />
+              </div>
+              <div className={`${modalFooter ? "" : "d-none"} modal-footer border-0`}>
+                <button
+                  data-dismiss="modal"
+                  className="btn btn-danger rounded-pill"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("messageAddHistory").innerHTML = "";
+                    setmodalFooter(false);
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+              <div className={`${!modalFooter ? "" : "d-none"} modal-footer border-0`}>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary rounded-pill"
+                  data-dismiss="modal"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setInputAddHistory({});
+                    setmodalFooter(false);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger rounded-pill"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(addToCollections(inputAddHistory))
+                      .then((response) => {
+                        setInputAddHistory({});
+                        setmodalFooter(true);
+                        document.getElementById("messageAddHistory").innerHTML = `<span class="text-success">Success added to collection</span>`;
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        setInputAddHistory({});
+                        setmodalFooter(true);
+                        document.getElementById("messageAddHistory").innerHTML = `<span class="text-danger">Failed added to collection</span>`;
+                      });
+                  }}
+                  disabled={inputAddHistory.collectionId === ""}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* for main middle section */}
-        <Flex p={2} flexDir='column' justifyContent='center' alignItems='center' h={containerHeight} w={panelWidth}>
+        <Flex px={1} py={2} flexDir="column" justifyContent="center" alignItems="center" h={containerHeight} w={panelWidth}>
           {/* for main middle top section */}
-          <Flex h={containerHeight/2} w='100%' paddingBottom={1} overflow='hidden'>
+          <Flex h={containerHeight / 2} w="100%" paddingBottom={1} overflow="hidden">
             <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
               <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
                 <div>
@@ -588,7 +808,7 @@ export default function HomePage() {
             </div>
           </Flex>
           {/* for main middle bottom section */}
-          <Flex h={containerHeight/2} w='100%' paddingTop={1} overflow='hidden'>
+          <Flex h={containerHeight / 2} w="100%" paddingTop={1} overflow="hidden">
             <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
               <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
                 <div>
@@ -673,14 +893,7 @@ export default function HomePage() {
                   ))
                 ) : (
                   <>
-                    <textarea
-                      className="form-control shadow-none border-0 body-raw bg-secondary"
-                      cols="30"
-                      rows="9"
-                      style={{ color: "#212121", resize: "none", height: "100%" }}
-                      onChange={changeInputBodyRaw}
-                      value={inputBodyRaw}
-                    ></textarea>
+                    <textarea className="form-control shadow-none border-0 body-raw bg-secondary" cols="30" rows="9" style={{ color: "#212121", resize: "none", height: "100%" }} onChange={changeInputBodyRaw} value={inputBodyRaw}></textarea>
                   </>
                 )}
               </div>
@@ -688,8 +901,8 @@ export default function HomePage() {
           </Flex>
         </Flex>
         {/* for main left section */}
-        <Flex p={2} justifyContent='center' alignItems='center' h={containerHeight} w={panelWidth} overflow='hidden'>
-          <Flex h='100%' w='100%'>
+        <Flex px={1} py={2} justifyContent="center" alignItems="center" h={containerHeight} w={panelWidth} overflow="hidden">
+          <Flex h="100%" w="100%">
             <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", width: "100%" }}>
               <div className="d-flex card-header border-0 flex-column p-2" style={{ backgroundColor: "#2d3748" }}>
                 <div className="d-flex justify-content-between">
@@ -697,17 +910,27 @@ export default function HomePage() {
                   <span></span>
                 </div>
                 <div>
-                  Status: <span className="text-success">{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
+                  Status: <span className={statusText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
-              <Flex p={2} overflow='hidden' w='100%' h='100%'>
-                <Flex p={1} className='card-body' overflow='scroll' borderRadius={8} w='100%' bgColor='gray.800'>
-                  {
-                    !resultPanel ? <></> :
-                    <ReactJson src={resultPanel} indentWidth={1} theme='colors' enableClipboard={false} iconStyle='square' displayDataTypes={false} style={{backgroundColor: '#1A202C'}} name={false} collapseStringsAfterLength={20}/>
-                  }
+              <Flex p={2} overflow="hidden" w="100%" h="100%">
+                <Flex p={1} className="card-body" overflow="scroll" borderRadius={8} w="100%" bgColor="gray.800">
+                  {!resultPanel ? (
+                    <></>
+                  ) : (
+                    <ReactJson src={resultPanel} indentWidth={1} theme="colors" enableClipboard={false} iconStyle="square" displayDataTypes={false} style={{ backgroundColor: "#1A202C" }} name={false} collapseStringsAfterLength={20} />
+                  )}
                 </Flex>
               </Flex>
+              {/* <div className="card-body pb-2 pt-0 px-2 text-wrap">
+                <textarea
+                  className="form-control shadow-none border-0 border-0 text-white body-raw"
+                  cols="30"
+                  style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c" }}
+                  defaultValue={typeof resultPanel === "object" ? JSON.stringify(resultPanel, null, 2) : resultPanel}
+                  disabled
+                ></textarea>
+              </div> */}
             </div>
           </Flex>
         </Flex>

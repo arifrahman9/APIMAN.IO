@@ -47,6 +47,7 @@ export default function HomePage() {
   const submitCollection = () => {
     dispatch(postCollection(inputCollection))
       .then((response) => {
+        console.log(response, ">>>>home");
         setInputCollection({
           name: "",
         });
@@ -796,20 +797,20 @@ export default function HomePage() {
                   Status: <span className={historyText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
-              {/* <div className="card-body pb-2 pt-0 px-2 text-wrap mx-2 mb-2" style={{ overflowY: "auto", overflowX: "auto", backgroundColor: "#1a202c", borderRadius: "10px" }}>
+              <div className="card-body pb-2 pt-0 px-2 text-wrap mx-2 mb-2" style={{ overflowY: "auto", overflowX: "auto", backgroundColor: "#1a202c", borderRadius: "10px" }}>
                 {!resultPanel ? (
                   <div></div>
                 ) : (
                   <ReactJson src={resultPanel} indentWidth={1} theme="colors" enableClipboard={false} iconStyle="square" collapseStringsAfterLength={50} displayDataTypes={false} style={{ width: "20%", backgroundColor: "#1a202c" }} />
-                )} */}
-              <div className="card-body pb-2 pt-0 px-2 text-wrap">
+                )}
+                {/* <div className="card-body pb-2 pt-0 px-2 text-wrap">
                 <textarea
                   className="form-control shadow-none border-0 border-0 text-white body-raw"
                   cols="30"
                   style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c" }}
                   defaultValue={typeof resultPanel === "object" ? JSON.stringify(resultPanel, null, 2) : resultPanel}
                   disabled
-                ></textarea>
+                ></textarea> */}
               </div>
             </div>
           </Flex>

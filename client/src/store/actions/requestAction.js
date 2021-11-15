@@ -1,5 +1,5 @@
 import axios from "axios";
-const server = process.env.REACT_APP_BASE_URL;
+import { server } from "../../apis/server";
 
 export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
   const access_token = localStorage.getItem("access_token");

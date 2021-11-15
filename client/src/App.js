@@ -1,12 +1,10 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch } from "react-router-dom";
 import "./assets/css/sb-admin-2.min.css";
 import PrivateLogin from "./navigation-guards/PrivateLogin";
 import PrivatePage from "./navigation-guards/PrivatePage";
 import Login from "./views/Login";
 import Register from "./views/Register";
-import Home from "./views/Home";
-
 import ProfilePage from "./views/ProfilePage";
 import ForgotPassword from "./views/ForgotPassword";
 import ChangePassword from "./views/ChangePassword";

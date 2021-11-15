@@ -17,7 +17,7 @@
 }
 
 .card-body::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
+  background-color: #f56e56;
   border-radius: 20px;
 }
 

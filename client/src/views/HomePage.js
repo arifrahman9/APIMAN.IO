@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Flex, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { faAngleRight, faMinus, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCollections } from "../store/actions/collectionAction";
+import { fetchCollections, postCollection } from "../store/actions/collectionAction";
 import { addNewHistory, addToCollections, deleteHistory, fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
@@ -12,7 +12,6 @@ import NavbarNew from "../components/Navbar";
 export default function HomePage() {
   // Buat itung container
   // Chakra layout start
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const navbar = useRef(null);
   const bodyHtml = useRef(null);
   const [containerHeight, setConteinerHeight] = useState(0);
@@ -33,6 +32,22 @@ export default function HomePage() {
     method: "get",
     url: "",
   });
+  const [inputCollection, setInputCollection] = useState({
+    name: "",
+  });
+
+  const changeInputCollection = (e) => {
+    const { value } = e.target;
+    setInputCollection({
+      name: value,
+    });
+  };
+
+  const submitCollection = () => {
+    dispatch(postCollection(inputCollection))
+      .then((response) => {})
+      .catch((err) => {});
+  };
 
   const [hoverStatus, setHoverStatus] = useState({ idx: -1 });
   const toggleHover = (idx) => {
@@ -41,39 +56,21 @@ export default function HomePage() {
     });
   };
 
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.keyCode === 13 && e.ctrlKey) {
-        console.log("CTRL + ENTER");
-        setMethodUrl(inputMethodUrl);
-        setInputParams(inputParams);
-        setInputHeaders(inputHeaders);
-        setInputBodyForms(inputBodyForms);
-        submitHandler();
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    return function cleanup() {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
   const { userdata } = useSelector((state) => state.loginReducer);
-  const { histories } = useSelector((state) => state.historyReducer);
+  const { histories, isLoading: loadingHistory } = useSelector((state) => state.historyReducer);
   const { collections } = useSelector((state) => state.collectionReducer);
 
   const historyText = (method) => {
-    if (method === "get") {
+    if (method === "get" || method === "2") {
       return "text-success";
-    } else if (method === "post") {
+    } else if (method === "post" || method === "5") {
       return "text-warning";
     } else if (method === "put") {
       return "text-primary";
-    } else if (method === "patch") {
-      return "text-info";
-    } else if (method === "delete") {
+    } else if (method === "delete" || method === "4") {
       return "text-danger";
+    } else {
+      return "text-info";
     }
   };
 
@@ -167,6 +164,7 @@ export default function HomePage() {
   };
 
   const [inputAddHistory, setInputAddHistory] = useState({ historyId: "", collectionId: "" });
+  const [modalFooter, setmodalFooter] = useState(false);
 
   const submitHandler = () => {
     let headerSend = undefined;
@@ -206,6 +204,25 @@ export default function HomePage() {
       });
   };
 
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.keyCode === 13 && e.ctrlKey) {
+        console.log("CTRL + ENTER");
+        console.log(inputMethodUrl);
+        // setMethodUrl(inputMethodUrl);
+        // setInputParams(inputParams);
+        // setInputHeaders(inputHeaders);
+        // setInputBodyForms(inputBodyForms);
+        // submitHandler();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return function cleanup() {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <Flex ref={bodyHtml} bgColor="gray.800" height="100vh" width="100vw" flexDirection="column" overflow="hidden">
       <Flex bgColor="gray.700" ref={navbar} borderRadius="0 0 20px 20px">
@@ -221,12 +238,12 @@ export default function HomePage() {
                   <ul className="nav nav-pills nav-fill" id="pills-tab" role="tablist">
                     <li className="nav-item">
                       <a className="nav-link active text-white" id="pills-collection-tab" data-toggle="pill" href="#pills-collection" role="tab" aria-controls="pills-collection" aria-selected="true">
-                        Collection
+                        <div class="btn-group">Collections</div>
                       </a>
                     </li>
                     <li className="nav-item">
                       <a className="nav-link text-white" id="pills-request-tab" data-toggle="pill" href="#pills-request" role="tab" aria-controls="pills-request" aria-selected="true">
-                        Request
+                        Import Request
                       </a>
                     </li>
                     <li className="nav-item">
@@ -237,13 +254,37 @@ export default function HomePage() {
                   </ul>
                 </nav>
               </div>
-              <div className="card-body py-2 px-3 text-wrap" style={{ overflowY: "auto" }}>
+              <div className="card-body py-2 px-3 text-wrap" style={{ overflowY: "auto", overflowX: "hidden" }}>
                 <div className="tab-content" id="pills-tabContent">
                   <div className="tab-pane fade show active" id="pills-collection" role="tabpanel" aria-labelledby="pills-collection-tab">
-                    {/* <button className="btn btn-primary btn-sm btn-block rounded-pill fixed">Add New</button> */}
-                    <div style={{ height: "100%" }}>
+                    <form
+                      className="row px-0 text-center"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        submitCollection();
+                      }}
+                    >
+                      <div className="col-9 pr-0">
+                        <input
+                          type="text"
+                          className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
+                          placeholder="New collection name"
+                          style={{ color: "#212121", borderRadius: 0 }}
+                          name="name"
+                          autoComplete="off"
+                          defaultValue={inputCollection.name}
+                          onChange={changeInputCollection}
+                        />
+                      </div>
+                      <div className="col-3 px-0">
+                        <button href="#" type="submit" className="btn btn-danger btn-sm mb-2 text-center text-decoration-none rounded-pill">
+                          Add New
+                        </button>
+                      </div>
+                    </form>
+                    <Flex flex={1} flexDirection="column" width="100%" height="100%">
                       {collections.length === 0 ? (
-                        <p>You didnt search anything yet</p>
+                        <p>You dont have any collection yet</p>
                       ) : (
                         collections.map((collection, idx) => {
                           return (
@@ -306,13 +347,18 @@ export default function HomePage() {
                           );
                         })
                       )}
-                    </div>
+                    </Flex>
+                    {/* <div className="h-100" style={{ backgroundColor: "#000000", overflowY: "auto" }}>
+                      
+                    </div> */}
                   </div>
                   <div className="tab-pane fade show" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
                     Request
                   </div>
                   <div className="tab-pane fade text-wrap" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
-                    {histories.length === 0 ? (
+                    {loadingHistory ? (
+                      <h1>Sedang loading history</h1>
+                    ) : histories.length === 0 ? (
                       <p>You didnt search anything yet</p>
                     ) : (
                       histories.map((history, idx) => {
@@ -404,19 +450,19 @@ export default function HomePage() {
               <div className="modal-body mx-3 my-0" style={{ backgroundColor: "#1a202c", borderRadius: "20px" }}>
                 <h1 className="mb-2">Save to</h1>
                 <hr style={{ border: "1px solid white" }} />
-                <div className="card-body p-0 mt-2" style={{ maxHeight: "40vh", minHeight: "40vh", overflow: "auto" }}>
+                <div className="card-body p-0 mt-2" style={{ maxHeight: "40vh", minHeight: "40vh", overflowY: "auto", overflowX: "hidden" }}>
                   {collections.map((collection) => {
                     return (
                       <div
                         key={collection._id}
-                        className="mb-1 py-2 px-3"
+                        className="mb-1"
                         style={hoverStatus.idx === collection._id || inputAddHistory.collectionId === collection._id ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}}
                         onMouseEnter={() => toggleHover(collection._id)}
                         onMouseLeave={() => toggleHover(-1)}
                       >
                         <a
                           href="#"
-                          className="text-decoration-none text-white row"
+                          className="text-decoration-none text-white row py-2 px-3"
                           onClick={(e) => {
                             e.preventDefault();
                             setInputAddHistory({
@@ -433,7 +479,20 @@ export default function HomePage() {
                 </div>
                 <div id="messageAddHistory" />
               </div>
-              <div className="modal-footer border-0" id="modalCollection">
+              <div className={`${modalFooter ? "" : "d-none"} modal-footer border-0`}>
+                <button
+                  data-dismiss="modal"
+                  class="btn btn-danger rounded-pill"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("messageAddHistory").innerHTML = "";
+                    setmodalFooter(false);
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+              <div className={`${!modalFooter ? "" : "d-none"} modal-footer border-0`}>
                 <button
                   type="button"
                   className="btn btn-outline-secondary rounded-pill"
@@ -455,14 +514,15 @@ export default function HomePage() {
                         const index = histories.indexOf(response);
                         response["CollectionId"] = inputAddHistory.collectionId;
                         histories.splice(index, 1, response);
-                        document.getElementById("messageAddHistory").innerHTML = `<span class="text-success">Success added to collection</span>`;
-                        document.getElementById("modalCollection").innerHTML = `<button data-dismiss="modal" class="btn btn-danger rounded-pill">Close</button>`;
                         setInputAddHistory({});
+                        setmodalFooter(true);
+                        document.getElementById("messageAddHistory").innerHTML = `<span class="text-success">Success added to collection</span>`;
                       })
                       .catch((err) => {
-                        document.getElementById("messageAddHistory").innerHTML = `<span class="text-danger">Failed added to collection</span>`;
                         console.log(err);
                         setInputAddHistory({});
+                        setmodalFooter(true);
+                        document.getElementById("messageAddHistory").innerHTML = `<span class="text-danger">Failed added to collection</span>`;
                       });
                   }}
                   disabled={inputAddHistory.collectionId === ""}
@@ -696,7 +756,7 @@ export default function HomePage() {
                         className="form-control shadow-none border-0 body-raw bg-secondary"
                         cols="30"
                         rows="9"
-                        style={{ color: "#212121", resize: "none", height: "100%" }}
+                        style={{ color: "#212121", resize: "none", height: "100%", fontSize: "10pt" }}
                         onChange={changeInputBodyRaw}
                         value={inputBodyRaw}
                       ></textarea>
@@ -718,15 +778,15 @@ export default function HomePage() {
                   <span></span>
                 </div>
                 <div>
-                  Status: <span className="text-success">{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
+                  Status: <span className={historyText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
               <div className="card-body pb-2 pt-0 px-2" style={{ overflow: "auto" }}>
                 <textarea
-                  className="form-control shadow-none border-0 bg-secondary border-0 text-dark body-raw"
+                  className="form-control shadow-none border-0 border-0 text-white body-raw"
                   cols="30"
-                  style={{ resize: "none", height: "100%", fontSize: "10pt" }}
-                  defaultValue={JSON.stringify(resultPanel, null, 2)}
+                  style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c" }}
+                  defaultValue={typeof resultPanel === "object" ? JSON.stringify(resultPanel, null, 2) : resultPanel}
                   disabled
                 ></textarea>
               </div>

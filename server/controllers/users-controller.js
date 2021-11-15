@@ -135,8 +135,8 @@ class UsersController {
       const transport = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "wutfuuu@gmail.com",
-          pass: "oranggila",
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD,
         },
       })
 
@@ -145,11 +145,10 @@ class UsersController {
         from: "wutfuuu@gmail.com",
         subject: "APIMAN password reset",
         text:
-          "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
-          "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-          "http://" +
-          req.headers.host +
-          "/reset/" +
+          'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          process.env.CLIENT_URL +
+          '/reset/' +
           token +
           "\n\n" +
           "If you did not request this, please ignore this email and your password will remain unchanged.\n",

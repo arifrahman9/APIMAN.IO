@@ -1,11 +1,10 @@
-const mongodb = require('mongodb');
-const { getDatabase } = require('../config/mongo');
+const mongodb = require("mongodb");
+const { getDatabase } = require("../config/mongo");
 
 class CollectionsModel {
   static async getCollectionsByUserId(userId) {
-    console.log(userId);
     const db = getDatabase();
-    const collectionsCollection = db.collection('collections');
+    const collectionsCollection = db.collection("collections");
     const collections = await collectionsCollection
       .find({
         UserId: userId,
@@ -17,7 +16,7 @@ class CollectionsModel {
 
   static async addNewCollection(UserId, name) {
     const db = getDatabase();
-    const collectionsCollection = db.collection('collections');
+    const collectionsCollection = db.collection("collections");
     const collection = await collectionsCollection.insertOne({
       name,
       UserId,
@@ -28,7 +27,7 @@ class CollectionsModel {
 
   static async getCollectionById(id) {
     const db = getDatabase();
-    const collectionsCollection = db.collection('collections');
+    const collectionsCollection = db.collection("collections");
     const collection = await collectionsCollection.findOne({
       _id: mongodb.ObjectId(id),
     });
@@ -38,7 +37,7 @@ class CollectionsModel {
 
   static async updateCollectionName(id, name) {
     const db = getDatabase();
-    const collectionsCollection = db.collection('collections');
+    const collectionsCollection = db.collection("collections");
     await collectionsCollection.updateOne(
       {
         _id: mongodb.ObjectId(id),
@@ -59,7 +58,7 @@ class CollectionsModel {
 
   static async deleteCollectionById(id) {
     const db = getDatabase();
-    const collectionsCollection = db.collection('collections');
+    const collectionsCollection = db.collection("collections");
 
     const collectionToDelete = await collectionsCollection.findOne({
       _id: mongodb.ObjectId(id),
@@ -74,12 +73,8 @@ class CollectionsModel {
 
   static async getLastInsertedCollection() {
     const db = getDatabase();
-    const collectionsCollection = db.collection('collections');
-    const collection = await collectionsCollection
-      .find({})
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
+    const collectionsCollection = db.collection("collections");
+    const collection = await collectionsCollection.find({}).sort({ _id: -1 }).limit(1).toArray();
 
     return collection;
   }

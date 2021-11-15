@@ -36,6 +36,7 @@ export default function ForgotPassword() {
           setIsSubmitted(true)
         })
         .catch(err => {
+          console.log(err)
           if (!toast.isActive('error123')) {
             toast({
               id: 'error123',

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { SET_USERDATA } from "../actionType";
-const server = process.env.REACT_APP_BASE_URL;
+import { server } from "../../apis/server";
 
 export function setUserdata(payload) {
   return {

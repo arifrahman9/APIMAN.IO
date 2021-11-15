@@ -1,14 +1,14 @@
-const mongodb = require('mongodb');
-const { getDatabase } = require('../config/mongo');
+const mongodb = require("mongodb");
+const { getDatabase } = require("../config/mongo");
 // const { getDatabase } = require('../config/mongo-test');
-const { hashPassword } = require('../helpers/bcrypt');
-const crypto = require('crypto');
+const { hashPassword } = require("../helpers/bcrypt");
+const crypto = require("crypto");
 
 class UsersModel {
   static async register(reqBody) {
     const { username, email, password, firstName, lastName } = reqBody;
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const user = await usersCollection.insertOne({
       username,
@@ -23,9 +23,8 @@ class UsersModel {
 
   static async login(reqBody) {
     const { email } = reqBody;
-    console.log(reqBody);
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const response = await usersCollection.findOne({
       $or: [{ email }, { username: email }],
@@ -36,7 +35,7 @@ class UsersModel {
 
   static async getLoggedInUser(id) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const foundUser = await usersCollection.findOne({
       _id: mongodb.ObjectId(id),
@@ -47,7 +46,7 @@ class UsersModel {
 
   static async findUserByUsername(username) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const response = await usersCollection.findOne({
       username,
@@ -58,7 +57,7 @@ class UsersModel {
 
   static async findUserByEmail(email) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const response = await usersCollection.findOne({
       email,
@@ -69,24 +68,20 @@ class UsersModel {
 
   static async getLastInsertedUser() {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
-    const user = await usersCollection
-      .find({})
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
+    const usersCollection = db.collection("users");
+    const user = await usersCollection.find({}).sort({ _id: -1 }).limit(1).toArray();
 
     return user;
   }
 
   static async loginGoogle(reqBody) {
-    console.log(reqBody, 'google login');
+    console.log(reqBody, "google login");
     const emailFromGoogle = reqBody.email;
     const nameFromGoogle = reqBody.name;
     const firstNameFromGoogle = reqBody.firstName;
     const lastNameFromGoogle = reqBody.lastName;
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     let findOrCreate = emailFromGoogle
       ? usersCollection.findOne({ email: emailFromGoogle })
@@ -102,15 +97,15 @@ class UsersModel {
 
   static async setResetPasswordToken(user) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const token = await new Promise((resolve, reject) => {
       crypto.randomBytes(20, (err, buf) => {
         if (err) {
-          reject('error generating token');
+          reject("error generating token");
         }
 
-        resolve(buf.toString('hex'));
+        resolve(buf.toString("hex"));
       });
     });
 
@@ -131,7 +126,7 @@ class UsersModel {
 
   static async findUserByToken(token) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     const user = await usersCollection.findOne({
       resetPasswordToken: token,
@@ -145,7 +140,7 @@ class UsersModel {
 
   static async changeUserPassword(user, newPassword) {
     const db = getDatabase();
-    const usersCollection = db.collection('users');
+    const usersCollection = db.collection("users");
 
     await usersCollection.updateOne(
       {

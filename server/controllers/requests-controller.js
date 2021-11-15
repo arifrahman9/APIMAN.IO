@@ -1,7 +1,8 @@
-const { default: axios } = require("axios")
-const process = require("../helpers/process-request")
-const HistoriesModel = require("../models/histories-model")
-const RequestsModel = require("../models/requests-model")
+const { default: axios } = require('axios');
+const redis = require('../config/redis');
+const process = require('../helpers/process-request');
+const HistoriesModel = require('../models/histories-model');
+const RequestsModel = require('../models/requests-model');
 
 class RequestsController {
   static async requestApi(req, res) {
@@ -20,7 +21,7 @@ class RequestsController {
         if (!bodyIsRaw) {
           bodies = process(bodies)
         } else {
-          bodies = JSON.parse(bodies)
+          // bodies = JSON.parse(bodies);
         }
       }
 
@@ -45,6 +46,9 @@ class RequestsController {
       const response = await axios(axiosOptions)
 
       const newAddedHistory = await HistoriesModel.addNewHistory(url, params, headers, bodies, method, req.user.id)
+
+      await redis.del('histories');
+      await redis.del('historiesUserId');
 
       res.status(200).json({
         status: `${response.request.res.statusCode} ${response.request.res.statusMessage}`,

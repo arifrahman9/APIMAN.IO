@@ -44,7 +44,7 @@ export default function Login() {
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
-      <div className="col-xl-5 col-lg-8 col-md-8">
+      <div className="col-5">
         <div className="card o-hidden border-0 shadow-lg text-white" style={{ borderRadius: "20px", backgroundColor: "#2d3748" }}>
           <div className="card-body p-0">
             <div className="p-5">

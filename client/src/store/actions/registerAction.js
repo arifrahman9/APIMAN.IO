@@ -1,5 +1,5 @@
 import axios from "axios";
-const server = process.env.REACT_APP_BASE_URL;
+import { server } from "../../apis/server";
 
 export function postRegister(data) {
   return (dispatch, getState) => {

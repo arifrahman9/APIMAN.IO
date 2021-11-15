@@ -1,20 +1,20 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
 }
 
-const express = require('express');
+const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
-const routes = require('./routes');
-const cors = require('cors');
+const routes = require("./routes");
+const cors = require("cors");
 
-const { connect, getDatabase } = require('./config/mongo');
+const { connect, getDatabase } = require("./config/mongo");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', routes);
+app.use("/", routes);
 
 module.exports = app;
 
@@ -23,3 +23,4 @@ module.exports = app;
 //     console.log(`http://localhost:${PORT}`);
 //   });
 // });
+// test

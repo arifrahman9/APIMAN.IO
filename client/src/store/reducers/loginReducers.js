@@ -2,6 +2,7 @@ import { SET_USERDATA } from "../actionType";
 
 const initialState = {
   userdata: {},
+  isLoading: false,
 };
 
 export default function loginReducer(state = initialState, action) {

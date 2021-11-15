@@ -107,10 +107,25 @@ class HistoriesController {
     }
   }
 
+  static async removeHistoryFromCollection(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const removedHistory = await HistoriesModel.getHistoryById(id);
+      await HistoriesModel.removeCollectionIdByHistoryId(id);
+
+      await redis.del('histories');
+      await redis.del('historiesUserId');
+
+      res.status(200).json(removedHistory);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async deleteHistoryById(req, res, next) {
     try {
       const { id } = req.params;
-      const historiesCache = await redis.get('histories');
 
       const deletedHistory = await HistoriesModel.deleteHistoryById(id);
 

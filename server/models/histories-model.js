@@ -119,6 +119,25 @@ class HistoriesModel {
       }
     );
   }
+
+  static async removeCollectionIdByHistoryId(historyId) {
+    const db = getDatabase();
+    const historiesCollection = db.collection('histories');
+
+    await historiesCollection.updateOne(
+      {
+        _id: mongodb.ObjectId(historyId),
+      },
+      {
+        $unset: {
+          CollectionId: 1,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+  }
 }
 
 module.exports = HistoriesModel;

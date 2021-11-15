@@ -567,6 +567,43 @@ _Response (200)_
 }
 ```
 
+### POST /histories/collection-remove/:id
+
+> Remove history from collection
+
+_Request Header_
+
+```
+{
+  "access_token": "<access_token>"
+}
+```
+
+_Request Body_
+
+```
+none
+```
+
+_Response (200)_
+
+```
+{
+    "_id": "618f932a1bc736747d752dd8",
+    "method": "GET",
+    "url": "https://darwin-blog-challenge-1-p2.herokuapp.com/posts",
+    "headers": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJlbWFpbDJAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjM2Nzk1ODYyfQ.fHc7RcbOY7Dqqde12_j9IupjuVYtmxOIZ7GBY1UyNWU"
+    },
+    "params": null,
+    "bodies": null,
+    "UserId": "618f93291bc736747d752dd6",
+    "createdAt": "2021-11-13T10:27:54.905Z",
+    "updatedAt": "2021-11-13T10:27:54.905Z",
+    "CollectionId": "618d383165ec2535246d32a7"
+}
+```
+
 ### GET /histories/:id
 
 > Get history by ID

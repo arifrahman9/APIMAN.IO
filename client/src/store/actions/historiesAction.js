@@ -1,7 +1,6 @@
 import axios from "axios";
 import { SET_HISTORIES, SET_HISTORIES_LOADING } from "../actionType";
-const server = process.env.REACT_APP_BASE_URL;
-const access_token = localStorage.getItem("access_token");
+import { server } from "../../apis/server";
 
 export function setHistories(payload) {
   return {
@@ -18,6 +17,7 @@ export function loadingHistory(payload) {
 }
 
 export function fetchHistories() {
+  const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
     dispatch(loadingHistory(true));
     return new Promise((resolve, reject) => {
@@ -41,6 +41,7 @@ export function fetchHistories() {
 }
 
 export function deleteHistory(id) {
+  const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios({
@@ -51,7 +52,6 @@ export function deleteHistory(id) {
         },
       })
         .then((result) => {
-          console.log(result);
           const newHistory = getState().historyReducer.histories.filter((history) => history._id !== id);
           dispatch(setHistories(newHistory));
         })
@@ -71,6 +71,7 @@ export function addNewHistory(addedHistory) {
 }
 
 export function addToCollections(data) {
+  const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       axios({

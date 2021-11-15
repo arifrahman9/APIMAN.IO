@@ -70,7 +70,7 @@ export default function NavbarNew(props) {
         <a className="dropdown-toggle text-decoration-none text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Hello, {userdata.firstName}&nbsp;
         </a>
-        <div className="dropdown-menu dropdown-menu-right " aria-labelledby="navbarDropdown" style={{ backgroundColor: "#2d3748" }}>
+        <div className="dropdown-menu dropdown-menu-right" style={{ backgroundColor: "#2d3748" }}>
           <Link className="dropdown-item text-white" to="/profile">
             Profile
           </Link>

@@ -286,6 +286,38 @@ _Response (200)_
 }
 ```
 
+### POST /login-google
+
+_Request Header_
+
+```
+none
+```
+
+_Request Body_
+
+<pre>
+{
+  "token": "<</>token from google</>>",
+}
+</pre>
+
+_Response (200)_
+
+<pre>
+{
+  "access_token": "<</>access_token</>>",
+}
+</pre>
+
+_Response ( 500 - Internal Server Error )_
+
+<pre>
+{
+  "error": "Internal Server Error"
+}
+</pre>
+
 ### POST /register
 
 _Request Header_
@@ -805,168 +837,168 @@ _Response (200)_
 
 ### GET / results
 
-Request Headers
+_Request Header_
 
 <pre> 
-    {
-        "access_token": "<</>your access token</>>"
-    } 
+{
+    "access_token": "<</>your access token</>>"
+} 
 </pre>
 
-Request Body
+_Request Body_
 
-<pre> not needed </pre>
+<pre> none </pre>
 
-Response ( 200 - OK )
+_Response (200)_
 
 <pre>
-    {
-        "_id": "<</>result_id</>>",
-        "content": "<</>result_content</>>",
-        "status": "<</>result_status</>>",
-        "code": "<</>result_code</>>",
-        "responseTime": "<</>result_responseTime</>>",
-        "responseSize": "<</>result_responseSize</>>",
-        "UserId": "<</>id from user</>>"
-    }
+{
+    "_id": "<</>result_id</>>",
+    "content": "<</>result_content</>>",
+    "status": "<</>result_status</>>",
+    "code": "<</>result_code</>>",
+    "responseTime": "<</>result_responseTime</>>",
+    "responseSize": "<</>result_responseSize</>>",
+    "UserId": "<</>id from user</>>"
+}
 </pre>
 
-Response ( 500 - Internal Server Error )
+_Response ( 500 - Internal Server Error )_
 
 <pre>
-    {
-        "error": "Internal Server Error"
-    }
+{
+    "error": "Internal Server Error"
+}
 </pre>
 
 ### POST / results
 
-Request Headers
+_Request Header_
 
 <pre> 
-    {
-        "access_token": "<</>your access token</>>"
-    } 
+{
+    "access_token": "<</>your access token</>>"
+} 
 </pre>
 
-Request Body
+_Request Body_
 
 <pre> 
-    {
-        "content": "<</>result_content</>>",
-        "status": "<</>result_status</>>",
-        "code": "<</>result_code</>>",
-        "responseTime": "<</>result_responseTime</>>",
-        "responseSize": "<</>result_responseSize</>>",
-    } 
+{
+    "content": "<</>result_content</>>",
+    "status": "<</>result_status</>>",
+    "code": "<</>result_code</>>",
+    "responseTime": "<</>result_responseTime</>>",
+    "responseSize": "<</>result_responseSize</>>",
+} 
 </pre>
 
-Response ( 201 - Add New Result )
+_Response ( 201 - Add New Result )_
 
 <pre>
-    {
-        "_id": "<</>new_result_id</>>",
-        "content": "<</>new_result_content</>>",
-        "status": "<</>new_result_status</>>",
-        "code": "<</>new_result_code</>>",
-        "responseTime": "<</>new_result_responseTime</>>",
-        "responseSize": "<</>new_result_responseSize</>>",
-        "UserId": "<</>id from user</>>"
-    }
+{
+    "_id": "<</>new_result_id</>>",
+    "content": "<</>new_result_content</>>",
+    "status": "<</>new_result_status</>>",
+    "code": "<</>new_result_code</>>",
+    "responseTime": "<</>new_result_responseTime</>>",
+    "responseSize": "<</>new_result_responseSize</>>",
+    "UserId": "<</>id from user</>>"
+}
 </pre>
 
-Response ( 500 - Internal Server Error )
+_Response ( 500 - Internal Server Error )_
 
 <pre>
-    {
-        "error": "Internal Server Error"
-    }
+{
+    "error": "Internal Server Error"
+}
 </pre>
 
 ### GET / results / :id
 
-Request Headers
+_Request Header_
 
 <pre> 
-    {
-        "access_token": "<</>your access token</>>"
-    } 
+{
+    "access_token": "<</>your access token</>>"
+} 
 </pre>
 
-Request Params
+_Request Params_
 
 <pre> 
-    {
-        "id": "<</>id from params</>>"
-    } 
+{
+    "id": "<</>id from params</>>"
+} 
 </pre>
 
-Request Body
+_Request Body_
 
-<pre> not needed </pre>
+<pre> none </pre>
 
-Response ( 200 - OK )
+_Response (200)_
 
 <pre>
-    {
-        "_id": "<</>result_id</>>",
-        "content": "<</>result_content</>>",
-        "status": "<</>result_status</>>",
-        "code": "<</>result_code</>>",
-        "responseTime": "<</>result_responseTime</>>",
-        "responseSize": "<</>result_responseSize</>>",
-        "UserId": "<</>id from user</>>"
-    }
+{
+    "_id": "<</>result_id</>>",
+    "content": "<</>result_content</>>",
+    "status": "<</>result_status</>>",
+    "code": "<</>result_code</>>",
+    "responseTime": "<</>result_responseTime</>>",
+    "responseSize": "<</>result_responseSize</>>",
+    "UserId": "<</>id from user</>>"
+}
 </pre>
 
-Response ( 500 - Internal Server Error )
+_Response ( 500 - Internal Server Error )_
 
 <pre>
-    {
-        "error": "Internal Server Error"
-    }
+{
+    "error": "Internal Server Error"
+}
 </pre>
 
 ### DELETE / results / :id
 
-Request Headers
+_Request Header_
 
 <pre> 
-    {
-        "access_token": "<</>your access token</>>"
-    } 
+{
+    "access_token": "<</>your access token</>>"
+} 
 </pre>
 
-Request Params
+_Request Params_
 
 <pre> 
-    {
-        "id": "<</>id from params</>>"
-    } 
+{
+    "id": "<</>id from params</>>"
+} 
 </pre>
 
-Request Body
+_Request Body_
 
-<pre> not needed </pre>
+<pre> none </pre>
 
-Response ( 200 - Deleted )
+_Response (200)_
 
 <pre>
-    {
-        "_id": "<</>deleted_result_id</>>",
-        "content": "<</>deleted_result_content</>>",
-        "status": "<</>deleted_result_status</>>",
-        "code": "<</>deleted_result_code</>>",
-        "responseTime": "<</>deleted_result_responseTime</>>",
-        "responseSize": "<</>deleted_result_responseSize</>>",
-        "UserId": "<</>id from user</>>"
-    }
+{
+    "_id": "<</>deleted_result_id</>>",
+    "content": "<</>deleted_result_content</>>",
+    "status": "<</>deleted_result_status</>>",
+    "code": "<</>deleted_result_code</>>",
+    "responseTime": "<</>deleted_result_responseTime</>>",
+    "responseSize": "<</>deleted_result_responseSize</>>",
+    "UserId": "<</>id from user</>>"
+}
 </pre>
 
-Response ( 500 - Internal Server Error )
+_Response ( 500 - Internal Server Error )_
 
 <pre>
-    {
-        "error": "Internal Server Error"
-    }
+{
+    "error": "Internal Server Error"
+}
 </pre>

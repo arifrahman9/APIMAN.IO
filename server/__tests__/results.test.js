@@ -238,7 +238,7 @@ describe("POST /results", () => {
       .send({})
       .then((response) => {
         expect(response.status).toBe(401)
-        expect(response.body).toHaveProperty("message", "result field cannot be empty")
+        expect(response.body).toHaveProperty("message", "Result field cannot be empty")
         done()
       })
       .catch((err) => done(err))

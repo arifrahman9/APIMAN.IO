@@ -23,7 +23,6 @@ class UsersModel {
 
   static async login(reqBody) {
     const { email } = reqBody;
-    console.log(reqBody);
     const db = getDatabase();
     const usersCollection = db.collection('users');
 

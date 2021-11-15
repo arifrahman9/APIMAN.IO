@@ -4,7 +4,7 @@ import { ViewIcon, UnlockIcon, ViewOffIcon, ArrowBackIcon, CheckIcon } from "@ch
 import { MdWarning } from "react-icons/md";
 import { useState } from "react";
 import axios from "axios";
-const server = process.env.REACT_APP_BASE_URL;
+import { server } from "../apis/server";
 
 export default function ChangePassword() {
   const params = useParams();

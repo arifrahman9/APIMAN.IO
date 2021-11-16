@@ -6,3 +6,5 @@ export const SET_HISTORIES = "histories/setHistories";
 export const SET_HISTORIES_LOADING = "histories/setLoading";
 export const SET_RESULTS = "results/setResults";
 export const SET_RESULTS_LOADING = "results/setLoading";
+export const SET_REQUESTS = "requests/setRequest";
+export const SET_REQUESTS_LOADING = "requests/setLoading";

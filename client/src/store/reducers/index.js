@@ -1,14 +1,18 @@
 import { combineReducers } from "redux";
+import collectionReducer from "./collectionReducer";
 import loginReducer from "./loginReducers";
 import historyReducer from "./historyReducer";
-import collectionReducer from "./collectionReducer";
-import profileReducer from "./profileReducers"
+import profileReducer from "./profileReducers";
+import resultReducer from "./resultReducer";
+import requestReducer from "./requestReducer";
 
 const reducers = combineReducers({
-  loginReducer,
-  historyReducer,
   collectionReducer,
-  profileReducer
+  historyReducer,
+  loginReducer,
+  profileReducer,
+  resultReducer,
+  requestReducer,
 });
 
 export default reducers;

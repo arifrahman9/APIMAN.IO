@@ -1,10 +1,9 @@
-import React, { useState } from "react"
-import { Link, useHistory } from "react-router-dom"
-import { useDispatch } from "react-redux"
-import { login } from "../store/actions/loginAction"
-
-// google login
-import GoogleLogin from "react-google-login"
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import GoogleLogin from "react-google-login";
+import { login } from "../store/actions/loginAction";
+import { server } from "../apis/server";
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -13,12 +12,12 @@ export default function Login() {
   const [inputLogin, setInputLogin] = useState({
     email: "",
     password: "",
-  })
+  });
 
   const [error, setError] = useState({
     status: false,
     message: "",
-  })
+  });
 
   const changeInputLoginHandler = (e) => {
     const { value, name } = e.target
@@ -47,7 +46,7 @@ export default function Login() {
 
   // google login
   const handleGoogleLogin = async (googleData) => {
-    const res = await fetch("http://localhost:3001/login-google", {
+    const res = await fetch(`${server}/login-google`, {
       method: "POST",
       body: JSON.stringify({
         token: googleData.tokenId,

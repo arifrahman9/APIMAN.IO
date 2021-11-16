@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Flex } from "@chakra-ui/react";
-import { faAngleRight, faMinus, faPencilAlt, faPlus, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDropzone } from "react-dropzone";
+import { Flex } from "@chakra-ui/react";
+import { faAngleRight, faMinus, faPencilAlt, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { deleteCollection, fetchCollections, patchCollection, postCollection } from "../store/actions/collectionAction";
 import { addNewHistory, addToCollections, deleteHistory, deleteHistoryfromCollection, fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
-import { postRequest } from "../store/actions/requestAction";
+import { deleteRequest, fetchRequests, importRequest, postRequest } from "../store/actions/requestAction";
 import Navbar from "../components/Navbar";
 import ReactJson from "react-json-view";
 import { postResult } from "../store/actions/resultAction";
@@ -23,6 +24,21 @@ export default function HomePage() {
     setConteinerHeight(bodyHtml.current.offsetHeight - navbar.current.offsetHeight);
   }, []);
   // Chakra layout end
+
+  const onDrop = useCallback((acceptedFiles) => {
+    for (const request of acceptedFiles) {
+      dispatch(importRequest(request));
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive, isDragAccept, fileRejections } = useDropzone({ onDrop, accept: "application/json" });
+
+  const fileRejectionItems = fileRejections.map(({ file, errors }) => {
+    console.log(file.path);
+    errors.map((e) => {
+      console.log(e.message);
+    });
+  });
 
   const dispatch = useDispatch();
   const [resultHeader, setResultHeader] = useState({
@@ -69,6 +85,7 @@ export default function HomePage() {
   const { userdata } = useSelector((state) => state.loginReducer);
   const { histories, isLoading: loadingHistory } = useSelector((state) => state.historyReducer);
   const { collections } = useSelector((state) => state.collectionReducer);
+  const { requests } = useSelector((state) => state.requestReducer);
 
   const historyText = (method) => {
     if (method === "get") {
@@ -112,6 +129,7 @@ export default function HomePage() {
     dispatch(fetchUserdata());
     dispatch(fetchHistories());
     dispatch(fetchCollections());
+    dispatch(fetchRequests());
   }, []);
 
   const [paramsHeaders, setParamsHeader] = useState("params");
@@ -150,7 +168,6 @@ export default function HomePage() {
   };
 
   const [body, setBody] = useState("form");
-
   const [inputBodyForms, setInputBodyForms] = useState([{ key: "", value: "" }]);
   const addInputBodyForms = () => {
     setInputBodyForms([...inputBodyForms, { key: "", value: "" }]);
@@ -201,7 +218,6 @@ export default function HomePage() {
 
   const submitNewName = (e) => {
     e.preventDefault();
-    // console.log(inputNewName);
     dispatch(patchCollection(inputNewName))
       .then((response) => {
         console.log(response);
@@ -264,7 +280,7 @@ export default function HomePage() {
         {/* for main left section */}
         <Flex justifyContent="center" alignItems="center" px={1} py={2} h={containerHeight} w={panelWidth}>
           <div className="card o-hidden border-0 text-white " style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
-            <div className="card-header mx-2 pt-2 px-2 pb-2" style={{ backgroundColor: "#2d3748" }}>
+            <div className="card-header mx-2 pt-2 px-2 pb-2 border-0" style={{ backgroundColor: "#2d3748" }}>
               <nav>
                 <ul className="nav nav-pills nav-fill" id="pills-tab" role="tablist">
                   <li className="nav-item">
@@ -438,9 +454,62 @@ export default function HomePage() {
                     )}
                   </Flex>
                 </div>
+                {/* Collections Tab End */}
+
                 <div className="tab-pane fade show" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
-                  Request
+                  <div className="container mb-2" style={{ backgroundColor: "#1A202C", borderRadius: "20px" }}>
+                    <div {...getRootProps({ className: "dropzone py-5 text-center" })}>
+                      <input {...getInputProps()} />
+                      <p>Drag n drop some JSON files here, or click to select files</p>
+                    </div>
+                  </div>
+
+                  {requests.map((request, idx) => {
+                    return (
+                      <div className="row" style={hoverStatus.idx === idx ? { backgroundColor: "rgba(0,0,0,0.5)", borderRadius: "20px" } : {}} onMouseEnter={() => toggleHover(idx)} onMouseLeave={() => toggleHover(-1)}>
+                        <div className="col-10">
+                          <a
+                            href="#"
+                            className="text-decoration-none text-white"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setMethodUrl({
+                                method: request.method,
+                                url: request.url,
+                              });
+                            }}
+                          >
+                            <div className="row mb-1 py-1">
+                              <div className={` ${historyText(request.method.toLowerCase())} col-2 px-1 text-right`}>{request.method.toLowerCase()}</div>
+                              <div className="col-10 px-1">{request.url}</div>
+                            </div>
+                          </a>
+                        </div>
+                        {hoverStatus.idx === idx ? (
+                          <div className="col-2 d-flex align-items-center justify-content-center">
+                            <a
+                              href="#"
+                              className="text-decoration-none text-white"
+                              data-toggle="tooltip"
+                              data-placement="bottom"
+                              title="Delete request"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                dispatch(deleteRequest(request._id));
+                              }}
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </a>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
+
+                {/* History Tabs */}
                 <div className="tab-pane fade text-wrap" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab">
                   {loadingHistory ? (
                     <h1>Sedang loading history</h1>
@@ -683,7 +752,7 @@ export default function HomePage() {
           {/* for main middle top section */}
           <Flex h={containerHeight / 2} w="100%" paddingBottom={1} overflow="hidden">
             <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
-              <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
+              <div className="d-flex card-header border-0 mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
                 <div>
                   <nav>
                     <ul className="nav nav-pills" id="pills-tab" role="tablist">
@@ -728,7 +797,7 @@ export default function HomePage() {
                           className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
                           placeholder="Key"
                           style={{ color: "#212121", borderRadius: 0 }}
-                          defaultValue={inputParam.key}
+                          value={inputParam.key}
                           name="key"
                           autoComplete="off"
                           onChange={(e) => changeInputParams(idx, e)}
@@ -738,7 +807,7 @@ export default function HomePage() {
                           className="form-control form-control-sm shadow-none  shadow-none border-0 rounded-pill bg-secondary mr-1"
                           placeholder="Value"
                           style={{ color: "#212121", borderRadius: 0 }}
-                          defaultValue={inputParam.value}
+                          value={inputParam.value}
                           name="value"
                           autoComplete="off"
                           onChange={(e) => changeInputParams(idx, e)}
@@ -747,13 +816,21 @@ export default function HomePage() {
                           <button
                             className="btn btn-danger btn-sm rounded-circle mb-1"
                             type="button"
-                            disabled={idx === 0}
                             style={{
                               borderRadius: 0,
                             }}
                             onClick={(e) => {
                               e.preventDefault();
-                              removeInputParams(idx);
+                              if (inputParams.length === 1) {
+                                setInputParams([
+                                  {
+                                    key: "",
+                                    value: "",
+                                  },
+                                ]);
+                              } else {
+                                removeInputParams(idx);
+                              }
                             }}
                           >
                             <FontAwesomeIcon icon={faMinus} />
@@ -770,7 +847,7 @@ export default function HomePage() {
                           className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
                           placeholder="Key"
                           style={{ color: "#212121", borderRadius: 0 }}
-                          defaultValue={inputHeader.key}
+                          value={inputHeader.key}
                           name="key"
                           autoComplete="off"
                           onChange={(e) => changeInputHeaders(idx, e)}
@@ -780,7 +857,7 @@ export default function HomePage() {
                           className="form-control form-control-sm shadow-none shadow-none border-0 rounded-pill bg-secondary mr-1"
                           placeholder="Value"
                           style={{ color: "#212121", borderRadius: 0 }}
-                          defaultValue={inputHeader.value}
+                          value={inputHeader.value}
                           name="value"
                           autoComplete="off"
                           onChange={(e) => changeInputHeaders(idx, e)}
@@ -789,13 +866,21 @@ export default function HomePage() {
                           <button
                             className="btn btn-danger btn-sm rounded-circle mb-1"
                             type="button"
-                            disabled={idx === 0}
                             style={{
                               borderRadius: 0,
                             }}
                             onClick={(e) => {
                               e.preventDefault();
-                              removeInputHeaders(idx);
+                              if (inputHeaders.length === 1) {
+                                setInputHeaders([
+                                  {
+                                    key: "",
+                                    value: "",
+                                  },
+                                ]);
+                              } else {
+                                removeInputHeaders(idx);
+                              }
                             }}
                           >
                             <FontAwesomeIcon icon={faMinus} />
@@ -860,6 +945,7 @@ export default function HomePage() {
                         placeholder="Key"
                         style={{ color: "#212121" }}
                         defaultValue={inputBodyForm.key}
+                        value={inputBodyForm.key}
                         name="key"
                         autoComplete="off"
                         onChange={(e) => changeInputBodyForms(idx, e)}
@@ -870,6 +956,7 @@ export default function HomePage() {
                         placeholder="Value"
                         style={{ color: "#212121" }}
                         defaultValue={inputBodyForm.value}
+                        value={inputBodyForm.value}
                         name="value"
                         autoComplete="off"
                         onChange={(e) => changeInputBodyForms(idx, e)}
@@ -878,13 +965,21 @@ export default function HomePage() {
                         <button
                           className="btn btn-danger btn-sm rounded-circle mb-1"
                           type="button"
-                          disabled={idx === 0}
                           style={{
                             borderRadius: 0,
                           }}
                           onClick={(e) => {
                             e.preventDefault();
-                            removeInputBodyForms(idx);
+                            if (inputBodyForms.length === 1) {
+                              setInputBodyForms([
+                                {
+                                  key: "",
+                                  value: "",
+                                },
+                              ]);
+                            } else {
+                              removeInputBodyForms(idx);
+                            }
                           }}
                         >
                           <FontAwesomeIcon icon={faMinus} />
@@ -929,7 +1024,7 @@ export default function HomePage() {
                   Status: <span className={statusText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
-              <Flex p={2} overflow="hidden" w="100%" h="100%">
+              <Flex pb={2} px={2} pt={0} overflow="hidden" w="100%" h="100%">
                 <Flex p={1} className="card-body" overflow="scroll" borderRadius={8} w="100%" bgColor="gray.800">
                   {!resultPanel ? (
                     <></>

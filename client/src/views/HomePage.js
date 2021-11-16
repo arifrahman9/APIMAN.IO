@@ -338,7 +338,7 @@ export default function HomePage() {
                                     className={`text-decoration-none text-white`}
                                     data-toggle="tooltip"
                                     data-placement="bottom"
-                                    title="Save to collection"
+                                    title="Edit name"
                                     data-toggle="modal"
                                     data-target="#editNameCollection"
                                     data-backdrop="static"

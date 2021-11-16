@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { login } from '../store/actions/loginAction';
-
-// google login
-import GoogleLogin from 'react-google-login';
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import GoogleLogin from "react-google-login";
+import { login } from "../store/actions/loginAction";
+import { server } from "../apis/server";
 
 export default function Login() {
   const dispatch = useDispatch();
   const history = useHistory();
 
   const [inputLogin, setInputLogin] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const [error, setError] = useState({
     status: false,
-    message: '',
+    message: "",
   });
 
   const changeInputLoginHandler = (e) => {
@@ -34,8 +33,8 @@ export default function Login() {
     dispatch(login(inputLogin))
       .then((response) => {
         const access_token = response.access_token;
-        localStorage.setItem('access_token', access_token);
-        history.push('/');
+        localStorage.setItem("access_token", access_token);
+        history.push("/");
       })
       .catch((err) => {
         setError({
@@ -47,13 +46,13 @@ export default function Login() {
 
   // google login
   const handleGoogleLogin = async (googleData) => {
-    const res = await fetch('http://localhost:3001/login-google', {
-      method: 'POST',
+    const res = await fetch(`${server}/login-google`, {
+      method: "POST",
       body: JSON.stringify({
         token: googleData.tokenId,
       }),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -62,22 +61,16 @@ export default function Login() {
     console.log(data);
 
     if (data.access_token) {
-      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem("access_token", data.access_token);
 
-      history.push('/');
+      history.push("/");
     }
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ height: '100vh' }}
-    >
+    <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
       <div className="col-5">
-        <div
-          className="card o-hidden border-0 shadow-lg text-white"
-          style={{ borderRadius: '20px', backgroundColor: '#2d3748' }}
-        >
+        <div className="card o-hidden border-0 shadow-lg text-white" style={{ borderRadius: "20px", backgroundColor: "#2d3748" }}>
           <div className="card-body p-0">
             <div className="p-5">
               <div className="text-center">
@@ -85,12 +78,10 @@ export default function Login() {
               </div>
               {error.status ? (
                 <div className="text-center">
-                  <span className="badge badge-pill badge-danger">
-                    {error.message}
-                  </span>
+                  <span className="badge badge-pill badge-danger">{error.message}</span>
                 </div>
               ) : (
-                ''
+                ""
               )}
               <form className="mt-3 user mb-3" onSubmit={submitHandler}>
                 <div className="form-group">
@@ -110,9 +101,9 @@ export default function Login() {
                   <label htmlFor="password">Password</label>
                   <input
                     style={{
-                      backgroundColor: '#dcdddd',
-                      borderColor: '#dcdddd',
-                      color: '#212121',
+                      backgroundColor: "#dcdddd",
+                      borderColor: "#dcdddd",
+                      color: "#212121",
                     }}
                     className="form-control rounded-pill shadow-none"
                     placeholder="Enter you strong password"
@@ -124,10 +115,7 @@ export default function Login() {
                     onChange={changeInputLoginHandler}
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="btn btn-danger btn-block rounded-pill mb-3"
-                >
+                <button type="submit" className="btn btn-danger btn-block rounded-pill mb-3">
                   Login
                 </button>
 
@@ -136,23 +124,17 @@ export default function Login() {
                   buttonText="Login with Google"
                   onSuccess={handleGoogleLogin}
                   onFailure={handleGoogleLogin}
-                  cookiePolicy={'single_host_origin'}
+                  cookiePolicy={"single_host_origin"}
                   theme="dark"
                 />
               </form>
               <div className="text-center">
-                Dont't have account yet? click{' '}
-                <Link
-                  className="text-decoration-none text-primary"
-                  to="/register"
-                >
+                Dont't have account yet? click{" "}
+                <Link className="text-decoration-none text-primary" to="/register">
                   here
                 </Link>
                 <br />
-                <Link
-                  className="text-decoration-none text-primary"
-                  to="/forgot-password"
-                >
+                <Link className="text-decoration-none text-primary" to="/forgot-password">
                   Forgot password
                 </Link>
               </div>

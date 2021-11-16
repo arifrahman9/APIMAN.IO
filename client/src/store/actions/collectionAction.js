@@ -2,6 +2,20 @@ import axios from "axios";
 import { SET_COLLECTIONS, SET_COLLECTIONS_LOADING } from "../actionType";
 import { server } from "../../apis/server";
 
+function sorting(collections) {
+  collections.sort((a, b) => {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (b.name > a.name) {
+      return -1;
+    }
+    return 0;
+  });
+
+  return collections;
+}
+
 export function setCollections(payload) {
   return {
     type: SET_COLLECTIONS,
@@ -28,20 +42,8 @@ export function fetchCollections() {
         },
       })
         .then((result) => {
-          const sorted = result.data
-            .map((col) => col.name)
-            .sort((a, b) => {
-              if (a > b) {
-                return 1;
-              }
-              if (b > a) {
-                return -1;
-              }
-              return 0;
-            });
-
-          console.log(sorted);
-          dispatch(setCollections(result.data));
+          const sorted = sorting(result.data);
+          dispatch(setCollections(sorted));
         })
         .catch((err) => {
           console.log(err.response.data.message);
@@ -66,8 +68,11 @@ export function postCollection(data) {
         data,
       })
         .then((result) => {
-          console.log(result.data[0]);
           getState().collectionReducer.collections.push(result.data[0]);
+          const collections = getState().collectionReducer.collections;
+          const sorted = sorting(collections);
+
+          dispatch(setCollections(sorted));
           resolve(result.data);
         })
         .catch((err) => {
@@ -134,7 +139,9 @@ export function patchCollection(data) {
               collections.splice(idx, 1, result.data);
             }
           });
-          // console.log(result.data);
+
+          const sorted = sorting(collections);
+          dispatch(setCollections(sorted));
           resolve(result.data);
         })
         .catch((err) => {

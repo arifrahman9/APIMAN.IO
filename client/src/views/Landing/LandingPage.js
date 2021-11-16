@@ -77,8 +77,12 @@ export default function LandingPage() {
             className="btn btn-danger next-btn text-light"
             type="button"
             onClick={(e) => {
-              e.preventDefault();
-              history.push("/login");
+              e.preventDefault()
+              if (localStorage.getItem("access_token")) {
+                history.push("/homepage")
+              } else {
+                history.push("/login")
+              }
             }}
           >
             <span style={{ textAlign: "center" }}>Start using now</span>

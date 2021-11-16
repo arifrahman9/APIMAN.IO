@@ -6,12 +6,6 @@ const process = (requestValue) => {
   });
 
   return processedRequestValue;
-
-  // params.forEach((param) => {
-  //   processedParams[param.key] = param.value;
-  // });
-
-  // params = processedParams;
 };
 
 module.exports = process;

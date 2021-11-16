@@ -265,7 +265,6 @@ export default function HomePage() {
           status: err.status,
           responseTime: `${err.responseTime} ms`,
         });
-        console.log(err, "dari error homeee");
       });
   };
 
@@ -280,7 +279,7 @@ export default function HomePage() {
         {/* for main left section */}
         <Flex justifyContent="center" alignItems="center" px={1} py={2} h={containerHeight} w={panelWidth}>
           <div className="card o-hidden border-0 text-white " style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
-            <div className="card-header mx-2 pt-2 px-2 pb-2 border-0" style={{ backgroundColor: "#2d3748" }}>
+            <div className="card-header mx-2 pt-2 px-2 pb-2" style={{ backgroundColor: "#2d3748", borderWidth: "0 0 2px 0" }}>
               <nav>
                 <ul className="nav nav-pills nav-fill" id="pills-tab" role="tablist">
                   <li className="nav-item">
@@ -610,7 +609,6 @@ export default function HomePage() {
                       placeholder="Enter new name here"
                       className="form-control border-0 bg-secondary text-dark rounded-pill"
                       autoComplete="off"
-                      defaultValue={inputNewName.name}
                       value={inputNewName.name}
                       name="name"
                       disabled={modalFooter}
@@ -752,7 +750,7 @@ export default function HomePage() {
           {/* for main middle top section */}
           <Flex h={containerHeight / 2} w="100%" paddingBottom={1} overflow="hidden">
             <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
-              <div className="d-flex card-header border-0 mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
+              <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748", borderWidth: "0 0 2px 0" }}>
                 <div>
                   <nav>
                     <ul className="nav nav-pills" id="pills-tab" role="tablist">
@@ -896,7 +894,7 @@ export default function HomePage() {
           {/* for main middle bottom section */}
           <Flex h={containerHeight / 2} w="100%" paddingTop={1} overflow="hidden">
             <div className="card o-hidden border-0" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
-              <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748" }}>
+              <div className="d-flex card-header mx-2 pt-2 px-0 pb-2 align-items-center justify-content-between" style={{ backgroundColor: "#2d3748", borderWidth: "0 0 2px 0" }}>
                 <div>
                   <nav>
                     <ul className="nav nav-pills" id="pills-tab" role="tablist">
@@ -944,7 +942,6 @@ export default function HomePage() {
                         className="form-control form-control-sm shadow-none border-0 rounded-pill bg-secondary mb-1 mr-1"
                         placeholder="Key"
                         style={{ color: "#212121" }}
-                        defaultValue={inputBodyForm.key}
                         value={inputBodyForm.key}
                         name="key"
                         autoComplete="off"
@@ -955,7 +952,6 @@ export default function HomePage() {
                         className="form-control form-control-sm shadow-none border-0 rounded-pill bg-secondary mr-1"
                         placeholder="Value"
                         style={{ color: "#212121" }}
-                        defaultValue={inputBodyForm.value}
                         value={inputBodyForm.value}
                         name="value"
                         autoComplete="off"
@@ -1009,8 +1005,6 @@ export default function HomePage() {
                       className="text-danger text-decoration-none"
                       onClick={(e) => {
                         e.preventDefault();
-                        console.log(resultHeader);
-                        console.log(resultPanel);
                         dispatch(postResult(resultHeader, resultPanel));
                       }}
                     >

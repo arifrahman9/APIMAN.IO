@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SET_REQUESTS, SET_REQUESTS_LOADING } from "../actionType";
 import { server } from "../../apis/server";
+import { postHistory } from "./historiesAction";
 
 export function setRequests(payload) {
   return {
@@ -16,31 +17,81 @@ export function loadingRequest(payload) {
   };
 }
 
+function helpers(requestValue) {
+  let processedRequestValue = {};
+
+  requestValue.forEach((el) => {
+    processedRequestValue[el.key] = el.value;
+  });
+
+  return processedRequestValue;
+}
+
 export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
+  const found = url.includes("http://localhost");
   const access_token = localStorage.getItem("access_token");
+
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
-      axios({
-        method: "POST",
-        url: `${server}/requests`,
-        headers: {
-          access_token,
-        },
-        data: {
-          method,
-          url,
-          bodies,
-          headers,
-          params,
-          bodyIsRaw,
-        },
-      })
-        .then((result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          reject(err.response.data);
+      if (found) {
+        if (params) params = helpers(params);
+        if (headers) headers = helpers(headers);
+        if (bodies) {
+          if (!bodyIsRaw) {
+            bodies = helpers(bodies);
+          } else {
+            bodies = JSON.parse(bodies);
+          }
+        }
+
+        let axiosOptions = { method, url, params, headers, data: bodies };
+        axios.interceptors.request.use((response) => {
+          response.meta = response.meta || {};
+          response.meta.requestStartedAt = new Date().getTime();
+          return response;
         });
+
+        axios.interceptors.response.use((response) => {
+          return response;
+        });
+
+        let success;
+        axios(axiosOptions)
+          .then((response) => {
+            success = {
+              status: `${response.status} ${response.statusText}`,
+              response: response.data,
+              responseTime: new Date().getTime() - response.config.meta.requestStartedAt,
+            };
+
+            return dispatch(postHistory({ method, url, params, headers, bodies }));
+          })
+          .then((newAddedHistory) => {
+            resolve({ ...success, newAddedHistory });
+          })
+          .catch((err) => {
+            reject({
+              status: `${err.response.status} ${err.response.statusText}`,
+              response: err.response.data,
+              responseTime: new Date().getTime() - err.response.config.meta.requestStartedAt,
+            });
+          });
+      } else {
+        axios({
+          method: "POST",
+          url: `${server}/requests`,
+          headers: {
+            access_token,
+          },
+          data: { method, url, bodies, headers, params, bodyIsRaw },
+        })
+          .then((result) => {
+            resolve(result.data);
+          })
+          .catch((err) => {
+            reject(err.response.data);
+          });
+      }
     });
   };
 }

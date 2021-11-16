@@ -48,7 +48,6 @@ export function postResult(header, content) {
     responseTime,
     responseSize: "0",
   };
-  console.log(data);
 
   return (dispatch, getState) => {
     dispatch(loadingResult(true));

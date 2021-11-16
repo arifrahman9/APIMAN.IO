@@ -131,3 +131,25 @@ export function deleteHistoryfromCollection(id) {
     });
   };
 }
+
+export function postHistory(data) {
+  const access_token = localStorage.getItem("access_token");
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: `${server}/histories`,
+        headers: {
+          access_token,
+        },
+        data,
+      })
+        .then((result) => {
+          resolve(result.data);
+        })
+        .catch((err) => {
+          reject(err.response.data);
+        });
+    });
+  };
+}

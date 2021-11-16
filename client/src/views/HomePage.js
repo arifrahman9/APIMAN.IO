@@ -250,23 +250,22 @@ export default function HomePage() {
       bodyIsRaw = true;
     }
 
-    dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, bodySend, headerSend, inputParams, bodyIsRaw));
-    // .then((response) => {
-    //   setResultPanel(response.response);
-    //   setResultHeader({
-    //     status: response.status,
-    //     responseTime: `${response.responseTime} ms`,
-    //   });
-    //   // dispatch(addNewHistory(response.newAddedHistory[0]));
-    // })
-    // .catch((err) => {
-    //   setResultPanel(err.response);
-    //   setResultHeader({
-    //     status: err.status,
-    //     responseTime: `${err.responseTime} ms`,
-    //   });
-    //   console.log(err, "dari error homeee");
-    // });
+    dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, bodySend, headerSend, inputParams, bodyIsRaw))
+      .then((response) => {
+        setResultPanel(response.response);
+        setResultHeader({
+          status: response.status,
+          responseTime: `${response.responseTime} ms`,
+        });
+        dispatch(addNewHistory(response.newAddedHistory[0]));
+      })
+      .catch((err) => {
+        setResultPanel(err.response);
+        setResultHeader({
+          status: err.status,
+          responseTime: `${err.responseTime} ms`,
+        });
+      });
   };
 
   return (
@@ -1006,8 +1005,6 @@ export default function HomePage() {
                       className="text-danger text-decoration-none"
                       onClick={(e) => {
                         e.preventDefault();
-                        console.log(resultHeader);
-                        console.log(resultPanel);
                         dispatch(postResult(resultHeader, resultPanel));
                       }}
                     >

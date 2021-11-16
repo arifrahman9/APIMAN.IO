@@ -6,8 +6,8 @@ import { login } from "../store/actions/loginAction";
 import { server } from "../apis/server";
 
 export default function Login() {
-  const dispatch = useDispatch()
-  const history = useHistory()
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const [inputLogin, setInputLogin] = useState({
     email: "",
@@ -20,29 +20,29 @@ export default function Login() {
   });
 
   const changeInputLoginHandler = (e) => {
-    const { value, name } = e.target
+    const { value, name } = e.target;
 
     setInputLogin({
       ...inputLogin,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const submitHandler = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     dispatch(login(inputLogin))
       .then((response) => {
-        const access_token = response.access_token
-        localStorage.setItem("access_token", access_token)
-        history.push("/homepage")
+        const access_token = response.access_token;
+        localStorage.setItem("access_token", access_token);
+        history.push("/homepage");
       })
       .catch((err) => {
         setError({
           status: true,
           message: err,
-        })
-      })
-  }
+        });
+      });
+  };
 
   // google login
   const handleGoogleLogin = async (googleData) => {
@@ -54,18 +54,15 @@ export default function Login() {
       headers: {
         "Content-Type": "application/json",
       },
-    })
+    });
 
-    const data = await res.json()
-
-    console.log(data)
-
+    const data = await res.json();
     if (data.access_token) {
-      localStorage.setItem("access_token", data.access_token)
+      localStorage.setItem("access_token", data.access_token);
 
-      history.push("/homepage")
+      history.push("/homepage");
     }
-  }
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
@@ -119,14 +116,21 @@ export default function Login() {
                   Login
                 </button>
 
-                <GoogleLogin
-                  clientId="980738002761-acrl34vhaspb51gdgp1k827m78tb65sn.apps.googleusercontent.com"
-                  buttonText="Login with Google"
-                  onSuccess={handleGoogleLogin}
-                  onFailure={handleGoogleLogin}
-                  cookiePolicy={"single_host_origin"}
-                  theme="dark"
-                />
+                <div className="text-center">
+                  <GoogleLogin
+                    clientId={process.env.REACT_APP_CLIENT_URL}
+                    onSuccess={handleGoogleLogin}
+                    onFailure={handleGoogleLogin}
+                    cookiePolicy={"single_host_origin"}
+                    theme="dark"
+                    icon={false}
+                    render={(renderProps) => (
+                      <button className="btn btn-primary btn-block rounded-pill shadow-none" onClick={renderProps.onClick}>
+                        Login with google
+                      </button>
+                    )}
+                  />
+                </div>
               </form>
               <div className="text-center">
                 Dont't have account yet? click{" "}
@@ -143,5 +147,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }

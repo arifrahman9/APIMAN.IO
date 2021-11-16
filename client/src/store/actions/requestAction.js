@@ -67,8 +67,7 @@ export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
             return dispatch(postHistory({ method, url, params, headers, bodies }));
           })
           .then((newAddedHistory) => {
-            console.log(newAddedHistory);
-            // resolve({ ...success, newAddedHistory });
+            resolve({ ...success, newAddedHistory });
           })
           .catch((err) => {
             reject({

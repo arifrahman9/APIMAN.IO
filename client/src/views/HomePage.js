@@ -1024,7 +1024,7 @@ export default function HomePage() {
                   Status: <span className={statusText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
-              <Flex p={2} overflow="hidden" w="100%" h="100%">
+              <Flex pb={2} px={2} pt={0} overflow="hidden" w="100%" h="100%">
                 <Flex p={1} className="card-body" overflow="scroll" borderRadius={8} w="100%" bgColor="gray.800">
                   {!resultPanel ? (
                     <></>

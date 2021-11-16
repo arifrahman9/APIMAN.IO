@@ -29,9 +29,6 @@ export default function App() {
         <PrivatePage path="/profile">
           <ProfilePage />
         </PrivatePage>
-        {/* <PrivatePage path="/chakra-home">
-          <HomePage />
-        </PrivatePage> */}
         <PrivatePage path="/">
           <HomePage />
         </PrivatePage>

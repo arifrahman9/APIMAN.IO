@@ -1,16 +1,16 @@
-import { Flex, Text } from '@chakra-ui/react'
-import { Link, useHistory } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { useDispatch } from 'react-redux'
-import { setUserdata } from '../store/actions/loginAction'
+import { Flex, Text } from "@chakra-ui/react";
+import { Link, useHistory } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDatabase } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { setUserdata } from "../store/actions/loginAction";
 
-export default function SecondaryNavbar ({userData}) {
-  const history = useHistory()
-  const dispatch = useDispatch()
-  
+export default function SecondaryNavbar({ userData }) {
+  const history = useHistory();
+  const dispatch = useDispatch();
+
   return (
-    <Flex width="100%" flexDirection="row" px={4} py={3} bgColor='gray.700' alignItems="center">
+    <Flex width="100%" flexDirection="row" px={4} py={3} bgColor="gray.700" alignItems="center" borderRadius="0 0 20px 20px">
       <Flex flex={1}>
         <Link className="text-decoration-none" to="/">
           <Text color="white" fontSize="xl">
@@ -41,5 +41,5 @@ export default function SecondaryNavbar ({userData}) {
         </div>
       </Flex>
     </Flex>
-  )
+  );
 }

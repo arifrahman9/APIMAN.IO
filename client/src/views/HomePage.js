@@ -7,8 +7,9 @@ import { deleteCollection, fetchCollections, patchCollection, postCollection } f
 import { addNewHistory, addToCollections, deleteHistory, deleteHistoryfromCollection, fetchHistories } from "../store/actions/historiesAction";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { postRequest } from "../store/actions/requestAction";
-import NavbarNew from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import ReactJson from "react-json-view";
+import { postResult } from "../store/actions/resultAction";
 
 export default function HomePage() {
   // Chakra layout start
@@ -255,8 +256,8 @@ export default function HomePage() {
   return (
     <Flex ref={bodyHtml} bgColor="gray.800" h="100vh" w="100vw" flexDir="column">
       {/* for navbar section */}
-      <Flex ref={navbar} bgColor="gray.700">
-        <NavbarNew inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} />
+      <Flex ref={navbar} bgColor="gray.700" borderRadius="0 0 20px 20px">
+        <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} />
       </Flex>
       {/* for main section */}
       <Flex h={containerHeight} justifyContent="space-evenly" alignItems="center" fontSize="10pt" px={1} py={2}>
@@ -907,7 +908,22 @@ export default function HomePage() {
               <div className="d-flex card-header border-0 flex-column p-2" style={{ backgroundColor: "#2d3748" }}>
                 <div className="d-flex justify-content-between">
                   <span>Response</span>
-                  <span></span>
+                  {resultPanel ? (
+                    <a
+                      href="#"
+                      className="text-danger text-decoration-none"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        console.log(resultHeader);
+                        console.log(resultPanel);
+                        dispatch(postResult(resultHeader, resultPanel));
+                      }}
+                    >
+                      Save Response
+                    </a>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div>
                   Status: <span className={statusText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>

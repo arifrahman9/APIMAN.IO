@@ -1,36 +1,36 @@
-import React, { useEffect, useRef } from "react"
-import Landing1 from "../../assets/logo/logo-landing1.png"
-import Landing2 from "../../assets/logo/logo-landing2-removebg-preview.png"
-import Landing3 from "../../assets/logo/undraw_Code_review_re_woeb__1_-removebg-preview.png"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGithub } from "@fortawesome/free-brands-svg-icons"
-import { faAngleDoubleRight, faDatabase } from "@fortawesome/free-solid-svg-icons"
-import "./LandingPage.css"
-import AOS from "aos"
-import { useHistory } from "react-router"
+import React, { useEffect, useRef } from "react";
+import Landing1 from "../../assets/logo/Landing1.svg";
+import Landing2 from "../../assets/logo/Landing2.png";
+import Landing3 from "../../assets/logo/Landing3.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faAngleDoubleRight, faDatabase } from "@fortawesome/free-solid-svg-icons";
+import "./LandingPage.css";
+import AOS from "aos";
+import { useHistory } from "react-router";
 
 export default function LandingPage() {
-  const history = useHistory()
+  const history = useHistory();
   useEffect(() => {
     AOS.init({
       duration: 1000,
-    })
-  }, [])
-  const secondLanding = useRef()
-  const thirdLanding = useRef()
+    });
+  }, []);
+  const secondLanding = useRef();
+  const thirdLanding = useRef();
   const handleArrowClick = () => {
     secondLanding.current.scrollIntoView({
       behaviour: "smooth",
-    })
-  }
+    });
+  };
   const handleSecondArrowClick = () => {
     thirdLanding.current.scrollIntoView({
       behaviour: "smooth",
-    })
-  }
+    });
+  };
   return (
     <div>
-      <section id="landing-1" style={{ overflowX: "hidden", height: "100vh" }}>
+      <section id="landing-1" style={{ overflow: "hidden", height: "100vh" }}>
         <div className="m-4 d-flex align-items-center justify-content-between">
           <FontAwesomeIcon icon={faDatabase} size="2x" color="#f56e56" />
           <a href="https://github.com/rasyidrmhd/APIMAN.io" target="blank" className="text-decoration-none">
@@ -47,7 +47,7 @@ export default function LandingPage() {
             </h3>
           </div>
           <div className="col" data-aos="fade-right">
-            <img src={Landing1} alt="Previous" width="700px" height="700px" />
+            <img src={Landing1} alt="Previous" width="90%" height="90%" />
           </div>
         </div>
         <div className="arrow" onClick={handleArrowClick}></div>
@@ -72,7 +72,7 @@ export default function LandingPage() {
       </section>
       <section id="landing-3 text-center" style={{ height: "100vh" }}>
         <div className="col d-flex flex-column align-items-center justify-content-center image-container" style={{ top: "35%" }} data-aos="fade-down" ref={thirdLanding}>
-          <img src={Landing3} alt="Previous" width="800px" height="800px" />
+          <img src={Landing3} alt="Previous" width="70%" height="70%" />
           <button
             className="btn btn-danger next-btn text-light"
             type="button"
@@ -102,5 +102,5 @@ export default function LandingPage() {
         </svg>
       </section>
     </div>
-  )
+  );
 }

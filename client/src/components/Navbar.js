@@ -1,20 +1,20 @@
-import React from "react";
-import { Flex, Text } from "@chakra-ui/react";
-import { Link, useHistory } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
-import { setUserdata } from "../store/actions/loginAction";
+import React from "react"
+import { Flex, Text } from "@chakra-ui/react"
+import { Link, useHistory } from "react-router-dom"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
+import { useDispatch } from "react-redux"
+import { setUserdata } from "../store/actions/loginAction"
 
 export default function NavbarNew(props) {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const { inputMethodUrl, changeMethodUrlHandler, submitHandler, userdata } = props;
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const { inputMethodUrl, changeMethodUrlHandler, submitHandler, userdata } = props
 
   return (
     <Flex width="100%" flexDirection="row" px={4} py={2} alignItems="center">
       <Flex flex={1}>
-        <Link className="text-decoration-none" to="/">
+        <Link className="text-decoration-none" to="/homepage">
           <Text color="white" fontSize="xl">
             <FontAwesomeIcon icon={faDatabase} color="#f56e56" /> APIMAN.io
           </Text>
@@ -25,8 +25,8 @@ export default function NavbarNew(props) {
           className="user"
           style={{ width: "100%" }}
           onSubmit={(e) => {
-            e.preventDefault();
-            submitHandler();
+            e.preventDefault()
+            submitHandler()
           }}
         >
           <div className="input-group">
@@ -78,10 +78,10 @@ export default function NavbarNew(props) {
             className="dropdown-item text-white"
             href="#"
             onClick={(e) => {
-              e.preventDefault();
-              localStorage.removeItem("access_token");
-              dispatch(setUserdata({}));
-              history.push("/login");
+              e.preventDefault()
+              localStorage.removeItem("access_token")
+              dispatch(setUserdata({}))
+              history.push("/login")
             }}
           >
             Logout
@@ -89,5 +89,5 @@ export default function NavbarNew(props) {
         </div>
       </Flex>
     </Flex>
-  );
+  )
 }

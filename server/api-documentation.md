@@ -512,6 +512,52 @@ _Response (200)_
 ]
 ```
 
+### POST /histories
+
+> Add new history (untuk yang nembak ke localhost dri client)
+
+_Request Header_
+
+```
+{
+  "access_token": "<access_token>"
+}
+```
+
+_Request Body_
+
+```
+{
+  "url": "http://localhost:4000/login",
+  "params": null,
+  "headers": {
+      "access_token": "12345"
+  },
+  "bodies": null,
+  "method": "POST"
+}
+```
+
+_Response (200)_
+
+```
+[
+  {
+    "_id": "6193b4032fed9e715cf45167",
+    "method": "POST",
+    "url": "http://localhost:4000/login",
+    "headers": {
+        "access_token": "12345"
+    },
+    "params": null,
+    "bodies": null,
+    "UserId": "618a30ff4d86c47e1e446d9d",
+    "createdAt": "2021-11-16T13:37:07.440Z",
+    "updatedAt": "2021-11-16T13:37:07.440Z"
+  }
+]
+```
+
 ### GET /histories/collection/:collectionId
 
 > Get histories by collection ID

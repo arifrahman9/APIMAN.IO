@@ -46,6 +46,20 @@ const setRedisFoundHistory = async (history, historyID) => {
   await redis.set('historyId', mongodb.ObjectId(historyID));
 };
 
+const addHistory = async () => {
+  db = getDatabase();
+  const historiesCollection = db.collection('histories');
+
+  await historiesCollection.insertOne({
+    method: 'GET',
+    url: 'https://testurl.com',
+    headers: null,
+    params: null,
+    bodies: { email: 'email2@gmail.com', password: 'password' },
+    UserId: lastInsertedUser[0]._id,
+  });
+};
+
 describe('GET /histories', () => {
   beforeAll(async () => {
     await connect();
@@ -172,6 +186,130 @@ describe('GET /histories', () => {
 
         expect(body).toEqual(expect.any(Object));
         expect(body).toHaveProperty('message');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+describe('POST /histories', () => {
+  beforeAll(async () => {
+    await connect();
+    await getDatabase();
+
+    db = getDatabase();
+    const usersCollection = db.collection('users');
+
+    await request(app).post('/register').send({
+      username: 'testuser',
+      email: 'test@gmail.com',
+      password: 'password',
+      firstName: 'firstTest',
+      lastName: 'lastTest',
+    });
+
+    lastInsertedUser = await usersCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(1)
+      .toArray();
+
+    // then login
+    const payload = {
+      email: 'test@gmail.com',
+      password: 'password',
+    };
+
+    loginResponse = await request(app).post('/login').send(payload);
+  });
+
+  afterAll(async () => {
+    await connect();
+    await getDatabase();
+
+    db = getDatabase();
+    const historiesCollection = db.collection('histories');
+
+    newestHistory = await historiesCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(1)
+      .toArray();
+
+    console.log(newestHistory, '<== newest');
+
+    await historiesCollection.deleteOne({
+      _id: newestHistory[0]._id,
+    });
+
+    const usersCollection = db.collection('users');
+
+    await usersCollection.deleteOne({
+      _id: lastInsertedUser[0]._id,
+    });
+  });
+
+  test('[success] successfully added new history', (done) => {
+    deleteRedis();
+
+    request(app)
+      .post('/histories')
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .send({
+        url: 'http://localhost:4000/register',
+        params: null,
+        headers: {
+          access_token: '12345',
+        },
+        bodies: null,
+        method: 'POST',
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body[0]).toEqual(expect.any(Object));
+        expect(body[0]).toHaveProperty('_id');
+        expect(body[0]).toHaveProperty('method');
+        expect(body[0]).toHaveProperty('url');
+        expect(body[0]).toHaveProperty('headers');
+        expect(body[0]).toHaveProperty('params');
+        expect(body[0]).toHaveProperty('bodies');
+        expect(body[0]).toHaveProperty('UserId');
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+
+  test('[failed] failed too add new history because of empty body params', (done) => {
+    deleteRedis();
+
+    request(app)
+      .post('/histories')
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .send({
+        url: null,
+        params: null,
+        headers: {
+          access_token: '12345',
+        },
+        bodies: null,
+        method: 'POST',
+      })
+      .then((response) => {
+        const body = response.body;
+
+        expect(body).toEqual(expect.any(Object));
+        expect(body).toHaveProperty('message', 'url or method cannot be empty');
 
         done();
       })

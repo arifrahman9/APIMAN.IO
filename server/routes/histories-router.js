@@ -18,6 +18,8 @@ router.get(
 
 router.post('/collection', HistoriesController.addHistoryToCollection);
 
+router.post('/', HistoriesController.addNewHistory);
+
 router.get('/', HistoriesController.getAllHistoriesByUserId);
 
 module.exports = router;

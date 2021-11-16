@@ -6,8 +6,8 @@ import { login } from "../store/actions/loginAction";
 import { server } from "../apis/server";
 
 export default function Login() {
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const dispatch = useDispatch()
+  const history = useHistory()
 
   const [inputLogin, setInputLogin] = useState({
     email: "",
@@ -20,29 +20,29 @@ export default function Login() {
   });
 
   const changeInputLoginHandler = (e) => {
-    const { value, name } = e.target;
+    const { value, name } = e.target
 
     setInputLogin({
       ...inputLogin,
       [name]: value,
-    });
-  };
+    })
+  }
 
   const submitHandler = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     dispatch(login(inputLogin))
       .then((response) => {
-        const access_token = response.access_token;
-        localStorage.setItem("access_token", access_token);
-        history.push("/");
+        const access_token = response.access_token
+        localStorage.setItem("access_token", access_token)
+        history.push("/homepage")
       })
       .catch((err) => {
         setError({
           status: true,
           message: err,
-        });
-      });
-  };
+        })
+      })
+  }
 
   // google login
   const handleGoogleLogin = async (googleData) => {
@@ -54,18 +54,18 @@ export default function Login() {
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
 
-    const data = await res.json();
+    const data = await res.json()
 
-    console.log(data);
+    console.log(data)
 
     if (data.access_token) {
-      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("access_token", data.access_token)
 
-      history.push("/");
+      history.push("/homepage")
     }
-  };
+  }
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
@@ -143,5 +143,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }

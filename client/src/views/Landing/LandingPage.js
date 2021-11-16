@@ -78,7 +78,11 @@ export default function LandingPage() {
             type="button"
             onClick={(e) => {
               e.preventDefault()
-              history.push("/login")
+              if (localStorage.getItem("access_token")) {
+                history.push("/homepage")
+              } else {
+                history.push("/login")
+              }
             }}
           >
             <span style={{ textAlign: "center" }}>Start using now</span>

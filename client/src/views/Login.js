@@ -1,22 +1,20 @@
 import React, { useState } from "react";
+import { useToast, Spinner } from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import GoogleLogin from "react-google-login";
 import { login } from "../store/actions/loginAction";
 import { server } from "../apis/server";
 
 export default function Login() {
+  const toast = useToast();
   const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.loginReducer);
   const history = useHistory();
 
   const [inputLogin, setInputLogin] = useState({
     email: "",
     password: "",
-  });
-
-  const [error, setError] = useState({
-    status: false,
-    message: "",
   });
 
   const changeInputLoginHandler = (e) => {
@@ -34,12 +32,26 @@ export default function Login() {
       .then((response) => {
         const access_token = response.access_token;
         localStorage.setItem("access_token", access_token);
+        toast({
+          position: "bottom",
+          render: () => (
+            <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "12pt" }}>
+              Login success! Welcome
+            </div>
+          ),
+          duration: 2000,
+        });
         history.push("/homepage");
       })
       .catch((err) => {
-        setError({
-          status: true,
-          message: err,
+        toast({
+          position: "top",
+          render: () => (
+            <div className="py-2 px-3 text-center text-white" style={{ backgroundColor: "#f56356", borderRadius: "20px", fontSize: "12pt" }}>
+              {err}
+            </div>
+          ),
+          duration: 2000,
         });
       });
   };
@@ -73,13 +85,6 @@ export default function Login() {
               <div className="text-center">
                 <h1 className="h1">APIMAN.io</h1>
               </div>
-              {error.status ? (
-                <div className="text-center">
-                  <span className="badge badge-pill badge-danger">{error.message}</span>
-                </div>
-              ) : (
-                ""
-              )}
               <form className="mt-3 user mb-3" onSubmit={submitHandler}>
                 <div className="form-group">
                   <label htmlFor="email">Username / Email</label>
@@ -112,25 +117,30 @@ export default function Login() {
                     onChange={changeInputLoginHandler}
                   />
                 </div>
-                <button type="submit" className="btn btn-danger btn-block rounded-pill mb-3">
-                  Login
+                <button type="submit" className="btn btn-danger btn-block rounded-pill mb-3" disabled={isLoading}>
+                  {isLoading ? (
+                    <div className="d-flex align-items-center justify-content-center">
+                      <Spinner size="sm" />
+                      &nbsp;Login
+                    </div>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
 
-                <div className="text-center">
-                  <GoogleLogin
-                    clientId={process.env.REACT_APP_CLIENT_URL}
-                    onSuccess={handleGoogleLogin}
-                    onFailure={handleGoogleLogin}
-                    cookiePolicy={"single_host_origin"}
-                    theme="dark"
-                    icon={false}
-                    render={(renderProps) => (
-                      <button className="btn btn-primary btn-block rounded-pill shadow-none" onClick={renderProps.onClick}>
-                        Login with google
-                      </button>
-                    )}
-                  />
-                </div>
+                <GoogleLogin
+                  clientId={process.env.REACT_APP_CLIENT_URL}
+                  onSuccess={handleGoogleLogin}
+                  onFailure={handleGoogleLogin}
+                  cookiePolicy={"single_host_origin"}
+                  theme="dark"
+                  icon={false}
+                  render={(renderProps) => (
+                    <button className="btn btn-primary btn-block rounded-pill shadow-none" onClick={renderProps.onClick} disabled={isLoading}>
+                      Login with google
+                    </button>
+                  )}
+                />
               </form>
               <div className="text-center">
                 Dont't have account yet? click{" "}

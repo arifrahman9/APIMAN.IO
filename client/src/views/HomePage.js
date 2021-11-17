@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDropzone } from "react-dropzone";
-import { Flex } from "@chakra-ui/react";
+import { Flex, useToast, Spinner } from "@chakra-ui/react";
 import { faAngleRight, faMinus, faPencilAlt, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { deleteCollection, fetchCollections, patchCollection, postCollection } from "../store/actions/collectionAction";
@@ -13,7 +13,8 @@ import ReactJson from "react-json-view";
 import { postResult } from "../store/actions/resultAction";
 
 export default function HomePage() {
-  // Chakra layout start
+  // Chakra start
+  const toast = useToast();
   const navbar = useRef(null);
   const bodyHtml = useRef(null);
   const [containerHeight, setConteinerHeight] = useState(0);
@@ -23,7 +24,7 @@ export default function HomePage() {
     setPanelWidth(Math.floor(bodyHtml.current.offsetWidth / 3));
     setConteinerHeight(bodyHtml.current.offsetHeight - navbar.current.offsetHeight);
   }, []);
-  // Chakra layout end
+  // Chakra end
 
   const onDrop = useCallback((acceptedFiles) => {
     for (const request of acceptedFiles) {
@@ -68,10 +69,26 @@ export default function HomePage() {
 
     dispatch(postCollection(inputCollection))
       .then((response) => {
-        console.log(response, ">>>>home");
+        toast({
+          position: "bottom-left",
+          render: () => (
+            <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+              {response[0].name}&nbsp;added to your collection
+            </div>
+          ),
+          duration: 2000,
+        });
       })
       .catch((err) => {
-        console.log(err);
+        toast({
+          position: "bottom-left",
+          render: () => (
+            <div className="py-2 px-3 text-center text-white bg-danger" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+              {err}
+            </div>
+          ),
+          duration: 2000,
+        });
       });
   };
 
@@ -82,10 +99,10 @@ export default function HomePage() {
     });
   };
 
-  const { userdata } = useSelector((state) => state.loginReducer);
+  const { userdata, isLoading: loadingUserdata } = useSelector((state) => state.loginReducer);
   const { histories, isLoading: loadingHistory } = useSelector((state) => state.historyReducer);
-  const { collections } = useSelector((state) => state.collectionReducer);
-  const { requests } = useSelector((state) => state.requestReducer);
+  const { collections, isLoading: loadingCollection, addLoading: addLoadCol, delLoading: delLoadCol, patchLoading: patchLoadCol } = useSelector((state) => state.collectionReducer);
+  const { requests, isLoading: loadingRequest, addLoading: addLoadReq, delLoading: delLoadReq, importLoading: importLoadReq } = useSelector((state) => state.requestReducer);
 
   const historyText = (method) => {
     if (method === "get") {
@@ -221,7 +238,7 @@ export default function HomePage() {
     dispatch(patchCollection(inputNewName))
       .then((response) => {
         console.log(response);
-        document.getElementById("messageEditCollection").innerHTML = `<span class="text-success">Success edit collection's name</span>`;
+        document.getElementById("messageEditCollection").innerHTML = `<span class="text-success">Success edit ${oldCollectionName} to ${inputNewName.name}</span>`;
         setmodalFooter(true);
       })
       .catch((err) => {
@@ -232,47 +249,59 @@ export default function HomePage() {
   };
 
   const submitHandler = () => {
-    let headerSend = undefined;
-    for (const key in inputHeaders) {
-      if (inputHeaders[key].key !== "" || inputHeaders[key].value !== "") {
-        headerSend = inputHeaders;
-        break;
-      }
-    }
-
-    let bodySend;
-    let bodyIsRaw;
-    if (body === "form") {
-      bodySend = inputBodyForms;
-      bodyIsRaw = false;
-    } else {
-      bodySend = JSON.parse(inputBodyRaw);
-      bodyIsRaw = true;
-    }
-
-    dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, bodySend, headerSend, inputParams, bodyIsRaw))
-      .then((response) => {
-        setResultPanel(response.response);
-        setResultHeader({
-          status: response.status,
-          responseTime: `${response.responseTime} ms`,
-        });
-        dispatch(addNewHistory(response.newAddedHistory[0]));
-      })
-      .catch((err) => {
-        setResultPanel(err.response);
-        setResultHeader({
-          status: err.status,
-          responseTime: `${err.responseTime} ms`,
-        });
+    if (inputMethodUrl.url === "" || !inputMethodUrl.url) {
+      toast({
+        position: "bottom-right",
+        render: () => (
+          <div className="py-2 px-3 text-center text-white" style={{ backgroundColor: "#f56356", borderRadius: "20px", fontSize: "11pt" }}>
+            Request URL is empty
+          </div>
+        ),
+        duration: 2000,
       });
+    } else {
+      let headerSend = undefined;
+      for (const key in inputHeaders) {
+        if (inputHeaders[key].key !== "" || inputHeaders[key].value !== "") {
+          headerSend = inputHeaders;
+          break;
+        }
+      }
+
+      let bodySend;
+      let bodyIsRaw;
+      if (body === "form") {
+        bodySend = inputBodyForms;
+        bodyIsRaw = false;
+      } else {
+        bodySend = JSON.parse(inputBodyRaw);
+        bodyIsRaw = true;
+      }
+
+      dispatch(postRequest(inputMethodUrl.method, inputMethodUrl.url, bodySend, headerSend, inputParams, bodyIsRaw))
+        .then((response) => {
+          setResultPanel(response.response);
+          setResultHeader({
+            status: response.status,
+            responseTime: `${response.responseTime} ms`,
+          });
+          dispatch(addNewHistory(response.newAddedHistory[0]));
+        })
+        .catch((err) => {
+          setResultPanel(err.response);
+          setResultHeader({
+            status: err.status,
+            responseTime: `${err.responseTime} ms`,
+          });
+        });
+    }
   };
 
   return (
     <Flex ref={bodyHtml} bgColor="gray.800" h="100vh" w="100vw" flexDir="column">
       {/* for navbar section */}
       <Flex ref={navbar} bgColor="gray.700" borderRadius="0 0 20px 20px">
-        <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} />
+        <Navbar inputMethodUrl={inputMethodUrl} changeMethodUrlHandler={changeMethodUrlHandler} submitHandler={submitHandler} userdata={userdata} loading={loadingUserdata} loadingReq={addLoadReq} />
       </Flex>
       {/* for main section */}
       <Flex h={containerHeight} justifyContent="space-evenly" alignItems="center" fontSize="10pt" px={1} py={2}>
@@ -320,17 +349,31 @@ export default function HomePage() {
                         autoComplete="off"
                         value={inputCollection.name}
                         onChange={changeInputCollection}
+                        disabled={addLoadCol}
                       />
                     </div>
                     <div className="col-3 px-0">
-                      <button href="#" type="submit" className="btn btn-danger btn-sm mb-2 text-center text-decoration-none rounded-pill">
-                        Add New
+                      <button href="#" type="submit" className="btn btn-danger btn-sm mb-2 text-center text-decoration-none rounded-pill" disabled={addLoadCol}>
+                        {addLoadCol ? (
+                          <div className="d-flex align-items-center justify-content-center">
+                            <Spinner size="sm" />
+                            &nbsp;Add New
+                          </div>
+                        ) : (
+                          "Add New"
+                        )}
                       </button>
                     </div>
                   </form>
                   <Flex flex={1} flexDirection="column" width="100%" height="100%">
-                    {collections.length === 0 ? (
-                      <p>You dont have any collection yet</p>
+                    {loadingCollection ? (
+                      <div className="text-center">
+                        <Spinner thickness="2px" speed="0.65s" emptyColor="white" color="#f56e56" />
+                      </div>
+                    ) : collections.length === 0 ? (
+                      <div className="text-center">
+                        <p>You dont have any collection yet</p>
+                      </div>
                     ) : (
                       collections.map((collection, idx) => {
                         return (
@@ -347,42 +390,48 @@ export default function HomePage() {
                                 </a>
                               </div>
                               {hoverStatus.idx === idx ? (
-                                <div className="col-2 d-flex align-items-center justify-content-around">
-                                  <a
-                                    href="#"
-                                    className={`text-decoration-none text-white`}
-                                    data-toggle="tooltip"
-                                    data-placement="bottom"
-                                    title="Edit name"
-                                    data-toggle="modal"
-                                    data-target="#editNameCollection"
-                                    data-backdrop="static"
-                                    data-keyboard="false"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setOldCollectionName(collection.name);
-                                      setinputNewName({
-                                        id: collection._id,
-                                        name: collection.name,
-                                      });
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faPencilAlt} />
-                                  </a>
-                                  <a
-                                    href="#"
-                                    className="text-decoration-none text-white"
-                                    data-toggle="tooltip"
-                                    data-placement="bottom"
-                                    title="Delete collection"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      dispatch(deleteCollection(collection._id));
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                  </a>
-                                </div>
+                                delLoadCol ? (
+                                  <div className="col-2 d-flex align-items-center justify-content-center">
+                                    <Spinner size="sm" />
+                                  </div>
+                                ) : (
+                                  <div className="col-2 d-flex align-items-center justify-content-around">
+                                    <a
+                                      href="#"
+                                      className={`text-decoration-none text-white`}
+                                      data-toggle="tooltip"
+                                      data-placement="bottom"
+                                      title="Edit name"
+                                      data-toggle="modal"
+                                      data-target="#editNameCollection"
+                                      data-backdrop="static"
+                                      data-keyboard="false"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        setOldCollectionName(collection.name);
+                                        setinputNewName({
+                                          id: collection._id,
+                                          name: collection.name,
+                                        });
+                                      }}
+                                    >
+                                      <FontAwesomeIcon icon={faPencilAlt} />
+                                    </a>
+                                    <a
+                                      href="#"
+                                      className="text-decoration-none text-white"
+                                      data-toggle="tooltip"
+                                      data-placement="bottom"
+                                      title="Delete collection"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        dispatch(deleteCollection(collection._id));
+                                      }}
+                                    >
+                                      <FontAwesomeIcon icon={faTrash} />
+                                    </a>
+                                  </div>
+                                )
                               ) : (
                                 ""
                               )}
@@ -456,10 +505,16 @@ export default function HomePage() {
                 {/* Collections Tab End */}
 
                 <div className="tab-pane fade show" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
-                  <div className="container mb-2" style={{ backgroundColor: "#1A202C", borderRadius: "20px" }}>
+                  <div className="container mb-2" style={isDragActive ? { backgroundColor: "rgba(245,110,86,0.5)", borderRadius: "20px" } : { backgroundColor: "#1A202C", borderRadius: "20px" }}>
                     <div {...getRootProps({ className: "dropzone py-5 text-center" })}>
                       <input {...getInputProps()} />
-                      <p>Drag n drop some JSON files here, or click to select files</p>
+                      {importLoadReq ? (
+                        <Spinner thickness="2px" speed="0.65s" emptyColor="white" color="#f56e56" size="md" />
+                      ) : isDragActive ? (
+                        <p>Drop your files here, we'll add the endpoints!</p>
+                      ) : (
+                        <p>Drag some JSON files here, or click to select files</p>
+                      )}
                     </div>
                   </div>
 
@@ -485,21 +540,27 @@ export default function HomePage() {
                           </a>
                         </div>
                         {hoverStatus.idx === idx ? (
-                          <div className="col-2 d-flex align-items-center justify-content-center">
-                            <a
-                              href="#"
-                              className="text-decoration-none text-white"
-                              data-toggle="tooltip"
-                              data-placement="bottom"
-                              title="Delete request"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                dispatch(deleteRequest(request._id));
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
-                            </a>
-                          </div>
+                          delLoadReq ? (
+                            <div className="col-2 d-flex align-items-center justify-content-center">
+                              <Spinner size="xs" />
+                            </div>
+                          ) : (
+                            <div className="col-2 d-flex align-items-center justify-content-center">
+                              <a
+                                href="#"
+                                className="text-decoration-none text-white"
+                                data-toggle="tooltip"
+                                data-placement="bottom"
+                                title="Delete request"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  dispatch(deleteRequest(request._id));
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faTrash} />
+                              </a>
+                            </div>
+                          )
                         ) : (
                           ""
                         )}
@@ -607,7 +668,7 @@ export default function HomePage() {
                       type="text"
                       id="newname"
                       placeholder="Enter new name here"
-                      className="form-control border-0 bg-secondary text-dark rounded-pill"
+                      className="form-control border-0 bg-secondary text-dark rounded-pill shadow-none"
                       autoComplete="off"
                       value={inputNewName.name}
                       name="name"
@@ -640,11 +701,19 @@ export default function HomePage() {
                       e.preventDefault();
                       setmodalFooter(false);
                     }}
+                    disabled={patchLoadCol}
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="btn btn-danger rounded-pill" disabled={inputNewName.name === ""}>
-                    Save
+                  <button type="submit" className="btn btn-danger rounded-pill" disabled={inputNewName.name === ""} disabled={patchLoadCol}>
+                    {patchLoadCol ? (
+                      <div className="d-flex align-items-center justify-content-center">
+                        <Spinner size="sm" />
+                        &nbsp;Save
+                      </div>
+                    ) : (
+                      "Save"
+                    )}
                   </button>
                 </div>
               </form>
@@ -1020,7 +1089,11 @@ export default function HomePage() {
               </div>
               <Flex pb={2} px={2} pt={0} overflow="hidden" w="100%" h="100%">
                 <Flex p={1} className="card-body" overflow="scroll" borderRadius={8} w="100%" bgColor="gray.800">
-                  {!resultPanel ? (
+                  {addLoadReq ? (
+                    <div className="d-flex align-items-center justify-content-center h-100 w-100">
+                      <Spinner thickness="3px" speed="0.65s" emptyColor="white" color="#f56e56" size="xl" />
+                    </div>
+                  ) : !resultPanel ? (
                     <></>
                   ) : (
                     <ReactJson src={resultPanel} indentWidth={1} theme="colors" enableClipboard={false} iconStyle="square" displayDataTypes={false} style={{ backgroundColor: "#1A202C" }} name={false} collapseStringsAfterLength={20} />

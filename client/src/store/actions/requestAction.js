@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SET_REQUESTS, SET_REQUESTS_LOADING } from "../actionType";
+import { SET_REQUESTS, SET_REQUESTS_LOADING, ADD_REQUEST_LOADING, DEL_REQUEST_LOADING, IMPORT_REQUEST_LOADING } from "../actionType";
 import { server } from "../../apis/server";
 import { postHistory } from "./historiesAction";
 
@@ -10,9 +10,9 @@ export function setRequests(payload) {
   };
 }
 
-export function loadingRequest(payload) {
+export function loadingRequest(type, payload) {
   return {
-    type: SET_REQUESTS_LOADING,
+    type,
     payload,
   };
 }
@@ -32,6 +32,7 @@ export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
   const access_token = localStorage.getItem("access_token");
 
   return (dispatch, getState) => {
+    dispatch(loadingRequest(ADD_REQUEST_LOADING, true));
     return new Promise((resolve, reject) => {
       if (found) {
         if (params) params = helpers(params);
@@ -75,6 +76,9 @@ export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
               response: err.response.data,
               responseTime: new Date().getTime() - err.response.config.meta.requestStartedAt,
             });
+          })
+          .finally(() => {
+            dispatch(loadingRequest(ADD_REQUEST_LOADING, false));
           });
       } else {
         axios({
@@ -90,6 +94,9 @@ export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
           })
           .catch((err) => {
             reject(err.response.data);
+          })
+          .finally(() => {
+            dispatch(loadingRequest(ADD_REQUEST_LOADING, false));
           });
       }
     });
@@ -99,7 +106,7 @@ export function postRequest(method, url, bodies, headers, params, bodyIsRaw) {
 export function fetchRequests() {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingRequest(true));
+    dispatch(loadingRequest(SET_REQUESTS_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         url: `${server}/requests`,
@@ -115,7 +122,7 @@ export function fetchRequests() {
           reject(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingRequest(false));
+          dispatch(loadingRequest(SET_REQUESTS_LOADING, false));
         });
     });
   };
@@ -127,7 +134,7 @@ export function importRequest(requests) {
   formData.append("requests", requests);
 
   return (dispatch, getState) => {
-    dispatch(loadingRequest(true));
+    dispatch(loadingRequest(IMPORT_REQUEST_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -149,7 +156,7 @@ export function importRequest(requests) {
           console.log(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingRequest(false));
+          dispatch(loadingRequest(IMPORT_REQUEST_LOADING, false));
         });
     });
   };
@@ -158,7 +165,7 @@ export function importRequest(requests) {
 export function deleteRequest(id) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingRequest(true));
+    dispatch(loadingRequest(DEL_REQUEST_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "DELETE",
@@ -171,14 +178,13 @@ export function deleteRequest(id) {
           const newRequests = getState().requestReducer.requests.filter((req) => req._id !== id);
           dispatch(setRequests(newRequests));
           resolve(result.data);
-          // console.log(result.data);
         })
         .catch((err) => {
           // reject(err.response.data.message);
           console.log(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingRequest(false));
+          dispatch(loadingRequest(DEL_REQUEST_LOADING, false));
         });
     });
   };

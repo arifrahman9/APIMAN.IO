@@ -1,22 +1,21 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useToast, Spinner } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import { postRegister } from "../store/actions/registerAction";
 
 export default function Register() {
+  const toast = useToast();
   const history = useHistory();
   const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.loginReducer);
   const [inputRegister, setInputRegister] = useState({
     firstName: "",
     lastName: "",
     username: "",
     email: "",
     password: "",
-  });
-  const [error, setError] = useState({
-    status: false,
-    message: "",
   });
 
   const changeInputRegisterHandler = (e) => {
@@ -36,9 +35,14 @@ export default function Register() {
         history.push("/login");
       })
       .catch((err) => {
-        setError({
-          status: true,
-          message: err,
+        toast({
+          position: "top",
+          render: () => (
+            <div className="py-2 px-2 text-center text-white" style={{ backgroundColor: "#f56356", borderRadius: "20px", fontSize: "11pt" }}>
+              {err}
+            </div>
+          ),
+          duration: 2000,
         });
       });
   };
@@ -52,13 +56,6 @@ export default function Register() {
               <div className="text-center">
                 <h1 className="h1">APIMAN.io</h1>
               </div>
-              {error.status ? (
-                <div className="text-center">
-                  <span className="badge badge-pill badge-danger">{error.message}</span>
-                </div>
-              ) : (
-                ""
-              )}
               <form className="mt-3 user mb-3" onSubmit={submitHandler}>
                 <div className="row form-group">
                   <div className="col pr-1">
@@ -132,8 +129,15 @@ export default function Register() {
                     onChange={changeInputRegisterHandler}
                   />
                 </div>
-                <button type="submit" className="btn btn-danger btn-block rounded-pill">
-                  Register
+                <button type="submit" className="btn btn-danger btn-block rounded-pill" disabled={isLoading}>
+                  {isLoading ? (
+                    <div className="d-flex align-items-center justify-content-center">
+                      <Spinner size="sm" />
+                      &nbsp;Register
+                    </div>
+                  ) : (
+                    "Register"
+                  )}
                 </button>
               </form>
               <div className="text-center">

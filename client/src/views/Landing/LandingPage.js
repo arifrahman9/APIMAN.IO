@@ -55,7 +55,7 @@ export default function LandingPage() {
       <section id="landing-2" style={{ overflowX: "hidden", height: "100vh" }} ref={secondLanding}>
         <div className="row">
           <div className="col d-flex align-items-center justify-content-center" style={{ height: "100vh" }} data-aos="fade-right">
-            <img src={Landing2} alt="Previous" />
+            <img src={Landing2} alt="Previous" width="90%" height="90%" />
           </div>
           <div className="col d-flex flex-column align-items-center justify-content-center" style={{ height: "100vh" }} data-aos="fade-left">
             <h1 className="text-light h1 text-center">
@@ -74,14 +74,14 @@ export default function LandingPage() {
         <div className="col d-flex flex-column align-items-center justify-content-center image-container" style={{ top: "35%" }} data-aos="fade-down" ref={thirdLanding}>
           <img src={Landing3} alt="Previous" width="70%" height="70%" />
           <button
-            className="btn btn-danger next-btn text-light"
+            className="btn btn-danger next-btn text-light rounded-pill"
             type="button"
             onClick={(e) => {
-              e.preventDefault()
+              e.preventDefault();
               if (localStorage.getItem("access_token")) {
-                history.push("/homepage")
+                history.push("/homepage");
               } else {
-                history.push("/login")
+                history.push("/login");
               }
             }}
           >

@@ -9,7 +9,7 @@ import { addNewHistory, addToCollections, deleteHistory, deleteHistoryfromCollec
 import { fetchUserdata } from "../store/actions/loginAction";
 import { deleteRequest, fetchRequests, importRequest, postRequest } from "../store/actions/requestAction";
 import Navbar from "../components/Navbar";
-import ReactJson from "react-json-view";
+import JSONTree from "react-json-tree";
 import { postResult } from "../store/actions/resultAction";
 
 export default function HomePage() {
@@ -18,10 +18,8 @@ export default function HomePage() {
   const navbar = useRef(null);
   const bodyHtml = useRef(null);
   const [containerHeight, setConteinerHeight] = useState(0);
-  const [panelWidth, setPanelWidth] = useState(0);
 
   useEffect(() => {
-    setPanelWidth(Math.floor(bodyHtml.current.offsetWidth / 3));
     setConteinerHeight(bodyHtml.current.offsetHeight - navbar.current.offsetHeight);
   }, []);
   // Chakra end
@@ -307,14 +305,14 @@ export default function HomePage() {
       {/* for main section */}
       <Flex h={containerHeight} justifyContent="space-evenly" alignItems="center" fontSize="10pt" px={1} py={2}>
         {/* for main left section */}
-        <Flex justifyContent="center" alignItems="center" px={1} py={2} h={containerHeight} w={panelWidth}>
+        <Flex justifyContent="center" alignItems="center" px={1} py={2} h={containerHeight} w="33%">
           <div className="card o-hidden border-0 text-white " style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
             <div className="card-header mx-2 pt-2 px-2 pb-2" style={{ backgroundColor: "#2d3748", borderWidth: "0 0 2px 0" }}>
               <nav>
                 <ul className="nav nav-pills nav-fill" id="pills-tab" role="tablist">
                   <li className="nav-item">
                     <a className="nav-link active text-white" id="pills-collection-tab" data-toggle="pill" href="#pills-collection" role="tab" aria-controls="pills-collection" aria-selected="true">
-                      <div className="btn-group">Collections</div>
+                      Collections
                     </a>
                   </li>
                   <li className="nav-item">
@@ -521,7 +519,7 @@ export default function HomePage() {
                 </div>
                 {/* Collections Tab End */}
 
-                <div className="tab-pane fade show" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
+                <div className="tab-pane fade" id="pills-request" role="tabpanel" aria-labelledby="pills-request-tab">
                   <div className="container mb-2" style={isDragActive ? { backgroundColor: "rgba(245,110,86,0.5)", borderRadius: "20px" } : { backgroundColor: "#1A202C", borderRadius: "20px" }}>
                     <div {...getRootProps({ className: "dropzone py-5 text-center" })}>
                       <input {...getInputProps()} />
@@ -846,7 +844,7 @@ export default function HomePage() {
         </div>
 
         {/* for main middle section */}
-        <Flex px={1} py={2} flexDir="column" justifyContent="center" alignItems="center" h={containerHeight} w={panelWidth}>
+        <Flex px={1} py={2} flexDir="column" justifyContent="center" alignItems="center" h={containerHeight} w="34%">
           {/* for main middle top section */}
           <Flex h={containerHeight / 2} w="100%" paddingBottom={1} overflow="hidden">
             <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", height: "100%", width: "100%" }}>
@@ -1093,7 +1091,7 @@ export default function HomePage() {
           </Flex>
         </Flex>
         {/* for main left section */}
-        <Flex px={1} py={2} justifyContent="center" alignItems="center" h={containerHeight} w={panelWidth} overflow="hidden">
+        <Flex px={1} py={2} justifyContent="center" alignItems="center" h={containerHeight} w="34%" overflow="hidden">
           <Flex h="100%" w="100%">
             <div className="card o-hidden border-0 text-white" style={{ borderRadius: "10px", backgroundColor: "#2d3748", width: "100%" }}>
               <div className="d-flex card-header border-0 flex-column p-2" style={{ backgroundColor: "#2d3748" }}>
@@ -1129,7 +1127,6 @@ export default function HomePage() {
                   )}
                 </div>
                 <div>
-                  {addLoadRes}
                   Status: <span className={statusText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>
@@ -1142,19 +1139,18 @@ export default function HomePage() {
                   ) : !resultPanel ? (
                     <></>
                   ) : (
-                    <ReactJson src={resultPanel} indentWidth={1} theme="colors" enableClipboard={false} iconStyle="square" displayDataTypes={false} style={{ backgroundColor: "#1A202C" }} name={false} collapseStringsAfterLength={20} />
+                    <JSONTree
+                      data={resultPanel}
+                      theme={{
+                        tree: {
+                          backgroundColor: "#1A202C",
+                        },
+                      }}
+                    />
+                    // <ReactJson src={resultPanel} indentWidth={1} theme="colors" enableClipboard={false} iconStyle="square" displayDataTypes={false} style={{ backgroundColor: "#1A202C" }} name={false} collapseStringsAfterLength={20} />
                   )}
                 </Flex>
               </Flex>
-              {/* <div className="card-body pb-2 pt-0 px-2 text-wrap">
-                <textarea
-                  className="form-control shadow-none border-0 border-0 text-white body-raw"
-                  cols="30"
-                  style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c" }}
-                  defaultValue={typeof resultPanel === "object" ? JSON.stringify(resultPanel, null, 2) : resultPanel}
-                  disabled
-                ></textarea>
-              </div> */}
             </div>
           </Flex>
         </Flex>

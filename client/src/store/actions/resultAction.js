@@ -29,6 +29,7 @@ export function fetchResults() {
       })
         .then((result) => {
           console.log(result.data);
+          dispatch(setResults(result.data));
         })
         .catch((err) => {
           console.log(err.response.data.message);
@@ -74,6 +75,31 @@ export function postResult(header, content) {
         })
         .finally(() => {
           dispatch(loadingResult(ADD_RESULT_LOADING, false));
+        });
+    });
+  };
+}
+
+export function deleteResult(id) {
+  const access_token = localStorage.getItem("access_token");
+  return (dispatch, getState) => {
+    dispatch(loadingResult(DEL_RESULT_LOADING, true));
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "DELETE",
+        url: `${server}/results/${id}`,
+        headers: {
+          access_token,
+        },
+      })
+        .then((result) => {
+          console.log(result.data);
+        })
+        .catch((err) => {
+          console.log(err.response.data.message);
+        })
+        .finally(() => {
+          dispatch(loadingResult(DEL_RESULT_LOADING, false));
         });
     });
   };

@@ -76,14 +76,14 @@ export default function NavbarNew(props) {
       </Flex>
       <Flex flex={1} justifyContent="end">
         <a className="dropdown-toggle text-decoration-none text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Hello,{" "}
+          Hello,&nbsp;
           {loading ? (
             <>
               <Spinner thickness="2px" speed="0.65s" emptyColor="white" color="#f56e56" size="xs" />
               &nbsp;
             </>
           ) : (
-            userdata.firstName
+            <>{userdata.firstName}&nbsp;</>
           )}
         </a>
         <div className="dropdown-menu dropdown-menu-right" style={{ backgroundColor: "#2d3748" }}>

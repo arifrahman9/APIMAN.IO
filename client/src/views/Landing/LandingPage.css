@@ -15,7 +15,7 @@
   border-top: none;
   border-right: 2px #ffff solid;
   border-bottom: 2px #ffff solid;
-  top: 28%;
+  top: 22%;
   margin: -20px 0 0 -20px;
   transform: rotate(45deg);
 }
@@ -62,12 +62,59 @@
   border-top: none;
   border-right: 2px #ffff solid;
   border-bottom: 2px #ffff solid;
-  top: 63%;
+  top: 45%;
   margin: -20px 0 0 -20px;
   transform: rotate(45deg);
 }
 
 .second-arrow:before {
+  content: "";
+  width: 20px;
+  border-right: 1px #ffff solid;
+  border-bottom: 1px #ffff solid;
+  animation-duration: 2s;
+  height: 20px;
+  top: 50%;
+  margin: -10px 0 0 -10px;
+  border-left: none;
+  border-top: none;
+  animation-iteration-count: infinite;
+  animation-name: arrow;
+}
+
+@keyframes arrow {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-10px, -10px);
+  }
+}
+
+.third-arrow,
+.third-arrow:before {
+  position: absolute;
+  left: 50%;
+}
+
+.third-arrow:hover {
+  cursor: pointer;
+}
+
+.third-arrow {
+  width: 40px;
+  height: 40px;
+  border-left: none;
+  border-top: none;
+  border-right: 2px #ffff solid;
+  border-bottom: 2px #ffff solid;
+  top: 70%;
+  margin: -20px 0 0 -20px;
+  transform: rotate(45deg);
+}
+
+.third-arrow:before {
   content: "";
   width: 20px;
   border-right: 1px #ffff solid;
@@ -103,4 +150,23 @@
   border: none;
   cursor: pointer;
   border-radius: 5px;
+}
+
+.card:hover .image-profile {
+  opacity: 0.5;
+}
+
+.button-to-github {
+  transition: 0.5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.card:hover .button-to-github {
+  opacity: 1;
 }

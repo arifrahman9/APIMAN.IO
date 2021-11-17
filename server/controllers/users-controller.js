@@ -80,7 +80,7 @@ class UsersController {
   static async getUserCredentials(req, res, next) {
     try {
       const user = await UsersModel.getLoggedInUser(req.user.id);
-      // console.log(user, "=======>>>>>>>>>>>>")
+      // console.log(user)
       res.status(200).json({
         username: user.username,
         email: user.email,

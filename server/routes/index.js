@@ -14,7 +14,7 @@ const UsersController = require('../controllers/users-controller');
 
 router.post(
   '/login-google',
-  cors({ origin: 'http://localhost:3000' }),
+  cors({ origin: 'https://apimanio.web.app' }),
   UsersController.loginGoogle
 );
 router.post('/register', UsersController.register);

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SET_HISTORIES, SET_HISTORIES_LOADING } from "../actionType";
+import { SET_HISTORIES, SET_HISTORIES_LOADING, ADD_TO_COLL_LOADING, DEL_HISTORY_LOADING } from "../actionType";
 import { server } from "../../apis/server";
 
 export function setHistories(payload) {
@@ -9,9 +9,9 @@ export function setHistories(payload) {
   };
 }
 
-export function loadingHistory(payload) {
+export function loadingHistory(type, payload) {
   return {
-    type: SET_HISTORIES_LOADING,
+    type,
     payload,
   };
 }
@@ -19,7 +19,7 @@ export function loadingHistory(payload) {
 export function fetchHistories() {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingHistory(true));
+    dispatch(loadingHistory(SET_HISTORIES_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         url: `${server}/histories`,
@@ -34,7 +34,7 @@ export function fetchHistories() {
           console.log(err.response.data);
         })
         .finally(() => {
-          dispatch(loadingHistory(false));
+          dispatch(loadingHistory(SET_HISTORIES_LOADING, false));
         });
     });
   };
@@ -43,6 +43,7 @@ export function fetchHistories() {
 export function deleteHistory(id) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
+    dispatch(loadingHistory(DEL_HISTORY_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "DELETE",
@@ -57,6 +58,9 @@ export function deleteHistory(id) {
         })
         .catch((err) => {
           console.log(err.response.data.message);
+        })
+        .finally(() => {
+          dispatch(loadingHistory(DEL_HISTORY_LOADING, false));
         });
     });
   };
@@ -73,6 +77,7 @@ export function addNewHistory(addedHistory) {
 export function addToCollections(data) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
+    dispatch(loadingHistory(ADD_TO_COLL_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -94,6 +99,9 @@ export function addToCollections(data) {
         })
         .catch((err) => {
           reject(err.response.data.message);
+        })
+        .finally(() => {
+          dispatch(loadingHistory(ADD_TO_COLL_LOADING, false));
         });
     });
   };
@@ -102,7 +110,7 @@ export function addToCollections(data) {
 export function deleteHistoryfromCollection(id) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingHistory(true));
+    dispatch(loadingHistory(DEL_HISTORY_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -126,7 +134,7 @@ export function deleteHistoryfromCollection(id) {
           reject(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingHistory(false));
+          dispatch(loadingHistory(DEL_HISTORY_LOADING, false));
         });
     });
   };

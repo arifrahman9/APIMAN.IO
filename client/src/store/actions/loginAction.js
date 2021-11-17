@@ -29,7 +29,6 @@ export function login(data) {
           resolve(result.data);
         })
         .catch((err) => {
-          console.log(err.response);
           reject(err.response.data.message);
         })
         .finally(() => {

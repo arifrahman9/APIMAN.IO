@@ -100,9 +100,10 @@ export default function HomePage() {
   };
 
   const { userdata, isLoading: loadingUserdata } = useSelector((state) => state.loginReducer);
-  const { histories, isLoading: loadingHistory } = useSelector((state) => state.historyReducer);
+  const { histories, isLoading: loadingHistory, addLoading: addLoadHist, delLoading: delLoadHist } = useSelector((state) => state.historyReducer);
   const { collections, isLoading: loadingCollection, addLoading: addLoadCol, delLoading: delLoadCol, patchLoading: patchLoadCol } = useSelector((state) => state.collectionReducer);
   const { requests, isLoading: loadingRequest, addLoading: addLoadReq, delLoading: delLoadReq, importLoading: importLoadReq } = useSelector((state) => state.requestReducer);
+  const { addLoading: addLoadRes } = useSelector((state) => state.resultReducer);
 
   const historyText = (method) => {
     if (method === "get") {
@@ -425,7 +426,17 @@ export default function HomePage() {
                                       title="Delete collection"
                                       onClick={(e) => {
                                         e.preventDefault();
-                                        dispatch(deleteCollection(collection._id));
+                                        dispatch(deleteCollection(collection._id)).then((response) => {
+                                          toast({
+                                            position: "bottom-left",
+                                            render: () => (
+                                              <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+                                                {response.name}&nbsp;deleted from your collection
+                                              </div>
+                                            ),
+                                            duration: 2000,
+                                          });
+                                        });
                                       }}
                                     >
                                       <FontAwesomeIcon icon={faTrash} />
@@ -473,21 +484,27 @@ export default function HomePage() {
                                           </div>
                                         </a>
                                         {hoverStatus.idx === history._id ? (
-                                          <div className="col-1 d-flex align-items-center justify-content-around">
-                                            <a
-                                              href="#"
-                                              className="text-decoration-none text-white"
-                                              data-toggle="tooltip"
-                                              data-placement="bottom"
-                                              title="Delete history"
-                                              onClick={(e) => {
-                                                e.preventDefault();
-                                                dispatch(deleteHistoryfromCollection(history._id));
-                                              }}
-                                            >
-                                              <FontAwesomeIcon icon={faTrash} />
-                                            </a>
-                                          </div>
+                                          delLoadHist ? (
+                                            <div className="col-1 d-flex align-items-center justify-content-center">
+                                              <Spinner size="xs" />
+                                            </div>
+                                          ) : (
+                                            <div className="col-1 d-flex align-items-center justify-content-around">
+                                              <a
+                                                href="#"
+                                                className="text-decoration-none text-white"
+                                                data-toggle="tooltip"
+                                                data-placement="bottom"
+                                                title="Delete history"
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  dispatch(deleteHistoryfromCollection(history._id));
+                                                }}
+                                              >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                              </a>
+                                            </div>
+                                          )
                                         ) : (
                                           ""
                                         )}
@@ -604,41 +621,47 @@ export default function HomePage() {
                             </a>
                           </div>
                           {hoverStatus.idx === idx ? (
-                            <div className="col-2 d-flex align-items-center justify-content-around">
-                              <a
-                                href="#"
-                                className={`${history.CollectionId ? "d-none" : ""} text-decoration-none text-white`}
-                                data-toggle="tooltip"
-                                data-placement="bottom"
-                                title="Save to collection"
-                                data-toggle="modal"
-                                data-target="#addToCollectionModal"
-                                data-backdrop="static"
-                                data-keyboard="false"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setInputAddHistory({
-                                    ...inputAddHistory,
-                                    historyId: history._id,
-                                  });
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faPlus} />
-                              </a>
-                              <a
-                                href="#"
-                                className="text-decoration-none text-white"
-                                data-toggle="tooltip"
-                                data-placement="bottom"
-                                title="Delete history"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  dispatch(deleteHistory(history._id));
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faTrash} />
-                              </a>
-                            </div>
+                            delLoadHist ? (
+                              <div className="col-2 d-flex align-items-center justify-content-center">
+                                <Spinner size="xs" />
+                              </div>
+                            ) : (
+                              <div className="col-2 d-flex align-items-center justify-content-around">
+                                <a
+                                  href="#"
+                                  className={`${history.CollectionId ? "d-none" : ""} text-decoration-none text-white`}
+                                  data-toggle="tooltip"
+                                  data-placement="bottom"
+                                  title="Save to collection"
+                                  data-toggle="modal"
+                                  data-target="#addToCollectionModal"
+                                  data-backdrop="static"
+                                  data-keyboard="false"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setInputAddHistory({
+                                      ...inputAddHistory,
+                                      historyId: history._id,
+                                    });
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faPlus} />
+                                </a>
+                                <a
+                                  href="#"
+                                  className="text-decoration-none text-white"
+                                  data-toggle="tooltip"
+                                  data-placement="bottom"
+                                  title="Delete history"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    dispatch(deleteHistory(history._id));
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faTrash} />
+                                </a>
+                              </div>
+                            )
                           ) : (
                             ""
                           )}
@@ -705,7 +728,7 @@ export default function HomePage() {
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="btn btn-danger rounded-pill" disabled={inputNewName.name === ""} disabled={patchLoadCol}>
+                  <button type="submit" className="btn btn-danger rounded-pill" disabled={inputNewName.name === "" || patchLoadCol}>
                     {patchLoadCol ? (
                       <div className="d-flex align-items-center justify-content-center">
                         <Spinner size="sm" />
@@ -784,6 +807,7 @@ export default function HomePage() {
                     setInputAddHistory({});
                     setmodalFooter(false);
                   }}
+                  disabled={addLoadHist}
                 >
                   Cancel
                 </button>
@@ -805,9 +829,16 @@ export default function HomePage() {
                         document.getElementById("messageAddHistory").innerHTML = `<span class="text-danger">Failed added to collection</span>`;
                       });
                   }}
-                  disabled={inputAddHistory.collectionId === ""}
+                  disabled={inputAddHistory.collectionId === "" || addLoadHist}
                 >
-                  Save
+                  {addLoadHist ? (
+                    <div className="d-flex align-items-center justify-content-center">
+                      <Spinner size="sm" />
+                      &nbsp;Save
+                    </div>
+                  ) : (
+                    "Save"
+                  )}
                 </button>
               </div>
             </div>
@@ -1069,21 +1100,36 @@ export default function HomePage() {
                 <div className="d-flex justify-content-between">
                   <span>Response</span>
                   {resultPanel ? (
-                    <a
-                      href="#"
-                      className="text-danger text-decoration-none"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        dispatch(postResult(resultHeader, resultPanel));
-                      }}
-                    >
-                      Save Response
-                    </a>
+                    addLoadRes ? (
+                      <Spinner speed="0.65s" emptyColor="white" color="#f56e56" size="xs" />
+                    ) : (
+                      <a
+                        href="#"
+                        className="text-danger text-decoration-none"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          dispatch(postResult(resultHeader, resultPanel)).then((response) => {
+                            toast({
+                              position: "bottom-right",
+                              render: () => (
+                                <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+                                  Response saved! Check it in your profile
+                                </div>
+                              ),
+                              duration: 2000,
+                            });
+                          });
+                        }}
+                      >
+                        Save Response
+                      </a>
+                    )
                   ) : (
                     ""
                   )}
                 </div>
                 <div>
+                  {addLoadRes}
                   Status: <span className={statusText(resultHeader.status[0])}>{resultHeader.status}</span>&nbsp; Time:&nbsp;<span className="text-success">{resultHeader.responseTime}</span>
                 </div>
               </div>

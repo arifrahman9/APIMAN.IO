@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SET_RESULTS, SET_RESULTS_LOADING } from "../actionType";
+import { SET_RESULTS, SET_RESULTS_LOADING, ADD_RESULT_LOADING, DEL_RESULT_LOADING } from "../actionType";
 import { server } from "../../apis/server";
 
 export function setResults(payload) {
@@ -9,9 +9,9 @@ export function setResults(payload) {
   };
 }
 
-export function loadingResult(payload) {
+export function loadingResult(type, payload) {
   return {
-    type: SET_RESULTS_LOADING,
+    type,
     payload,
   };
 }
@@ -19,6 +19,7 @@ export function loadingResult(payload) {
 export function fetchResults() {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
+    dispatch(loadingResult(SET_RESULTS_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         url: `${server}/results`,
@@ -31,6 +32,9 @@ export function fetchResults() {
         })
         .catch((err) => {
           console.log(err.response.data.message);
+        })
+        .finally(() => {
+          dispatch(loadingResult(SET_RESULTS_LOADING, false));
         });
     });
   };
@@ -50,7 +54,7 @@ export function postResult(header, content) {
   };
 
   return (dispatch, getState) => {
-    dispatch(loadingResult(true));
+    dispatch(loadingResult(ADD_RESULT_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -69,7 +73,7 @@ export function postResult(header, content) {
           reject(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingResult(false));
+          dispatch(loadingResult(ADD_RESULT_LOADING, false));
         });
     });
   };

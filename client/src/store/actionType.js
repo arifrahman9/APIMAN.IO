@@ -8,11 +8,15 @@ export const ADD_COLLECTION_LOADING = "collection/addLoading"; // loading add ne
 export const DEL_COLLECTION_LOADING = "collection/delLoading"; // loading delete
 export const PATCH_COLLECTION_LOADING = "collection/patchLoading"; // loading edit
 
-export const SET_HISTORIES = "histories/setHistories";
-export const SET_HISTORIES_LOADING = "histories/setLoading";
+export const SET_HISTORIES = "histories/setHistories"; // set state
+export const SET_HISTORIES_LOADING = "histories/setLoading"; // loading read
+export const ADD_TO_COLL_LOADING = "history/addLoading"; // loading add to collection
+export const DEL_HISTORY_LOADING = "history/delLoading"; // loading del history
 
-export const SET_RESULTS = "results/setResults";
-export const SET_RESULTS_LOADING = "results/setLoading";
+export const SET_RESULTS = "results/setResults"; // set state
+export const SET_RESULTS_LOADING = "results/setLoading"; // loading read
+export const ADD_RESULT_LOADING = "result/addLoading"; // loading add result
+export const DEL_RESULT_LOADING = "result/delLoading"; // loading del result
 
 export const SET_REQUESTS = "requests/setRequest"; // set state
 export const SET_REQUESTS_LOADING = "requests/setLoading"; // loading read

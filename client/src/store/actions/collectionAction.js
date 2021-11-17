@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SET_COLLECTIONS, SET_COLLECTIONS_LOADING } from "../actionType";
+import { SET_COLLECTIONS, SET_COLLECTIONS_LOADING, ADD_COLLECTION_LOADING, DEL_COLLECTION_LOADING, PATCH_COLLECTION_LOADING } from "../actionType";
 import { server } from "../../apis/server";
 
 function sorting(collections) {
@@ -23,9 +23,9 @@ export function setCollections(payload) {
   };
 }
 
-export function loadingCollection(payload) {
+export function loadingCollection(type, payload) {
   return {
-    type: SET_COLLECTIONS_LOADING,
+    type,
     payload,
   };
 }
@@ -33,7 +33,7 @@ export function loadingCollection(payload) {
 export function fetchCollections() {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingCollection(true));
+    dispatch(loadingCollection(SET_COLLECTIONS_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         url: `${server}/collections`,
@@ -49,7 +49,7 @@ export function fetchCollections() {
           console.log(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingCollection(false));
+          dispatch(loadingCollection(SET_COLLECTIONS_LOADING, false));
         });
     });
   };
@@ -58,6 +58,7 @@ export function fetchCollections() {
 export function postCollection(data) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
+    dispatch(loadingCollection(ADD_COLLECTION_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -77,6 +78,9 @@ export function postCollection(data) {
         })
         .catch((err) => {
           reject(err.response.data.message);
+        })
+        .finally(() => {
+          dispatch(loadingCollection(ADD_COLLECTION_LOADING, false));
         });
     });
   };
@@ -85,7 +89,7 @@ export function postCollection(data) {
 export function deleteCollection(id) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingCollection(true));
+    dispatch(loadingCollection(DEL_COLLECTION_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "DELETE",
@@ -113,7 +117,7 @@ export function deleteCollection(id) {
           reject(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingCollection(false));
+          dispatch(loadingCollection(DEL_COLLECTION_LOADING, false));
         });
     });
   };
@@ -122,7 +126,7 @@ export function deleteCollection(id) {
 export function patchCollection(data) {
   const access_token = localStorage.getItem("access_token");
   return (dispatch, getState) => {
-    dispatch(loadingCollection(true));
+    dispatch(loadingCollection(PATCH_COLLECTION_LOADING, true));
     return new Promise((resolve, reject) => {
       axios({
         method: "PATCH",
@@ -149,7 +153,7 @@ export function patchCollection(data) {
           reject(err.response.data.message);
         })
         .finally(() => {
-          dispatch(loadingCollection(false));
+          dispatch(loadingCollection(PATCH_COLLECTION_LOADING, false));
         });
     });
   };

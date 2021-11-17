@@ -1,15 +1,15 @@
-import React from "react"
-import { Flex, Text } from "@chakra-ui/react"
-import { Link, useHistory } from "react-router-dom"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
-import { useDispatch } from "react-redux"
-import { setUserdata } from "../store/actions/loginAction"
+import React from "react";
+import { Flex, Text, Spinner } from "@chakra-ui/react";
+import { Link, useHistory } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDatabase, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { setUserdata } from "../store/actions/loginAction";
 
 export default function NavbarNew(props) {
-  const dispatch = useDispatch()
-  const history = useHistory()
-  const { inputMethodUrl, changeMethodUrlHandler, submitHandler, userdata } = props
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { inputMethodUrl, changeMethodUrlHandler, submitHandler, loading, userdata, loadingReq } = props;
 
   return (
     <Flex width="100%" flexDirection="row" px={4} py={2} alignItems="center">
@@ -25,13 +25,13 @@ export default function NavbarNew(props) {
           className="user"
           style={{ width: "100%" }}
           onSubmit={(e) => {
-            e.preventDefault()
-            submitHandler()
+            e.preventDefault();
+            submitHandler();
           }}
         >
           <div className="input-group">
             <div className="input-group-prepend">
-              <select className="custom-select shadow-none" style={{ borderRadius: "20px 0 0 20px", backgroundColor: "#dcdddd", color: "#212121" }} name="method" onChange={changeMethodUrlHandler}>
+              <select className="custom-select shadow-none" style={{ borderRadius: "20px 0 0 20px", backgroundColor: "#dcdddd", color: "#212121" }} name="method" onChange={changeMethodUrlHandler} disabled={loadingReq}>
                 <option value="get" key="get" selected={inputMethodUrl.method === "get" ? "selected" : false}>
                   Get
                 </option>
@@ -55,12 +55,19 @@ export default function NavbarNew(props) {
               placeholder="Url"
               style={{ borderRadius: 0, backgroundColor: "#dcdddd", borderColor: "#dcdddd", color: "#212121" }}
               name="url"
-              defaultValue={inputMethodUrl.url}
+              value={inputMethodUrl.url}
               onChange={changeMethodUrlHandler}
+              disabled={loadingReq}
             />
             <div className="input-group-append">
-              <button className="btn btn-danger" type="submit" style={{ borderRadius: "0 20px 20px 0" }}>
-                <FontAwesomeIcon icon={faPaperPlane} />
+              <button className="btn btn-danger shadow-none" type="submit" style={{ borderRadius: "0 20px 20px 0" }} disabled={loadingReq}>
+                {loadingReq ? (
+                  <div className="d-flex align-items-center justify-content-center">
+                    <Spinner size="sm" />
+                  </div>
+                ) : (
+                  <FontAwesomeIcon icon={faPaperPlane} />
+                )}
               </button>
             </div>
           </div>
@@ -68,7 +75,15 @@ export default function NavbarNew(props) {
       </Flex>
       <Flex flex={1} justifyContent="end">
         <a className="dropdown-toggle text-decoration-none text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Hello, {userdata.firstName}&nbsp;
+          Hello,{" "}
+          {loading ? (
+            <>
+              <Spinner thickness="2px" speed="0.65s" emptyColor="white" color="#f56e56" size="xs" />
+              &nbsp;
+            </>
+          ) : (
+            userdata.firstName
+          )}
         </a>
         <div className="dropdown-menu dropdown-menu-right" style={{ backgroundColor: "#2d3748" }}>
           <Link className="dropdown-item text-white" to="/profile">
@@ -78,10 +93,10 @@ export default function NavbarNew(props) {
             className="dropdown-item text-white"
             href="#"
             onClick={(e) => {
-              e.preventDefault()
-              localStorage.removeItem("access_token")
-              dispatch(setUserdata({}))
-              history.push("/login")
+              e.preventDefault();
+              localStorage.removeItem("access_token");
+              dispatch(setUserdata({}));
+              history.push("/login");
             }}
           >
             Logout
@@ -89,5 +104,5 @@ export default function NavbarNew(props) {
         </div>
       </Flex>
     </Flex>
-  )
+  );
 }

@@ -32,13 +32,22 @@ export default function Login() {
       .then((response) => {
         const access_token = response.access_token;
         localStorage.setItem("access_token", access_token);
+        toast({
+          position: "bottom",
+          render: () => (
+            <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "12pt" }}>
+              Login success! Welcome
+            </div>
+          ),
+          duration: 2000,
+        });
         history.push("/homepage");
       })
       .catch((err) => {
         toast({
           position: "top",
           render: () => (
-            <div className="py-2 px-3 text-center text-white" style={{ backgroundColor: "#f56356", borderRadius: "20px", fontSize: "11pt" }}>
+            <div className="py-2 px-3 text-center text-white" style={{ backgroundColor: "#f56356", borderRadius: "20px", fontSize: "12pt" }}>
               {err}
             </div>
           ),

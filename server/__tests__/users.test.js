@@ -257,6 +257,26 @@ describe("GET /users/profile", () => {
       })
       .catch((err) => done(err))
   })
+
+  test("[Failed] Should handle error when get profile with invalid userId", async () => {
+    const mock = jest.spyOn(UsersController, "getUserCredentials").mockRejectedValueOnce({ message: "Internal Server Error", status: 500 })
+    return request(app)
+      .get("/users/profile")
+      .set({
+        access_token: loginResponse.body.access_token,
+      })
+      .then((response) => {
+        response.body = mock()
+        console.log(response.body)
+        return response.body
+      })
+      .then((result) => {
+        console.log(result)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  })
 })
 
 describe("POST /forgot-password", () => {

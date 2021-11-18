@@ -5,7 +5,6 @@ import Landing3 from "../../assets/logo/Landing3.svg"
 import ProfileRasyid from "../../assets/profile/Acit.png"
 import ProfileDarwin from "../../assets/profile/Darwin.png"
 import ProfileArif from "../../assets/profile/Arif.jpg"
-// import ProfileZahrul from "../../assets/profile/Zahrul.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGithub } from "@fortawesome/free-brands-svg-icons"
 import { faAngleDoubleRight, faDatabase } from "@fortawesome/free-solid-svg-icons"
@@ -60,7 +59,7 @@ export default function LandingPage() {
             </h3>
           </div>
           <div className="col" data-aos="fade-right">
-            <img src={Landing1} alt="Previous" width="90%" height="90%" />
+            <img src={Landing1} alt="Previous" width="85%" height="80%" />
           </div>
         </div>
         <div className="arrow" onClick={handleArrowClick}></div>
@@ -83,9 +82,9 @@ export default function LandingPage() {
         </div>
         <div className="second-arrow" onClick={handleSecondArrowClick}></div>
       </section>
-      <section id="landing-3" style={{ height: "100vh" }}>
+      <section id="landing-3" style={{ overflowX: "hidden", height: "100vh" }} ref={thirdLanding}>
         <div className="row">
-          <div className="col-12 d-flex align-items-start justify-content-center" data-aos="fade-down" ref={thirdLanding}>
+          <div className="col-12 d-flex align-items-start justify-content-center" data-aos="fade-down">
             <p className="text-danger" style={{ fontSize: "50pt", fontWeight: "bolder" }}>
               Our Team
             </p>
@@ -140,29 +139,13 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-              {/* <div className="col">
-                <div className="card bg-danger mx-auto rounded h-100 border-0">
-                  <img src={ProfileZahrul} className="card-img-top" alt="Profile" style={{ height: "250px" }} />
-                  <div className="card-body">
-                    <h5 className="card-title text-light" style={{ textAlign: "center", fontWeight: "600" }}>
-                      Muhammad Zahrul Wathoni
-                    </h5>
-                    <a href="https://github.com/zahrulsch" target="_blank" rel="noopener">
-                      <button type="button" class="btn btn-warning">
-                        <FontAwesomeIcon icon={faGithub} size="2x" color="#f56e56" style={{ verticalAlign: "middle", marginRight: 5 }} />
-                        Github
-                      </button>
-                    </a>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
           <div className="third-arrow" onClick={handleThirdArrowClick}></div>
         </div>
       </section>
-      <section id="landing-4 text-center" style={{ height: "100vh" }}>
-        <div className="col d-flex flex-column align-items-center justify-content-center image-container" style={{ top: "35%" }} data-aos="fade-down" ref={fourLanding}>
+      <section id="landing-4" style={{ height: "100vh" }} ref={fourLanding}>
+        <div className="col d-flex flex-column align-items-center justify-content-center image-container" style={{ top: "30%" }} data-aos="fade-down">
           <img src={Landing3} alt="Previous" width="70%" height="70%" />
           <button
             className="btn btn-danger next-btn text-light rounded-pill"
@@ -181,7 +164,7 @@ export default function LandingPage() {
             <FontAwesomeIcon icon={faAngleDoubleRight} size="2x" color="#ffff" style={{ verticalAlign: "middle" }} />
           </button>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style={{ zIndex: "-1" }}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
           <path
             fill="#f46e56"
             fill-opacity="1"

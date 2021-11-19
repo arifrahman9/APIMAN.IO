@@ -94,6 +94,9 @@ export function deleteResult(id) {
       })
         .then((result) => {
           console.log(result.data);
+          const newResult = getState().resultReducer.results.filter((result) => result._id != id);
+          dispatch(setResults(newResult));
+          resolve(result.data);
         })
         .catch((err) => {
           console.log(err.response.data.message);

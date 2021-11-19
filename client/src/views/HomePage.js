@@ -32,12 +32,21 @@ export default function HomePage() {
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, fileRejections } = useDropzone({ onDrop, accept: "application/json" });
 
-  const fileRejectionItems = fileRejections.map(({ file, errors }) => {
-    console.log(file.path);
-    errors.map((e) => {
-      console.log(e.message);
-    });
-  });
+  // const fileRejectionItems = fileRejections.map(({ file, errors }) => {
+  //   toast({
+  //     position: "bottom-left",
+  //     render: () => (
+  //       <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+  //         {file.path}{" "}
+  //         {errors.map((e) => {
+  //           return <span>{e.message}</span>;
+  //         })}
+  //         {/* {response[0].name}&nbsp;added to your collection */}
+  //       </div>
+  //     ),
+  //     duration: 2000,
+  //   });
+  // });
 
   const dispatch = useDispatch();
   const [resultHeader, setResultHeader] = useState({
@@ -104,15 +113,15 @@ export default function HomePage() {
   const { addLoading: addLoadRes } = useSelector((state) => state.resultReducer);
 
   const historyText = (method) => {
-    if (method === "get") {
+    if (method == "get") {
       return "text-success";
-    } else if (method === "post") {
+    } else if (method == "post") {
       return "text-warning";
-    } else if (method === "put") {
+    } else if (method == "put") {
       return "text-primary";
-    } else if (method === "delete") {
+    } else if (method == "delete") {
       return "text-danger";
-    } else {
+    } else if (method == "patch") {
       return "text-info";
     }
   };
@@ -273,7 +282,7 @@ export default function HomePage() {
         bodySend = inputBodyForms;
         bodyIsRaw = false;
       } else {
-        bodySend = JSON.parse(inputBodyRaw);
+        bodySend = inputBodyRaw;
         bodyIsRaw = true;
       }
 
@@ -1083,7 +1092,14 @@ export default function HomePage() {
                   ))
                 ) : (
                   <>
-                    <textarea className="form-control shadow-none border-0 body-raw bg-secondary" cols="30" rows="9" style={{ color: "#212121", resize: "none", height: "100%" }} onChange={changeInputBodyRaw} value={inputBodyRaw}></textarea>
+                    <textarea
+                      className="form-control shadow-none border-0 body-raw bg-secondary"
+                      cols="30"
+                      rows="9"
+                      style={{ color: "#212121", resize: "none", height: "100%", fontSize: "10pt" }}
+                      onChange={changeInputBodyRaw}
+                      value={inputBodyRaw}
+                    ></textarea>
                   </>
                 )}
               </div>

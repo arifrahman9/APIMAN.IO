@@ -1,48 +1,48 @@
-import React, { useEffect, useRef } from "react"
-import Landing1 from "../../assets/logo/Landing1.svg"
-import Landing2 from "../../assets/logo/Landing2.png"
-import Landing3 from "../../assets/logo/Landing3.svg"
-import ProfileRasyid from "../../assets/profile/Acit.png"
-import ProfileDarwin from "../../assets/profile/Darwin.png"
-import ProfileArif from "../../assets/profile/Arif.jpg"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGithub } from "@fortawesome/free-brands-svg-icons"
-import { faAngleDoubleRight, faDatabase } from "@fortawesome/free-solid-svg-icons"
-import "./LandingPage.css"
-import AOS from "aos"
-import { useHistory } from "react-router"
+import React, { useEffect, useRef } from "react";
+import Landing1 from "../../assets/logo/Landing1.svg";
+import Landing2 from "../../assets/logo/Landing2.png";
+import Landing3 from "../../assets/logo/Landing3.svg";
+import ProfileRasyid from "../../assets/profile/Acit.png";
+import ProfileDarwin from "../../assets/profile/Darwin.png";
+import ProfileArif from "../../assets/profile/Arif.jpg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faAngleDoubleRight, faDatabase } from "@fortawesome/free-solid-svg-icons";
+import "./LandingPage.css";
+import AOS from "aos";
+import { useHistory } from "react-router";
 
 export default function LandingPage() {
-  const history = useHistory()
+  const history = useHistory();
   useEffect(() => {
     AOS.init({
       duration: 1000,
-    })
-  }, [])
-  const secondLanding = useRef()
-  const thirdLanding = useRef()
-  const fourLanding = useRef()
+    });
+  }, []);
+  const secondLanding = useRef();
+  const thirdLanding = useRef();
+  const fourLanding = useRef();
   const handleArrowClick = () => {
     secondLanding.current.scrollIntoView({
       behaviour: "smooth",
-    })
-  }
+    });
+  };
 
   const handleSecondArrowClick = () => {
     thirdLanding.current.scrollIntoView({
       behaviour: "smooth",
-    })
-  }
+    });
+  };
 
   const handleThirdArrowClick = () => {
     fourLanding.current.scrollIntoView({
       behaviour: "smooth",
-    })
-  }
+    });
+  };
 
   return (
     <div>
-      <section id="landing-1" style={{ overflow: "hidden", height: "100vh" }}>
+      <section id="landing-1" style={{ overflowX: "hidden", height: "100vh" }}>
         <div className="m-4 d-flex align-items-center justify-content-between">
           <FontAwesomeIcon icon={faDatabase} size="2x" color="#f56e56" />
           <a href="https://github.com/rasyidrmhd/APIMAN.io" target="blank" className="text-decoration-none">
@@ -151,11 +151,11 @@ export default function LandingPage() {
             className="btn btn-danger next-btn text-light rounded-pill"
             type="button"
             onClick={(e) => {
-              e.preventDefault()
+              e.preventDefault();
               if (localStorage.getItem("access_token")) {
-                history.push("/homepage")
+                history.push("/homepage");
               } else {
-                history.push("/login")
+                history.push("/login");
               }
             }}
           >
@@ -173,5 +173,5 @@ export default function LandingPage() {
         </svg>
       </section>
     </div>
-  )
+  );
 }

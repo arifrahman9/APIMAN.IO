@@ -149,11 +149,9 @@ export function importRequest(requests) {
           const requests = getState().requestReducer.requests;
           requests.unshift(...result.data);
           resolve(result.data);
-          console.log(result.data);
         })
         .catch((err) => {
           reject(err.response.data.message);
-          console.log(err.response.data.message);
         })
         .finally(() => {
           dispatch(loadingRequest(IMPORT_REQUEST_LOADING, false));

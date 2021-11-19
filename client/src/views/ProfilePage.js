@@ -1,16 +1,17 @@
-import { Flex, Text, Icon, Avatar, VStack, Box, HStack, StackDivider, Skeleton, SkeletonCircle, Spinner, Grid } from "@chakra-ui/react";
-import { FcPortraitMode, FcOpenedFolder, FcFolder, FcSurvey } from "react-icons/fc";
+import { Flex, Text, Icon, Avatar, VStack, Box, HStack, StackDivider, Skeleton, SkeletonCircle, Spinner, Grid, useToast } from "@chakra-ui/react";
+import { FcPortraitMode, FcOpenedFolder, FcFolder, FcSurvey, FcEmptyTrash } from "react-icons/fc";
 import { BsFolderFill } from "react-icons/bs";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserdata } from "../store/actions/loginAction";
 import { fetchCollections } from "../store/actions/collectionAction";
 import SecondaryNavbar from "../components/SecondaryNavbar";
-import { fetchResults } from "../store/actions/resultAction";
+import { deleteResult, fetchResults } from "../store/actions/resultAction";
 import JSONTree from "react-json-tree";
 import Acit from "../assets/profile/Acit.jpeg";
 
 export default function ProfilePage() {
+  const toast = useToast();
   const dispatch = useDispatch();
   const navbar = useRef(null);
   const bodyHtml = useRef(null);
@@ -42,7 +43,7 @@ export default function ProfilePage() {
 
   const { userdata: data } = useSelector((state) => state.loginReducer);
   const { isLoading: loadingCollection, collections } = useSelector((state) => state.collectionReducer);
-  const { isLoading: loadingResult, results } = useSelector((state) => state.resultReducer);
+  const { isLoading: loadingResult, delLoading: delLoadRes, results } = useSelector((state) => state.resultReducer);
 
   return (
     <Flex ref={bodyHtml} h="100vh" w="100vw" flexDir="column">
@@ -124,57 +125,106 @@ export default function ProfilePage() {
               </nav>
             </div>
             <div className="card-body py-2 px-3 text-wrap" style={{ overflowY: "auto", overflowX: "hidden" }}>
-              {results.map((result) => (
-                <div key={result._id} className="card bg-transparent mx-1 border-0" style={{ fontSize: "10pt" }}>
-                  <div className="card-body p-1 row">
-                    <div className="col-3 px-1">
-                      <div className="mx-2 mb-1">&nbsp;</div>
-                      <div className="p-3" style={{ backgroundColor: "#1A202C", borderRadius: "20px", height: "200px" }}>
-                        Code:&nbsp;
-                        <span className={statusText(result.code[0])}>{result.code}</span>
-                        <br />
-                        Status:&nbsp;
-                        <span className={statusText(result.code[0])}>{result.status.length > 5 ? <>{result.status.substring(0, 5)}..</> : result.status}</span>
-                        <br />
-                        Time: <span className="text-info">{result.responseTime} ms</span>
+              {loadingResult ? (
+                <div className="text-center">
+                  <Spinner thickness="2px" speed="0.65s" emptyColor="white" color="#f56e56" />
+                </div>
+              ) : (
+                results.map((result) => (
+                  <div key={result._id} className="card bg-transparent mx-1 border-0" style={{ fontSize: "10pt" }}>
+                    <div className="card-body p-1 row">
+                      <div className="col-3 px-1">
+                        <div className="mx-2 mb-1">&nbsp;</div>
+                        <div className="p-3" style={{ backgroundColor: "#1A202C", borderRadius: "20px", height: "200px" }}>
+                          Code:&nbsp;
+                          <span className={statusText(result.code[0])}>{result.code}</span>
+                          <br />
+                          Status:&nbsp;
+                          <span className={statusText(result.code[0])}>{result.status.length > 5 ? <>{result.status.substring(0, 5)}..</> : result.status}</span>
+                          <br />
+                          Time: <span className="text-info">{result.responseTime} ms</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-9 px-1">
-                      <div className="d-flex justify-content-end mx-2 mb-1">
-                        <a href="#" className="text-decoration-none text-white">
-                          <Icon as={FcSurvey} /> Copy response
-                        </a>
-                      </div>
-                      <div style={{ backgroundColor: "#1A202C", borderRadius: "20px", height: "200px" }}>
-                        <JSONTree
-                          data={result.content}
-                          theme={{
-                            tree: {
-                              backgroundColor: "#1A202C",
-                              padding: "6px",
-                              borderRadius: "20px",
-                            },
-                          }}
-                        />
-                        {/* <textarea
-                          className="form-control shadow-none border-0 border-0 text-white body-raw p-3"
-                          cols="30"
-                          style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c", borderRadius: "20px" }}
-                          disabled
-                        >
-                          {JSON.stringify(result.content, null, 2)}
-                        </textarea> */}
+                      <div className="col-9 px-1">
+                        <div className="d-flex justify-content-end mx-2 mb-1">
+                          <a
+                            href="#"
+                            className="text-decoration-none text-white"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigator.clipboard.writeText(JSON.stringify(result.content, null, 2));
+                              toast({
+                                position: "bottom-right",
+                                render: () => (
+                                  <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+                                    Response copied to your clipboard
+                                  </div>
+                                ),
+                                duration: 2000,
+                              });
+                            }}
+                          >
+                            <Icon as={FcSurvey} /> Copy
+                          </a>
+                          &nbsp;&nbsp;
+                          {delLoadRes ? (
+                            <div className="d-flex align-items-center justify-content-center">
+                              <Spinner size="sm" />
+                            </div>
+                          ) : (
+                            <a
+                              href="#"
+                              className="text-decoration-none text-white"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                dispatch(deleteResult(result._id)).then((response) => {
+                                  toast({
+                                    position: "bottom-right",
+                                    render: () => (
+                                      <div className="py-2 px-3 text-center text-white bg-success" style={{ borderRadius: "20px", fontSize: "11pt" }}>
+                                        Response successfully deleted
+                                      </div>
+                                    ),
+                                    duration: 2000,
+                                  });
+                                });
+                              }}
+                            >
+                              <Icon as={FcEmptyTrash} /> Delete
+                            </a>
+                          )}
+                        </div>
+                        <div style={{ backgroundColor: "#1A202C", borderRadius: "20px", height: "200px" }}>
+                          <JSONTree
+                            data={result.content}
+                            theme={{
+                              tree: {
+                                backgroundColor: "#1A202C",
+                                padding: "6px",
+                                borderRadius: "20px",
+                                height: "200px",
+                                overflowY: "auto",
+                              },
+                            }}
+                          />
+                          {/* <textarea
+                            className="form-control shadow-none border-0 border-0 text-white body-raw p-3"
+                            cols="30"
+                            style={{ resize: "none", height: "100%", fontSize: "10pt", backgroundColor: "#1a202c", borderRadius: "20px" }}
+                            disabled
+                          ></textarea> */}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                // <div className="row">
-                //   <div className="col" style={{ backgroundColor: "#1A202C" }}>
-                //     {result.status}
-                //   </div>
-                //   <div className="col"></div>
-                // </div>
-              ))}
+                  // <div className="row">
+                  //   <div className="col" style={{ backgroundColor: "#1A202C" }}>
+                  //     {result.status}
+                  //   </div>
+                  //   <div className="col"></div>
+                  // </div>
+                ))
+              )}
             </div>
           </div>
         </Flex>

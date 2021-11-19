@@ -83,7 +83,7 @@ export default function Login() {
           <div className="card-body p-0">
             <div className="p-5">
               <div className="text-center">
-                <h1 className="h1">APIMAN.io</h1>
+                <h1 className="h1">APIMAN</h1>
               </div>
               <form className="mt-3 user mb-3" onSubmit={submitHandler}>
                 <div className="form-group">

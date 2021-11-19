@@ -17,7 +17,7 @@ export default function NavbarNew(props) {
       <Flex flex={1}>
         <Link className="text-decoration-none" to="/homepage">
           <Text color="white" fontSize="xl">
-            <FontAwesomeIcon icon={faDatabase} color="#f56e56" /> APIMAN.io
+            <FontAwesomeIcon icon={faDatabase} color="#f56e56" /> APIMAN
           </Text>
         </Link>
       </Flex>
